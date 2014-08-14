@@ -83,7 +83,7 @@
 						<configuration>
 							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
 							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
-							<docletPath>../../../../../../developers/org.eclipse.ease.helpgenerator/bin</docletPath>
+							<docletPath>${EASE_CORE_PATH}/developers/org.eclipse.ease.helpgenerator/bin</docletPath>
 							<additionalparam>-root ${project.build.directory}/..</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 						</configuration>

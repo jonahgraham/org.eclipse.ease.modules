@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.ease.modules.feature"
-      label="EASE basic modules"
-      version="0.1.1.qualifier"
-      plugin="org.eclipse.ease">
+      label="EASE Modules (Incubation)"
+      version="0.1.0.qualifier"
+      provider-name="Eclipse.org">
 
    <description url="http://www.example.com/description">
       EASE basic modules to interact with Eclipse Workbench

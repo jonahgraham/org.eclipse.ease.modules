@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.eclipse.ease.modules</groupId>
+  <artifactId>org.eclipse.ease.modules.releng</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+	<properties>
+		<tycho-version>0.21.0</tycho-version>
+	</properties>
+
+
+	<repositories>
+		<repository>
+			<id>kepler</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/kepler</url>
+		</repository>
+	</repositories>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- enable tycho build extension -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+
+			<!-- set compiler compliance level -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<modules>
+
+		<!-- Modules -->
+		<module>../../plugins/org.eclipse.ease.module.platform</module>
+		<module>../../plugins/org.eclipse.ease.modules.incubation</module>
+		<module>../../features/org.eclipse.ease.modules.feature</module>
+
+		<!-- releng -->
+		<module>../org.eclipse.ease.modules.releng.target</module>
+		<module>../org.eclipse.ease.modules.releng.p2</module>
+	</modules>
+
+
+	<profiles>
+		<profile>
+			<id>local</id>
+		</profile>
+
+		<profile>
+			<id>docs</id>
+
+			<build>
+				<plugins>
+
+					<!-- enable module documentation builder -->
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<groupId>org.apache.maven.plugins</groupId>
+						<version>2.9.1</version>
+						<configuration>
+							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
+							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
+							<docletPath>../../../../../../developers/org.eclipse.ease.helpgenerator/bin</docletPath>
+							<additionalparam>-root ${project.build.directory}/..</additionalparam>
+							<useStandardDocletOptions>false</useStandardDocletOptions>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-docs</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>javadoc</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

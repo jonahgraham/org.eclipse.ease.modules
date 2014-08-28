@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
- *******************************************************************************/package org.eclipse.ease.module.platform;
+ *******************************************************************************/
+package org.eclipse.ease.module.platform;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -51,25 +52,20 @@ public class FilesystemHandle implements IFileHandle {
 	public String read(final int characters) throws IOException {
 		BufferedReader reader = getReader();
 		if (reader != null) {
-			if (characters >= 0) {
-				// read dedicated amount of characters
-				char[] buffer = new char[characters];
-				int length = reader.read(buffer);
+			StringBuilder result = new StringBuilder();
+			char[] buffer = new char[1024 * 4];
+			while (characters != 0) {
+				int length = reader.read(buffer, 0, (characters < 0) ? buffer.length : Math.min(buffer.length, characters));
+				if (length == -1) {
+					// EOF reached
+					reader.close();
+					break;
+				}
 
-				if (length >= 0)
-					return new String(buffer, 0, length);
+				result.append(new String(buffer, 0, length));
+			}
 
-			} else {
-				// read rest of file
-				StringBuilder data = read(reader);
-				if (data != null)
-					return data.toString();
-			}
-			// did not work, close reader
-			try {
-				reader.close();
-			} catch (IOException e) {
-			}
+			return result.toString();
 		}
 
 		return null;
@@ -89,37 +85,15 @@ public class FilesystemHandle implements IFileHandle {
 	}
 
 	@Override
-	public boolean write(final String data, int offset) {
+	public boolean write(final String data) {
 		try {
-			if (fMode == RANDOM_ACCESS) {
-				// random write access to file
-				BufferedReader reader = createReader();
-				StringBuilder buffer = read(reader);
+			// replace file content or append content
+			if (fWriter == null)
+				fWriter = new PrintWriter(new BufferedWriter(createWriter()));
 
-				if (offset == OFFSET_ENF_OF_FILE)
-					offset = buffer.length();
-
-				buffer.insert(Math.min(buffer.length(), offset), data);
-
-				PrintWriter writer = new PrintWriter(new BufferedWriter(createWriter()));
-				writer.write(buffer.toString());
-				writer.close();
-
-				try {
-					if (fReader != null)
-						fReader.close();
-				} catch (Exception e) {
-				}
-
-			} else {
-				// replace file content or append content
-				if (fWriter == null)
-					fWriter = new PrintWriter(new BufferedWriter(createWriter()));
-
-				fWriter.print(data);
-				fWriter.flush();
-				return true;
-			}
+			fWriter.print(data);
+			fWriter.flush();
+			return true;
 
 		} catch (Exception e) {
 		}
@@ -130,7 +104,7 @@ public class FilesystemHandle implements IFileHandle {
 	protected static StringBuilder read(final Reader reader) throws IOException {
 		// consume reader
 		StringBuilder builder = new StringBuilder();
-		char[] buffer = new char[1024];
+		char[] buffer = new char[1024 * 4];
 		int bytes = 0;
 		do {
 			bytes = reader.read(buffer);

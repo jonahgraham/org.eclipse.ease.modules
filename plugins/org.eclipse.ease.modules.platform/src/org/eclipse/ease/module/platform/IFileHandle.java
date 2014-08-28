@@ -7,27 +7,26 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
- *******************************************************************************/package org.eclipse.ease.module.platform;
+ *******************************************************************************/
+package org.eclipse.ease.module.platform;
 
 import java.io.IOException;
 
 public interface IFileHandle {
-	int OFFSET_ENF_OF_FILE = -1;
-
 	int READ = 1;
 	int WRITE = 2;
 	int APPEND = 4;
-	int RANDOM_ACCESS = 8;
 
 	String read(int characters) throws IOException;
 
 	String readLine() throws IOException;
 
-	boolean write(String data, int offset);
+	boolean write(String data);
 
 	boolean exists();
 
 	boolean createFile(boolean createHierarchy) throws Exception;
 
 	void close();
+
 }

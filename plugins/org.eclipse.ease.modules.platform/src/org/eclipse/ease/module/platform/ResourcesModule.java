@@ -7,8 +7,10 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
- *******************************************************************************/package org.eclipse.ease.module.platform;
+ *******************************************************************************/
+package org.eclipse.ease.module.platform;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
+import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.ease.tools.RunnableWithResult;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -53,12 +56,9 @@ public class ResourcesModule extends AbstractScriptModule {
 	@WrapToScript
 	public static final int APPEND = IFileHandle.APPEND;
 
-	@WrapToScript
-	public static final int RANDOM_ACCESS = IFileHandle.RANDOM_ACCESS;
-
 	/**
 	 * Get the workspace root.
-	 * 
+	 *
 	 * @return workspace root
 	 */
 	@WrapToScript
@@ -68,7 +68,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 	/**
 	 * Get a project instance.
-	 * 
+	 *
 	 * @param name
 	 *            project name
 	 * @return project or <code>null</code>
@@ -80,7 +80,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 	/**
 	 * Create a new workspace project. Will create a new project if it now already exists. If creation fails, <code>null</code> is returned.
-	 * 
+	 *
 	 * @param name
 	 *            name or project to create
 	 * @return <code>null</code> or project
@@ -101,9 +101,202 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
+	 * Create a new folder in the workspace or the file system.
+	 *
+	 * @param location
+	 *            folder location
+	 * @return {@link IFolder}, {@link File} or <code>null</code> in case of error
+	 * @throws CoreException
+	 */
+	@WrapToScript
+	public Object createFolder(final Object location) throws CoreException {
+		Object folder = ResourceTools.resolveFolder(location, getScriptEngine().getExecutedFile(), false);
+		if (folder instanceof IFolder) {
+			if (!((IFolder) folder).exists()) {
+				((IFolder) folder).create(true, true, new NullProgressMonitor());
+				return folder;
+			}
+
+		} else if (folder instanceof File) {
+			if (!((File) folder).exists())
+				if (((File) folder).mkdirs())
+					return folder;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Create a new file in the workspace or the file system.
+	 *
+	 * @param location
+	 *            file location
+	 * @return {@link IFile}, {@link File} or <code>null</code> in case of error
+	 * @throws CoreException
+	 * @throws IOException
+	 */
+	@WrapToScript
+	public Object createFile(final Object location) throws CoreException, IOException {
+		Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), false);
+
+		if (file instanceof IFile) {
+			if (!((IFile) file).exists()) {
+				((IFile) file).create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
+				return file;
+			}
+
+		} else if (file instanceof File) {
+			if (!((File) file).exists())
+				if (((File) file).createNewFile())
+					return file;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Opens a file from the workspace or the file system. If the file does not exist and we open it for writing, the file is created automatically.
+	 *
+	 * @param location
+	 *            file location
+	 * @param mode
+	 *            one of {@value #READ}, {@value #WRITE}, {@value #APPEND}
+	 * @return file handle instance to be used for file modification commands
+	 */
+	@WrapToScript
+	public IFileHandle openFile(final String location, @ScriptParameter(optional = true, defaultValue = "1") final int mode) {
+		IFileHandle handle = getFileHandle(location, mode);
+
+		if ((handle == null) && (mode != IFileHandle.READ)) {
+			try {
+				Object file = createFile(location);
+				return getFileHandle(file, mode);
+			} catch (Exception e) {
+				// file did not exist and could not be created, giving up
+			}
+		}
+
+		return handle;
+	}
+
+	/**
+	 * Close a file. Releases system resources bound by an open file.
+	 *
+	 * @param handle
+	 *            handle to be closed
+	 */
+	@WrapToScript
+	public void closeFile(final IFileHandle handle) {
+		handle.close();
+	}
+
+	/**
+	 * Read data from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@link #openFile(String, int)} and use the handle for
+	 * <i>location</i>.
+	 *
+	 * @param location
+	 *            file location, file handle or file instance
+	 * @param bytes
+	 *            amount of bytes to read (-1 for whole file)
+	 * @return file data or <code>null</code> if EOF is reached
+	 * @throws IOException
+	 */
+	@WrapToScript
+	public String readFile(final Object location, @ScriptParameter(optional = true, defaultValue = "-1") final int bytes) throws IOException {
+		IFileHandle handle = getFileHandle(location, IFileHandle.READ);
+
+		if (handle != null) {
+			String result = handle.read(bytes);
+			handle.close();
+			return result;
+		}
+
+		throw new IOException("File \"" + location + "\" not found");
+	}
+
+	/**
+	 * Read a single line from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@link #openFile(String, int)} and use the
+	 * handle for <i>location</i>.
+	 *
+	 * @param location
+	 *            file location, file handle or file instance
+	 * @return line of text or <code>null</code> if EOF is reached
+	 * @throws IOException
+	 */
+	@WrapToScript
+	public String readLine(final Object location) throws IOException {
+		IFileHandle handle = getFileHandle(location, IFileHandle.READ);
+
+		if (handle != null) {
+			String result = handle.readLine();
+			handle.close();
+			return result;
+		}
+
+		throw new IOException("File \"" + location + "\" not found");
+	}
+
+	/**
+	 * Write data to a file. When not using an {@link IFileHandle}, previous file content will be overridden. Files that do not exist yet will be automatically
+	 * created.
+	 *
+	 * @param location
+	 *            file location
+	 * @param data
+	 *            data to be written
+	 * @return file handle to continue write operations
+	 */
+	@WrapToScript
+	public IFileHandle writeFile(final Object location, final String data) {
+		IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+
+		if (handle != null)
+			handle.write(data);
+
+		return handle;
+	}
+
+	/**
+	 * Write a line of data to a file. When not using an {@link IFileHandle}, previous file content will be overridden. Files that do not exist yet will be
+	 * automatically created.
+	 *
+	 * @param location
+	 *            file location
+	 * @param data
+	 *            data to be written
+	 * @return file handle to continue write operations
+	 */
+	@WrapToScript
+	public IFileHandle writeLine(final Object location, final String data) {
+		IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+
+		if (handle != null)
+			// TODO get correct line delimiter from system properties
+			handle.write(data + "\n");
+
+		return handle;
+	}
+
+	private IFileHandle getFileHandle(final Object location, final int mode) {
+		if (location instanceof IFileHandle)
+			return (IFileHandle) location;
+
+		if (location instanceof File)
+			return new FilesystemHandle((File) location, mode);
+
+		if (location instanceof IFile)
+			return new ResourceHandle((IFile) location, mode);
+
+		if (location != null)
+			return getFileHandle(ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true), mode);
+
+		return null;
+	}
+
+	/**
 	 * Opens a file dialog. Depending on the <i>rootFolder</i> a workspace dialog or a file system dialog will be used. If the folder cannot be located, the
 	 * workspace root folder is used by default. When type is set to WRITE or APPEND a save dialog will be shown instead of the default open dialog.
-	 * 
+	 *
 	 * @param rootFolder
 	 *            root folder path to use
 	 * @param type
@@ -114,7 +307,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	public String showFileSelectionDialog(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
 			@ScriptParameter(optional = true, defaultValue = "0") final int type) {
 
-		Object root = (rootFolder instanceof String) ? getFile((String) rootFolder) : rootFolder;
+		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
 			root = getWorkspace();
 
@@ -188,7 +381,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 	/**
 	 * /** Opens a dialog box which allows the user to select a container (project or folder) in the workspace.
-	 * 
+	 *
 	 * @param title
 	 *            the title to use for the dialog box
 	 * @param message
@@ -201,7 +394,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		// FIXME currently we cannot resolve folders within the workspace
 		// therefore this call fails when a subfolder is requested by the user
 
-		Object root = (rootFolder instanceof String) ? getFile((String) rootFolder) : rootFolder;
+		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
 			root = getWorkspace();
 
@@ -245,104 +438,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Retrieve a file from the workspace or the file system.
-	 * 
-	 * @param location
-	 *            file location to open from
-	 * @return {@link File} or {@link IFile} object when file is found, <code>null</code> otherwise
-	 */
-	@WrapToScript
-	public Object getFile(final String location) {
-		return getEnvironment().resolveFile(location);
-	}
-
-	@WrapToScript
-	public IFileHandle openFile(final Object location, @ScriptParameter(optional = true, defaultValue = "1") final int mode) {
-		// resolve file
-		Object file;
-		if ((location instanceof IFile) || (location instanceof File))
-			file = location;
-
-		else
-			file = getFile(location.toString());
-
-		// create handle
-		if (file instanceof IFile)
-			return new ResourceHandle((IFile) file, mode);
-
-		else if (file instanceof File)
-			return new FilesystemHandle((File) file, mode);
-
-		return null;
-	}
-
-	@WrapToScript
-	public String readFile(final IFileHandle handle, @ScriptParameter(optional = true, defaultValue = "-1") final int characters) throws IOException {
-		return handle.read(characters);
-	}
-
-	@WrapToScript
-	public String readLine(final IFileHandle handle) throws IOException {
-		return handle.readLine();
-	}
-
-	@WrapToScript
-	public boolean writeFile(final IFileHandle handle, final String data, @ScriptParameter(optional = true, defaultValue = "-1") final int offset) {
-		return handle.write(data, offset);
-	}
-
-	@WrapToScript
-	public boolean existsFile(final IFileHandle handle) {
-		return handle.exists();
-	}
-
-	/**
-	 * Create a file from a given file handle.
-	 * 
-	 * @param handle
-	 *            handle to the file to be created
-	 * @param createHierarchy
-	 *            create non existing folders in fiel hierarchy
-	 * @return <code>true</code> on success
-	 * @throws Exception
-	 */
-	@WrapToScript
-	public boolean createFile(final IFileHandle handle, @ScriptParameter(optional = true, defaultValue = "true") final boolean createHierarchy)
-			throws Exception {
-		return handle.createFile(createHierarchy);
-	}
-
-	/**
-	 * Create a folder into the workbench
-	 * 
-	 * @param path
-	 *            Path of the new folder
-	 * @return The {@link IFolder}
-	 */
-	@WrapToScript
-	public IFolder createFolder(final String path) {
-		// FIXME we need a method to resolve workspace paths and system paths to allow to create system folders too
-		IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path(path));
-		try {
-			if (!folder.exists())
-				folder.create(false, true, null);
-
-			return folder;
-
-		} catch (CoreException e) {
-		}
-
-		return null;
-	}
-
-	@WrapToScript
-	public void closeFile(final IFileHandle handle) {
-		handle.close();
-	}
-
-	/**
 	 * Return all the file of a workspace matching a pattern
-	 * 
+	 *
 	 * @param patternString
 	 *            A pattern as define in {@link Pattern}
 	 * @return An array of all the file into the workspace matching this pattern

@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
- *******************************************************************************/package org.eclipse.ease.module.platform;
+ *******************************************************************************/
+package org.eclipse.ease.module.platform;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ease.modules.AbstractScriptModule;
@@ -38,7 +39,7 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Run code in UI thread. Needed to interact with SWT elements. Might not be supported by some engines. Might be disabled by the user. Code will be executed
 	 * synchronously and stall UI updates while executed.
-	 * 
+	 *
 	 * @param code
 	 *            code/object to execute
 	 * @return execution result
@@ -50,7 +51,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Returns <code>true</code> when executed in the UI thread.
-	 * 
+	 *
 	 * @return <code>true</code> in UI thread
 	 */
 	@WrapToScript
@@ -60,13 +61,13 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Displays an info dialog. Needs UI to be available.
-	 * 
+	 *
 	 * @param title
 	 *            dialog title
 	 * @param message
 	 *            dialog message
 	 */
-	@WrapToScript
+	@WrapToScript(alias = "showMessageDialog")
 	public void showInfoDialog(final String title, final String message) {
 		Display.getDefault().syncExec(new Runnable() {
 
@@ -79,7 +80,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Displays a question dialog. Contains yes/no buttons. Needs UI to be available.
-	 * 
+	 *
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -104,7 +105,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Displays an input dialog. Contains yes/no buttons. Needs UI to be available.
-	 * 
+	 *
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -131,7 +132,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Displays a confirmation dialog.
-	 * 
+	 *
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -154,7 +155,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Displays a warning dialog.
-	 * 
+	 *
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -173,7 +174,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Displays an error dialog.
-	 * 
+	 *
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -209,7 +210,7 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Opens a view by given Name or id. When <i>name</i> does not match any known view id we try to match it with a view title. When found the view is opened.
 	 * If the view is already visible it will be given focus.
-	 * 
+	 *
 	 * @param name
 	 *            name or id of viw to open
 	 * @return view instance or <code>null</code>
@@ -247,7 +248,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Opens a file in an editor.
-	 * 
+	 *
 	 * @param file
 	 *            workspace file to open
 	 * @return editor instance or <code>null</code>
@@ -293,7 +294,7 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Get the current selection. If <i>partID</i> is provided, the selection of the given part is returned. Otherwise the selection of the current active part
 	 * is returned.
-	 * 
+	 *
 	 * @param name
 	 *            name or ID of part to get selection from
 	 * @return current selection
@@ -324,7 +325,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Converts selection to a consumable form. Table/Tree selections are transformed into Object[], Text selections into the selected String.
-	 * 
+	 *
 	 * @param selection
 	 *            selection to convert
 	 * @return converted elements
@@ -342,7 +343,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Find ID for a given view name. If <i>name</i> already contains a valid id, it will be returned.
-	 * 
+	 *
 	 * @param name
 	 *            name of view
 	 * @return view ID or <code>null</code>
@@ -366,7 +367,7 @@ public class UIModule extends AbstractScriptModule {
 
 	/**
 	 * Show a generic dialog.
-	 * 
+	 *
 	 * @param dialog
 	 *            dialog to display
 	 * @return result of dialog.open() method

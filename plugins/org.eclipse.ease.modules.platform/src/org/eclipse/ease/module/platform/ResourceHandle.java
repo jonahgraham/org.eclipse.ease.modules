@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
- *******************************************************************************/package org.eclipse.ease.module.platform;
+ *******************************************************************************/
+package org.eclipse.ease.module.platform;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -35,31 +36,17 @@ public class ResourceHandle extends FilesystemHandle {
 	}
 
 	@Override
-	public boolean write(final String data, int offset) {
+	public boolean write(final String data) {
 		try {
-			if (getMode() == RANDOM_ACCESS) {
-				// random write access to file
-				BufferedReader reader = createReader();
-				StringBuilder buffer = read(reader);
-
-				if (offset == OFFSET_ENF_OF_FILE)
-					offset = buffer.length();
-
-				buffer.insert(Math.min(buffer.length(), offset), data);
-
-				fFile.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), false, false, null);
+			// replace file content or append content
+			if ((getMode() & APPEND) == APPEND) {
+				// append data
+				fFile.appendContents(new ByteArrayInputStream(data.getBytes()), false, false, null);
 
 			} else {
-				// replace file content or append content
-				if ((getMode() & APPEND) == APPEND) {
-					// append data
-					fFile.appendContents(new ByteArrayInputStream(data.getBytes()), false, false, null);
-
-				} else {
-					// replace content
-					fFile.setContents(new ByteArrayInputStream(data.getBytes()), false, false, null);
-					setMode(getMode() | APPEND);
-				}
+				// replace content
+				fFile.setContents(new ByteArrayInputStream(data.getBytes()), false, false, null);
+				setMode(getMode() | APPEND);
 			}
 
 			return true;
@@ -87,7 +74,7 @@ public class ResourceHandle extends FilesystemHandle {
 
 	/**
 	 * Create a new container on the workbench.
-	 * 
+	 *
 	 * @param container
 	 *            container to create
 	 * @return <code>true</code> on success

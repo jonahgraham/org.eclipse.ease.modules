@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.ease</groupId>
-	<artifactId>org.eclipse.ease</artifactId>
+	<artifactId>ease.modules</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>

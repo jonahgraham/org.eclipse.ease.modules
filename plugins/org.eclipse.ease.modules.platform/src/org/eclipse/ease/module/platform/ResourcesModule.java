@@ -29,6 +29,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
@@ -55,6 +56,8 @@ public class ResourcesModule extends AbstractScriptModule {
 
 	@WrapToScript
 	public static final int APPEND = IFileHandle.APPEND;
+
+	private static final String LINE_DELIMITER = System.getProperty(Platform.PREF_LINE_SEPARATOR);
 
 	/**
 	 * Get the workspace root.
@@ -271,8 +274,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
 
 		if (handle != null)
-			// TODO get correct line delimiter from system properties
-			handle.write(data + "\n");
+			handle.write(data + LINE_DELIMITER);
 
 		return handle;
 	}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="selector" name="Selector" schema="schema/selector.exsd"/>
+   <extension
+         point="org.eclipse.ease.modules.modeling.selector">
+      <selector
+            id="GMFSemanticSeletor"
+            impl="org.eclipse.ease.modules.modeling.selector.GMFSemanticSeletor"
+            priority="50">
+      </selector>
+      <selector
+            id="GMFNotationSelector"
+            impl="org.eclipse.ease.modules.modeling.selector.GMFNotationSelector"
+            priority="45">
+      </selector>
+   </extension>
+   <extension
+         point="org.eclipse.ease.modules">
+      <category
+            id="org.eclipse.ease.modules.category.modeling"
+            name="Modeling">
+      </category>
+      <module
+            category="org.eclipse.ease.modules.category.modeling"
+            class="org.eclipse.ease.modules.modeling.EcoreModule"
+            id="org.eclipse.ease.modules.modeling.ecore"
+            name="ECore"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.module.platform.ui">
+         </dependency>
+      </module>
+      <module
+            category="org.eclipse.ease.modules.category.modeling"
+            class="org.eclipse.ease.modules.modeling.NotationModule"
+            id="org.eclipse.ease.modules.modeling.notation"
+            name="Notation"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.module.platform.ui">
+         </dependency>
+      </module>
+      <module
+            category="org.eclipse.ease.modules.category.modeling"
+            class="org.eclipse.ease.modules.modeling.UMLModule"
+            id="org.eclipse.ease.modules.modeling.uml"
+            name="UML"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.module.platform.ui">
+         </dependency>
+      </module>
+      <module
+            category="org.eclipse.ease.modules.category.modeling"
+            class="org.eclipse.ease.modules.modeling.PapyrusModule"
+            id="org.eclipse.ease.modules.modeling.papyrus"
+            name="Papyrus"
+            visible="true">
+      </module>
+   </extension>
+
+</plugin>

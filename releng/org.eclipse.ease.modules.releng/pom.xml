@@ -108,7 +108,7 @@
 
 		<!-- Modules -->
 		<module>../../plugins/org.eclipse.ease.modules.platform</module>
-		<module>../../plugins/org.eclipse.ease.modules.incubation</module>
+		<module>../../plugins/org.eclipse.ease.modules.modeling</module>
 		<module>../../features/org.eclipse.ease.modules.feature</module>
 
 		<!-- releng -->

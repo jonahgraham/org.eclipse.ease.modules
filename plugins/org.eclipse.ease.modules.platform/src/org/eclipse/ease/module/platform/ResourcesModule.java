@@ -168,7 +168,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return file handle instance to be used for file modification commands
 	 */
 	@WrapToScript
-	public IFileHandle openFile(final String location, @ScriptParameter(defaultValue = "1") final int mode) {
+	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode) {
 		IFileHandle handle = getFileHandle(location, mode);
 
 		if ((handle == null) && (mode != IFileHandle.READ)) {

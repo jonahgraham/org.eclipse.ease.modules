@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -303,11 +304,17 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            root folder path to use
 	 * @param type
 	 *            dialog type to use (WRITE|APPEND for save dialog, other for open dialog)
+	 * @param title
+	 *            dialog title
+	 * @param message
+	 *            dialog message
 	 * @return full path to selected file
 	 */
 	@WrapToScript
 	public String showFileSelectionDialog(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(optional = true, defaultValue = "0") final int type) {
+			@ScriptParameter(optional = true, defaultValue = "0") final int type,
+			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String title,
+			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
@@ -333,6 +340,10 @@ public class ResourcesModule extends AbstractScriptModule {
 				@Override
 				public void run() {
 					FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), mode);
+
+					if (title != null)
+						dialog.setText(title);
+
 					dialog.setFilterPath(dialogRoot.getAbsolutePath());
 					setResult(dialog.open());
 				}
@@ -356,20 +367,23 @@ public class ResourcesModule extends AbstractScriptModule {
 						if (!dialogRoot.equals(getWorkspace()))
 							dialog.setOriginalFile(dialogRoot.getFile(new Path("newFile")));
 
+						dialog.setTitle(title);
+						dialog.setMessage(message);
+
 						if (dialog.open() == Window.OK)
-							setResult("workspace:/" + dialog.getResult().toString());
+							setResult("workspace:/" + dialog.getResult().toPortableString());
 
 					} else {
 						// open a select file dialog
 
 						final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display.getDefault().getActiveShell(),
 								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-						dialog.setTitle("Select file");
-						dialog.setMessage("Select a file from the workspace:");
+						dialog.setTitle(title);
+						dialog.setMessage(message);
 						dialog.setInput(dialogRoot);
 
 						if (dialog.open() == Window.OK)
-							setResult("workspace:/" + ((IFile) dialog.getFirstResult()).getFullPath().toPortableString());
+							setResult("workspace:/" + ((IPath) dialog.getFirstResult()).toPortableString());
 					}
 				}
 			};
@@ -382,19 +396,21 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * /** Opens a dialog box which allows the user to select a container (project or folder) in the workspace.
+	 * Opens a dialog box which allows the user to select a container (project or folder). Workspace paths will always display the workspace as root object.
 	 *
+	 * @param rootFolder
+	 *            root folder to display: for workspace paths this will set the default selection
 	 * @param title
-	 *            the title to use for the dialog box
+	 *            dialog title
 	 * @param message
-	 *            a message to show in the dialog box
-	 * @return array of selected objects
+	 *            dialog message
+	 *
+	 * @return path to selected folder
 	 */
 	@WrapToScript
-	public String showFolderSelectionDialog(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder) {
-
-		// FIXME currently we cannot resolve folders within the workspace
-		// therefore this call fails when a subfolder is requested by the user
+	public String showFolderSelectionDialog(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
+			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String title,
+			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
@@ -408,7 +424,14 @@ public class ResourcesModule extends AbstractScriptModule {
 
 				@Override
 				public void run() {
-					DirectoryDialog dialog = new DirectoryDialog(Display.getDefault().getActiveShell());
+					DirectoryDialog dialog = new DirectoryDialog(Display.getCurrent().getActiveShell());
+
+					if (title != null)
+						dialog.setText(title);
+
+					if (message != null)
+						dialog.setMessage(message);
+
 					dialog.setFilterPath(dialogRoot.getAbsolutePath());
 					setResult(dialog.open());
 				}
@@ -425,10 +448,11 @@ public class ResourcesModule extends AbstractScriptModule {
 
 				@Override
 				public void run() {
-					ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(), null, true, null);
-					dialog.setInitialSelections(new Object[] { dialogRoot });
+					ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(), dialogRoot, true, message);
+					dialog.setTitle(title);
+
 					if (dialog.open() == Window.OK)
-						setResult("workspace:/" + ((IContainer) dialog.getResult()[0]).getFullPath().toPortableString());
+						setResult("workspace:/" + ((IPath) dialog.getResult()[0]).toPortableString());
 				}
 			};
 

@@ -113,7 +113,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
 	 */
 	@WrapToScript
-	public String showInputDialog(final String title, final String message, @ScriptParameter(optional = true, defaultValue = "") final String initialValue) {
+	public String showInputDialog(final String title, final String message, @ScriptParameter(defaultValue = "") final String initialValue) {
 
 		final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
@@ -300,7 +300,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return current selection
 	 */
 	@WrapToScript
-	public ISelection getSelection(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String name) {
+	public ISelection getSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
 		final ISelectionService selectionService = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getSelectionService();
 
 		if ((name != null) && (!name.isEmpty())) {

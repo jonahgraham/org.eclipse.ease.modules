@@ -168,7 +168,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return file handle instance to be used for file modification commands
 	 */
 	@WrapToScript
-	public IFileHandle openFile(final String location, @ScriptParameter(optional = true, defaultValue = "1") final int mode) {
+	public IFileHandle openFile(final String location, @ScriptParameter(defaultValue = "1") final int mode) {
 		IFileHandle handle = getFileHandle(location, mode);
 
 		if ((handle == null) && (mode != IFileHandle.READ)) {
@@ -206,7 +206,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @throws IOException
 	 */
 	@WrapToScript
-	public String readFile(final Object location, @ScriptParameter(optional = true, defaultValue = "-1") final int bytes) throws IOException {
+	public String readFile(final Object location, @ScriptParameter(defaultValue = "-1") final int bytes) throws IOException {
 		IFileHandle handle = getFileHandle(location, IFileHandle.READ);
 
 		if (handle != null) {
@@ -311,10 +311,9 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return full path to selected file
 	 */
 	@WrapToScript
-	public String showFileSelectionDialog(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(optional = true, defaultValue = "0") final int type,
-			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String title,
-			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String message) {
+	public String showFileSelectionDialog(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
+			@ScriptParameter(defaultValue = "0") final int type, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String title,
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
@@ -408,9 +407,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return path to selected folder
 	 */
 	@WrapToScript
-	public String showFolderSelectionDialog(@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String title,
-			@ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final String message) {
+	public String showFolderSelectionDialog(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String title, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
@@ -475,8 +473,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return An array of all matching files
 	 */
 	@WrapToScript
-	public Object[] findFiles(final String pattern, @ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(optional = true, defaultValue = "true") final boolean recursive) {
+	public Object[] findFiles(final String pattern, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
+			@ScriptParameter(defaultValue = "true") final boolean recursive) {
 
 		// evaluate expression to look for
 		Pattern regExp;

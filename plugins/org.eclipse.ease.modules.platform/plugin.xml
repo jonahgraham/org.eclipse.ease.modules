@@ -3,14 +3,14 @@
    <extension point="org.eclipse.ease.modules">
       <module
             category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.module.platform.UIModule"
+            class="org.eclipse.ease.modules.platform.UIModule"
             id="org.eclipse.ease.module.platform.ui"
             name="UI"
             visible="true">
       </module>
       <module
             category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.module.platform.ResourcesModule"
+            class="org.eclipse.ease.modules.platform.ResourcesModule"
             id="org.eclipse.ease.module.platform.resources"
             name="Resources"
             visible="true">

@@ -8,7 +8,7 @@
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ease.module.platform;
+package org.eclipse.ease.modules.platform;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

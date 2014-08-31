@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Export-Package: org.eclipse.ease.module.platform
+Export-Package: org.eclipse.ease.modules.platform
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ease,

@@ -464,47 +464,79 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Return all the file of a workspace matching a pattern
+	 * Return files matching a certain pattern.
 	 *
-	 * @param patternString
-	 *            A pattern as define in {@link Pattern}
-	 * @return An array of all the file into the workspace matching this pattern
+	 * @param pattern
+	 *            search pattern: use * and ? as wildcards. If the pattern starts with '^' then a regular expression can be used.
+	 * @param rootFolder
+	 *            root folder to start your search from. <code>null</code> for workspace root
+	 * @param recursive
+	 *            searches subfolders when set to <code>true</code>
+	 * @return An array of all matching files
 	 */
 	@WrapToScript
-	public IFile[] findFiles(final String pattern, @ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
+	public Object[] findFiles(final String pattern, @ScriptParameter(optional = true, defaultValue = ScriptParameter.NULL) final Object rootFolder,
 			@ScriptParameter(optional = true, defaultValue = "true") final boolean recursive) {
-		Pattern regExp = Pattern.compile(pattern);
 
-		List<IFile> result = new ArrayList<IFile>();
-		Collection<IContainer> toVisit = new HashSet<IContainer>();
+		// evaluate expression to look for
+		Pattern regExp;
+		if (!pattern.startsWith("^"))
+			regExp = Pattern.compile(pattern.replace("*", ".*").replace('?', '.'));
+		else
+			regExp = Pattern.compile(pattern);
+
+		List<Object> result = new ArrayList<Object>();
 
 		// locate root folder to start with
-		if (rootFolder == null)
-			toVisit.add(ResourcesPlugin.getWorkspace().getRoot());
+		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
+		if (root == null)
+			root = getWorkspace();
 
-		// FIXME locate workspace folder, best create an exported method for it
-		// else
-		// toVisit.add(getFolder(rootFolder));
+		if (root instanceof IContainer) {
+			// search in workspace
+			Collection<IContainer> toVisit = new HashSet<IContainer>();
+			toVisit.add((IContainer) root);
 
-		do {
-			IContainer container = toVisit.iterator().next();
-			toVisit.remove(container);
+			do {
+				IContainer container = toVisit.iterator().next();
+				toVisit.remove(container);
 
-			try {
-				for (IResource child : container.members()) {
-					if (child instanceof IFile) {
-						if (regExp.matcher(child.getName()).matches())
-							result.add((IFile) child);
+				try {
+					for (IResource child : container.members()) {
+						if (child instanceof IFile) {
+							if (regExp.matcher(child.getName()).matches())
+								result.add(child);
 
-					} else if ((recursive) && (child instanceof IContainer))
-						toVisit.add((IContainer) child);
+						} else if ((recursive) && (child instanceof IContainer))
+							toVisit.add((IContainer) child);
+					}
+				} catch (CoreException e) {
+					// cannot parse container, skip and continue with next one
 				}
-			} catch (CoreException e) {
-				// cannot parse container, skip and continue with next one
-			}
 
-		} while (!toVisit.isEmpty());
+			} while (!toVisit.isEmpty());
 
-		return result.toArray(new IFile[result.size()]);
+		} else if (root instanceof File) {
+			// search in file system
+			Collection<File> toVisit = new HashSet<File>();
+			toVisit.add((File) root);
+
+			do {
+				File container = toVisit.iterator().next();
+				toVisit.remove(container);
+
+				for (File child : container.listFiles()) {
+					if (child.isFile()) {
+						if (regExp.matcher(child.getName()).matches())
+							result.add(child);
+
+					} else if ((recursive) && (child.isDirectory()))
+						toVisit.add(child);
+				}
+
+			} while (!toVisit.isEmpty());
+		}
+
+		return result.toArray(new Object[result.size()]);
 	}
 }

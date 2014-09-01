@@ -1,14 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Christian Pontesegger and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Christian Pontesegger - initial API and implementation
- *******************************************************************************//*******************************************************************************
-F * Copyright (c) 2013 Atos
+ * Copyright (c) 2013 Atos
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +23,9 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Module used to interact with the workbench
- * 
+ *
  * @author adaussy
- * 
+ *
  */
 public class WorkbenchModule extends AbstractScriptModule {
 
@@ -43,7 +34,7 @@ public class WorkbenchModule extends AbstractScriptModule {
 
 	/**
 	 * Return the active workbench
-	 * 
+	 *
 	 * @return
 	 */
 	@WrapToScript
@@ -53,7 +44,7 @@ public class WorkbenchModule extends AbstractScriptModule {
 
 	/**
 	 * Return the Active Window {@link IWorkbench#getActiveWorkbenchWindow()}
-	 * 
+	 *
 	 * @return
 	 */
 	@WrapToScript
@@ -71,7 +62,7 @@ public class WorkbenchModule extends AbstractScriptModule {
 
 	/**
 	 * Return the active shell
-	 * 
+	 *
 	 * @return The active shell
 	 */
 	@WrapToScript
@@ -81,7 +72,7 @@ public class WorkbenchModule extends AbstractScriptModule {
 
 	/**
 	 * Return the active page {@link IWorkbenchWindow#getActivePage()}
-	 * 
+	 *
 	 * @return
 	 */
 	@WrapToScript
@@ -91,7 +82,7 @@ public class WorkbenchModule extends AbstractScriptModule {
 
 	/**
 	 * Return the current editor
-	 * 
+	 *
 	 * @return The current editor
 	 */
 	@WrapToScript

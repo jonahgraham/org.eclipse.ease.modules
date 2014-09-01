@@ -129,10 +129,6 @@ public class PapyrusModule extends UMLModule {
 			@ScriptParameter(name = "diagramName", defaultValue = "NewDiagram") final String newDiagram, @ScriptParameter(name = "open") final boolean open) {
 		if ("Class".equals(diagramType)) {
 			createDiagram(getModelSet(), new CreateClassDiagramCommand(), new ClassDiagramCreationCondition(), semanticElement, newDiagram, open);
-		} else if ("Package".equals(diagramType)) {
-			throw new RuntimeException("not implemented");
-			// FIXME disabled as we cannot resolve PackageDiagramCreateCommand and PackageDiagramCreationCondition
-			// createDiagram(getModelSet(), new PackageDiagramCreateCommand(), new PackageDiagramCreationCondition(), semanticElement, newDiagram, open);
 		}
 	}
 

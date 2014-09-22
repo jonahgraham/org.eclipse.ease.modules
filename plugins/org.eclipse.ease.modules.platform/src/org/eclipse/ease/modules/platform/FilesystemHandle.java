@@ -42,7 +42,7 @@ public class FilesystemHandle implements IFileHandle {
 			if (fReader == null)
 				fReader = createReader();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 
 		return fReader;
@@ -50,12 +50,12 @@ public class FilesystemHandle implements IFileHandle {
 
 	@Override
 	public String read(final int characters) throws IOException {
-		BufferedReader reader = getReader();
+		final BufferedReader reader = getReader();
 		if (reader != null) {
-			StringBuilder result = new StringBuilder();
-			char[] buffer = new char[1024 * 4];
+			final StringBuilder result = new StringBuilder();
+			final char[] buffer = new char[1024 * 4];
 			while (characters != 0) {
-				int length = reader.read(buffer, 0, (characters < 0) ? buffer.length : Math.min(buffer.length, characters));
+				final int length = reader.read(buffer, 0, (characters < 0) ? buffer.length : Math.min(buffer.length, characters));
 				if (length == -1) {
 					// EOF reached
 					reader.close();
@@ -73,7 +73,7 @@ public class FilesystemHandle implements IFileHandle {
 
 	@Override
 	public String readLine() throws IOException {
-		BufferedReader reader = getReader();
+		final BufferedReader reader = getReader();
 		if (reader != null)
 			return reader.readLine();
 
@@ -95,7 +95,7 @@ public class FilesystemHandle implements IFileHandle {
 			fWriter.flush();
 			return true;
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 
 		return false;
@@ -103,8 +103,8 @@ public class FilesystemHandle implements IFileHandle {
 
 	protected static StringBuilder read(final Reader reader) throws IOException {
 		// consume reader
-		StringBuilder builder = new StringBuilder();
-		char[] buffer = new char[1024 * 4];
+		final StringBuilder builder = new StringBuilder();
+		final char[] buffer = new char[1024 * 4];
 		int bytes = 0;
 		do {
 			bytes = reader.read(buffer);
@@ -125,7 +125,7 @@ public class FilesystemHandle implements IFileHandle {
 	@Override
 	public boolean createFile(final boolean createHierarchy) throws Exception {
 		if (createHierarchy) {
-			File folder = fFile.getParentFile();
+			final File folder = fFile.getParentFile();
 			if (!folder.exists())
 				folder.mkdirs();
 		}
@@ -153,13 +153,18 @@ public class FilesystemHandle implements IFileHandle {
 		try {
 			if (fReader != null)
 				fReader.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 
 		try {
 			if (fWriter != null)
 				fWriter.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
+	}
+
+	@Override
+	public Object getFile() {
+		return fFile;
 	}
 }

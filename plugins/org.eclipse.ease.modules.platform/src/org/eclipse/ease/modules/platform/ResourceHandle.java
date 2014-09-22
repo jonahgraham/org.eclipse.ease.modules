@@ -51,7 +51,7 @@ public class ResourceHandle extends FilesystemHandle {
 
 			return true;
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 
 		return false;
@@ -109,5 +109,10 @@ public class ResourceHandle extends FilesystemHandle {
 		}
 
 		return true;
+	}
+
+	@Override
+	public Object getFile() {
+		return fFile;
 	}
 }

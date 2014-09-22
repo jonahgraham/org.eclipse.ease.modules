@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.platform;
 
+import java.io.File;
 import java.io.IOException;
+
+import org.eclipse.core.resources.IFile;
 
 public interface IFileHandle {
 	int READ = 1;
@@ -29,4 +32,10 @@ public interface IFileHandle {
 
 	void close();
 
+	/**
+	 * Get the base file object. Returns an {@link IFile} or a {@link File} instance.
+	 *
+	 * @return base file object
+	 */
+	Object getFile();
 }

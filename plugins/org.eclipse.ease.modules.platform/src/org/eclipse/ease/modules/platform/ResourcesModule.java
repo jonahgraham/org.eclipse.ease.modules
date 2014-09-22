@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.platform;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,12 +90,12 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public IProject createProject(final String name) {
-		IProject project = getProject(name);
+		final IProject project = getProject(name);
 		if (!project.exists()) {
 			try {
 				project.create(new NullProgressMonitor());
 				project.open(new NullProgressMonitor());
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				return null;
 			}
 		}
@@ -114,7 +113,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public Object createFolder(final Object location) throws CoreException {
-		Object folder = ResourceTools.resolveFolder(location, getScriptEngine().getExecutedFile(), false);
+		final Object folder = ResourceTools.resolveFolder(location, getScriptEngine().getExecutedFile(), false);
 		if (folder instanceof IFolder) {
 			if (!((IFolder) folder).exists()) {
 				((IFolder) folder).create(true, true, new NullProgressMonitor());
@@ -136,26 +135,13 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @param location
 	 *            file location
 	 * @return {@link IFile}, {@link File} or <code>null</code> in case of error
-	 * @throws CoreException
-	 * @throws IOException
+	 * @throws Exception
+	 *             problems on file access
 	 */
 	@WrapToScript
-	public Object createFile(final Object location) throws CoreException, IOException {
-		Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), false);
-
-		if (file instanceof IFile) {
-			if (!((IFile) file).exists()) {
-				((IFile) file).create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
-				return file;
-			}
-
-		} else if (file instanceof File) {
-			if (!((File) file).exists())
-				if (((File) file).createNewFile())
-					return file;
-		}
-
-		return null;
+	public Object createFile(final Object location) throws Exception {
+		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+		return handle.getFile();
 	}
 
 	/**
@@ -166,21 +152,12 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @param mode
 	 *            one of {@value #READ}, {@value #WRITE}, {@value #APPEND}
 	 * @return file handle instance to be used for file modification commands
+	 * @throws Exception
+	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode) {
-		IFileHandle handle = getFileHandle(location, mode);
-
-		if ((handle == null) && (mode != IFileHandle.READ)) {
-			try {
-				Object file = createFile(location);
-				return getFileHandle(file, mode);
-			} catch (Exception e) {
-				// file did not exist and could not be created, giving up
-			}
-		}
-
-		return handle;
+	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode) throws Exception {
+		return getFileHandle(location, mode);
 	}
 
 	/**
@@ -203,14 +180,15 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @param bytes
 	 *            amount of bytes to read (-1 for whole file)
 	 * @return file data or <code>null</code> if EOF is reached
-	 * @throws IOException
+	 * @throws Exception
+	 *             problems on file access
 	 */
 	@WrapToScript
-	public String readFile(final Object location, @ScriptParameter(defaultValue = "-1") final int bytes) throws IOException {
-		IFileHandle handle = getFileHandle(location, IFileHandle.READ);
+	public String readFile(final Object location, @ScriptParameter(defaultValue = "-1") final int bytes) throws Exception {
+		final IFileHandle handle = getFileHandle(location, IFileHandle.READ);
 
 		if (handle != null) {
-			String result = handle.read(bytes);
+			final String result = handle.read(bytes);
 			handle.close();
 			return result;
 		}
@@ -225,14 +203,15 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @param location
 	 *            file location, file handle or file instance
 	 * @return line of text or <code>null</code> if EOF is reached
-	 * @throws IOException
+	 * @throws Exception
+	 *             problems on file access
 	 */
 	@WrapToScript
-	public String readLine(final Object location) throws IOException {
-		IFileHandle handle = getFileHandle(location, IFileHandle.READ);
+	public String readLine(final Object location) throws Exception {
+		final IFileHandle handle = getFileHandle(location, IFileHandle.READ);
 
 		if (handle != null) {
-			String result = handle.readLine();
+			final String result = handle.readLine();
 			handle.close();
 			return result;
 		}
@@ -249,10 +228,12 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @param data
 	 *            data to be written
 	 * @return file handle to continue write operations
+	 * @throws Exception
+	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeFile(final Object location, final String data) {
-		IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+	public IFileHandle writeFile(final Object location, final String data) throws Exception {
+		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
 
 		if (handle != null)
 			handle.write(data);
@@ -269,10 +250,12 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @param data
 	 *            data to be written
 	 * @return file handle to continue write operations
+	 * @throws Exception
+	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeLine(final Object location, final String data) {
-		IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+	public IFileHandle writeLine(final Object location, final String data) throws Exception {
+		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
 
 		if (handle != null)
 			handle.write(data + LINE_DELIMITER);
@@ -280,20 +263,26 @@ public class ResourcesModule extends AbstractScriptModule {
 		return handle;
 	}
 
-	private IFileHandle getFileHandle(final Object location, final int mode) {
+	private IFileHandle getFileHandle(final Object location, final int mode) throws Exception {
+		IFileHandle handle = null;
 		if (location instanceof IFileHandle)
-			return (IFileHandle) location;
+			handle = (IFileHandle) location;
 
-		if (location instanceof File)
-			return new FilesystemHandle((File) location, mode);
+		else if (location instanceof File)
+			handle = new FilesystemHandle((File) location, mode);
 
-		if (location instanceof IFile)
-			return new ResourceHandle((IFile) location, mode);
+		else if (location instanceof IFile)
+			handle = new ResourceHandle((IFile) location, mode);
 
-		if (location != null)
-			return getFileHandle(ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true), mode);
+		else if (location != null)
+			handle = getFileHandle(ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), mode == IFileHandle.READ), mode);
 
-		return null;
+		if ((handle != null) && (!handle.exists())) {
+			// create file if it does not exist yet
+			handle.createFile(true);
+		}
+
+		return handle;
 	}
 
 	/**
@@ -334,11 +323,11 @@ public class ResourcesModule extends AbstractScriptModule {
 			}
 			final File dialogRoot = (File) root;
 
-			RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
+			final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
 				@Override
 				public void run() {
-					FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), mode);
+					final FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), mode);
 
 					if (title != null)
 						dialog.setText(title);
@@ -355,13 +344,13 @@ public class ResourcesModule extends AbstractScriptModule {
 			// workspace
 			final IContainer dialogRoot = (IContainer) root;
 
-			RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
+			final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
 				@Override
 				public void run() {
 					if ((type == WRITE) || (type == APPEND)) {
 						// open a save as dialog
-						SaveAsDialog dialog = new SaveAsDialog(Display.getDefault().getActiveShell());
+						final SaveAsDialog dialog = new SaveAsDialog(Display.getDefault().getActiveShell());
 						// set default filename if a subfolder is selected
 						if (!dialogRoot.equals(getWorkspace()))
 							dialog.setOriginalFile(dialogRoot.getFile(new Path("newFile")));
@@ -418,11 +407,11 @@ public class ResourcesModule extends AbstractScriptModule {
 
 			final File dialogRoot = (File) root;
 
-			RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
+			final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
 				@Override
 				public void run() {
-					DirectoryDialog dialog = new DirectoryDialog(Display.getCurrent().getActiveShell());
+					final DirectoryDialog dialog = new DirectoryDialog(Display.getCurrent().getActiveShell());
 
 					if (title != null)
 						dialog.setText(title);
@@ -442,11 +431,11 @@ public class ResourcesModule extends AbstractScriptModule {
 			// workspace
 			final IContainer dialogRoot = (IContainer) root;
 
-			RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
+			final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
 				@Override
 				public void run() {
-					ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(), dialogRoot, true, message);
+					final ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(), dialogRoot, true, message);
 					dialog.setTitle(title);
 
 					if (dialog.open() == Window.OK)
@@ -483,7 +472,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		else
 			regExp = Pattern.compile(pattern);
 
-		List<Object> result = new ArrayList<Object>();
+		final List<Object> result = new ArrayList<Object>();
 
 		// locate root folder to start with
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
@@ -492,15 +481,15 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		if (root instanceof IContainer) {
 			// search in workspace
-			Collection<IContainer> toVisit = new HashSet<IContainer>();
+			final Collection<IContainer> toVisit = new HashSet<IContainer>();
 			toVisit.add((IContainer) root);
 
 			do {
-				IContainer container = toVisit.iterator().next();
+				final IContainer container = toVisit.iterator().next();
 				toVisit.remove(container);
 
 				try {
-					for (IResource child : container.members()) {
+					for (final IResource child : container.members()) {
 						if (child instanceof IFile) {
 							if (regExp.matcher(child.getName()).matches())
 								result.add(child);
@@ -508,7 +497,7 @@ public class ResourcesModule extends AbstractScriptModule {
 						} else if ((recursive) && (child instanceof IContainer))
 							toVisit.add((IContainer) child);
 					}
-				} catch (CoreException e) {
+				} catch (final CoreException e) {
 					// cannot parse container, skip and continue with next one
 				}
 
@@ -516,14 +505,14 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		} else if (root instanceof File) {
 			// search in file system
-			Collection<File> toVisit = new HashSet<File>();
+			final Collection<File> toVisit = new HashSet<File>();
 			toVisit.add((File) root);
 
 			do {
-				File container = toVisit.iterator().next();
+				final File container = toVisit.iterator().next();
 				toVisit.remove(container);
 
-				for (File child : container.listFiles()) {
+				for (final File child : container.listFiles()) {
 					if (child.isFile()) {
 						if (regExp.matcher(child.getName()).matches())
 							result.add(child);

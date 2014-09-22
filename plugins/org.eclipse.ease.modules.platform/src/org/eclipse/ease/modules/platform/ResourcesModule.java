@@ -227,13 +227,15 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            file location
 	 * @param data
 	 *            data to be written
+	 * @param mode
+	 *            write mode (WRITE/APPEND)
 	 * @return file handle to continue write operations
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeFile(final Object location, final String data) throws Exception {
-		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+	public IFileHandle writeFile(final Object location, final String data, @ScriptParameter(defaultValue = "2") int mode) throws Exception {
+		final IFileHandle handle = getFileHandle(location, mode);
 
 		if (handle != null)
 			handle.write(data);
@@ -249,13 +251,15 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            file location
 	 * @param data
 	 *            data to be written
+	 * @param mode
+	 *            write mode (WRITE/APPEND)
 	 * @return file handle to continue write operations
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeLine(final Object location, final String data) throws Exception {
-		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+	public IFileHandle writeLine(final Object location, final String data, @ScriptParameter(defaultValue = "2") int mode) throws Exception {
+		final IFileHandle handle = getFileHandle(location, mode);
 
 		if (handle != null)
 			handle.write(data + LINE_DELIMITER);

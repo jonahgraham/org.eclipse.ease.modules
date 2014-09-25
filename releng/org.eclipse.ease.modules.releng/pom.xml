@@ -123,8 +123,8 @@
 		</profile>
 
 		<profile>
-			<!-- build help pages for modules using javadoc.
-				 Needs variable doclet.path to be set to the location of the ModuleDoclet bin folder -->
+			<!-- build help pages for modules using javadoc. Needs variable doclet.path 
+				to be set to the location of the ModuleDoclet bin folder -->
 			<id>module-docs</id>
 
 			<build>
@@ -149,6 +149,29 @@
 								<goals>
 									<goal>javadoc</goal>
 								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<version>1.9.1</version>
+						<executions>
+							<execution>
+								<id>add_help</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>add-resource</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>${basedir}/help</directory>
+											<targetPath>help</targetPath>
+										</resource>
+									</resources>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

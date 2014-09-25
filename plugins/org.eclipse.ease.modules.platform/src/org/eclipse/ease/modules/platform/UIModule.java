@@ -62,13 +62,13 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Displays an info dialog. Needs UI to be available.
 	 *
-	 * @param title
-	 *            dialog title
 	 * @param message
 	 *            dialog message
+	 * @param title
+	 *            dialog title
 	 */
 	@WrapToScript(alias = "showMessageDialog")
-	public void showInfoDialog(final String title, final String message) {
+	public void showInfoDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -81,14 +81,14 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Displays a question dialog. Contains yes/no buttons. Needs UI to be available.
 	 *
-	 * @param title
-	 *            dialog title
 	 * @param message
 	 *            dialog message
+	 * @param title
+	 *            dialog title
 	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
 	 */
 	@WrapToScript
-	public boolean showQuestionDialog(final String title, final String message) {
+	public boolean showQuestionDialog(final String message, @ScriptParameter(defaultValue = "Question") final String title) {
 
 		final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
 
@@ -106,20 +106,23 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Displays an input dialog. Contains yes/no buttons. Needs UI to be available.
 	 *
-	 * @param title
-	 *            dialog title
 	 * @param message
 	 *            dialog message
+	 * @param initialValue
+	 *            default value used to populate input box
+	 * @param title
+	 *            dialog title
 	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
 	 */
 	@WrapToScript
-	public String showInputDialog(final String title, final String message, @ScriptParameter(defaultValue = "") final String initialValue) {
+	public String showInputDialog(final String message, @ScriptParameter(defaultValue = "") final String initialValue,
+			@ScriptParameter(defaultValue = "Info") final String title) {
 
 		final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
 			@Override
 			public void run() {
-				InputDialog dialog = new InputDialog(Display.getDefault().getActiveShell(), title, message, initialValue, null);
+				final InputDialog dialog = new InputDialog(Display.getDefault().getActiveShell(), title, message, initialValue, null);
 				if (dialog.open() == Window.OK)
 					setResult(dialog.getValue());
 			}
@@ -133,15 +136,15 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Displays a confirmation dialog.
 	 *
-	 * @param title
-	 *            dialog title
 	 * @param message
 	 *            dialog message
+	 * @param title
+	 *            dialog title
 	 * @return <code>true</code> when accepted
 	 */
 	@WrapToScript
-	public boolean showConfirmDialog(final String title, final String message) {
-		RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
+	public boolean showConfirmDialog(final String message, @ScriptParameter(defaultValue = "Confirmation") final String title) {
+		final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
 
 			@Override
 			public void run() {
@@ -156,13 +159,13 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Displays a warning dialog.
 	 *
-	 * @param title
-	 *            dialog title
 	 * @param message
 	 *            dialog message
+	 * @param title
+	 *            dialog title
 	 */
 	@WrapToScript
-	public void showWarningDialog(final String title, final String message) {
+	public void showWarningDialog(final String message, @ScriptParameter(defaultValue = "Warning") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -175,13 +178,13 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Displays an error dialog.
 	 *
-	 * @param title
-	 *            dialog title
 	 * @param message
 	 *            dialog message
+	 * @param title
+	 *            dialog title
 	 */
 	@WrapToScript
-	public void showErrorDialog(final String title, final String message) {
+	public void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -223,7 +226,7 @@ public class UIModule extends AbstractScriptModule {
 		final String viewID = getIDForName(name);
 
 		if (viewID != null) {
-			RunnableWithResult<IViewPart> runnable = new RunnableWithResult<IViewPart>() {
+			final RunnableWithResult<IViewPart> runnable = new RunnableWithResult<IViewPart>() {
 
 				@Override
 				public void run() {
@@ -234,7 +237,7 @@ public class UIModule extends AbstractScriptModule {
 							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
 								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView(viewID));
 						}
-					} catch (PartInitException e) {
+					} catch (final PartInitException e) {
 					}
 				}
 			};
@@ -263,7 +266,7 @@ public class UIModule extends AbstractScriptModule {
 
 		if (descriptor != null) {
 			final IEditorDescriptor editorDescriptor = descriptor;
-			RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
+			final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
 
 				@Override
 				public void run() {
@@ -277,7 +280,7 @@ public class UIModule extends AbstractScriptModule {
 								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput(file),
 										editorDescriptor.getId()));
 						}
-					} catch (PartInitException e) {
+					} catch (final PartInitException e) {
 						// cannot handle that one, giving up
 					}
 				}
@@ -304,7 +307,7 @@ public class UIModule extends AbstractScriptModule {
 		final ISelectionService selectionService = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getSelectionService();
 
 		if ((name != null) && (!name.isEmpty())) {
-			String partID = getIDForName(name);
+			final String partID = getIDForName(name);
 			if (partID != null)
 				return selectionService.getSelection(partID);
 
@@ -312,7 +315,7 @@ public class UIModule extends AbstractScriptModule {
 		}
 
 		// current selection needs to be accessed from Display thread
-		RunnableWithResult<ISelection> runnable = new RunnableWithResult<ISelection>() {
+		final RunnableWithResult<ISelection> runnable = new RunnableWithResult<ISelection>() {
 
 			@Override
 			public void run() {
@@ -351,8 +354,8 @@ public class UIModule extends AbstractScriptModule {
 	private String getIDForName(final String name) {
 		String id = null;
 
-		IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
-		for (IViewDescriptor descriptor : viewRegistry.getViews()) {
+		final IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
+		for (final IViewDescriptor descriptor : viewRegistry.getViews()) {
 			if (descriptor.getId().equals(name)) {
 				id = descriptor.getId();
 				break;
@@ -374,7 +377,7 @@ public class UIModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public int openDialog(final Window dialog) {
-		RunnableWithResult<Integer> run = new RunnableWithResult<Integer>() {
+		final RunnableWithResult<Integer> run = new RunnableWithResult<Integer>() {
 
 			@Override
 			public void run() {
@@ -388,7 +391,7 @@ public class UIModule extends AbstractScriptModule {
 
 	@WrapToScript
 	public Shell getShell() {
-		RunnableWithResult<Shell> runnable = new RunnableWithResult<Shell>() {
+		final RunnableWithResult<Shell> runnable = new RunnableWithResult<Shell>() {
 			@Override
 			public void run() {
 				setResult(Display.getCurrent().getActiveShell());

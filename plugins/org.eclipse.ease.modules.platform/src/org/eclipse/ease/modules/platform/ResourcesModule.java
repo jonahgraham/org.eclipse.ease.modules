@@ -48,12 +48,15 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ResourcesModule extends AbstractScriptModule {
 
+	/** Access modifier for read mode. */
 	@WrapToScript
 	public static final int READ = IFileHandle.READ;
 
+	/** Access modifier for write mode. */
 	@WrapToScript
 	public static final int WRITE = IFileHandle.WRITE;
 
+	/** Access modifier for append mode. */
 	@WrapToScript
 	public static final int APPEND = IFileHandle.APPEND;
 
@@ -234,7 +237,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeFile(final Object location, final String data, @ScriptParameter(defaultValue = "2") int mode) throws Exception {
+	public IFileHandle writeFile(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
 		final IFileHandle handle = getFileHandle(location, mode);
 
 		if (handle != null)
@@ -258,7 +261,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeLine(final Object location, final String data, @ScriptParameter(defaultValue = "2") int mode) throws Exception {
+	public IFileHandle writeLine(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
 		final IFileHandle handle = getFileHandle(location, mode);
 
 		if (handle != null)

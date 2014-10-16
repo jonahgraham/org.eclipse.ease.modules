@@ -22,6 +22,13 @@
             name="Scripting"
             visible="true">
       </module>
+      <module
+            category="org.eclipse.ease.category.system"
+            class="org.eclipse.ease.modules.platform.PlatformModule"
+            id="org.eclipse.ease.module.platform.platform"
+            name="Platform"
+            visible="true">
+      </module>
    </extension>
 
 </plugin>

@@ -192,7 +192,9 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		if (handle != null) {
 			final String result = handle.read(bytes);
-			handle.close();
+			if (!(location instanceof IFileHandle))
+				handle.close();
+
 			return result;
 		}
 
@@ -215,7 +217,9 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		if (handle != null) {
 			final String result = handle.readLine();
-			handle.close();
+			if (!(location instanceof IFileHandle))
+				handle.close();
+
 			return result;
 		}
 

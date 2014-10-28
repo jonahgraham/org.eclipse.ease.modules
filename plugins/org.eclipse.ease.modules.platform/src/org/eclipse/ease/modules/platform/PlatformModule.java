@@ -60,11 +60,23 @@ public class PlatformModule {
 	@WrapToScript
 	public void executeCommand(final String commandId, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Map<String, String> parameters)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		Map<String, String> commandParameters = (parameters != null) ? parameters : new HashMap<String, String>();
-		ICommandService commandService = (ICommandService) getService(ICommandService.class);
-		IEvaluationService evaluationService = (IEvaluationService) getService(IEvaluationService.class);
+		final Map<String, String> commandParameters = (parameters != null) ? parameters : new HashMap<String, String>();
+		final ICommandService commandService = (ICommandService) getService(ICommandService.class);
+		final IEvaluationService evaluationService = (IEvaluationService) getService(IEvaluationService.class);
 
-		Command command = commandService.getCommand(commandId);
+		final Command command = commandService.getCommand(commandId);
 		command.executeWithChecks(new ExecutionEvent(command, commandParameters, null, evaluationService.getCurrentState()));
+	}
+
+	/**
+	 * Get a system property value
+	 *
+	 * @param key
+	 *            key to query
+	 * @return system property for <i>key</i>
+	 */
+	@WrapToScript
+	public String getSystemProperty(String key) {
+		return System.getProperty(key);
 	}
 }

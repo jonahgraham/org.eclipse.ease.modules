@@ -1,6 +1,9 @@
 package org.eclipse.ease.modules.platform;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
@@ -78,5 +81,32 @@ public class PlatformModule {
 	@WrapToScript
 	public String getSystemProperty(String key) {
 		return System.getProperty(key);
+	}
+
+	/**
+	 * Run an external process. The process is started in the background and a {@link Future} object is returned. Query the result for finished state, output
+	 * and error streams of the executed process.
+	 *
+	 * @param name
+	 *            program to run (with full path if necessary)
+	 * @param args
+	 *            program arguments
+	 * @return {@link Future} object tracking the program
+	 */
+	@WrapToScript
+	public Future runProcess(String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) String[] args) {
+		final List<String> arguments = new ArrayList<String>();
+		arguments.add(name);
+		if (args != null) {
+			for (final String arg : args)
+				arguments.add(arg);
+		}
+
+		final ProcessBuilder builder = new ProcessBuilder(arguments);
+		try {
+			return new Future(builder.start());
+		} catch (final IOException e) {
+			return new Future(e);
+		}
 	}
 }

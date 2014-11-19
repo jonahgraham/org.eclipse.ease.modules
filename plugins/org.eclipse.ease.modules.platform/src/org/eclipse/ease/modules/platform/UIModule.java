@@ -27,6 +27,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -389,13 +390,55 @@ public class UIModule extends AbstractScriptModule {
 		return run.getResult();
 	}
 
+	/**
+	 * Get the workbench shell instance.
+	 *
+	 * @return shell
+	 */
 	@WrapToScript
 	public Shell getShell() {
 		final RunnableWithResult<Shell> runnable = new RunnableWithResult<Shell>() {
 			@Override
 			public void run() {
 				setResult(Display.getCurrent().getActiveShell());
+			}
+		};
 
+		Display.getDefault().syncExec(runnable);
+
+		return runnable.getResult();
+	}
+
+	/**
+	 * Get the active view instance.
+	 *
+	 * @return active view
+	 */
+	@WrapToScript
+	public IWorkbenchPart getActiveView() {
+		final RunnableWithResult<IWorkbenchPart> runnable = new RunnableWithResult<IWorkbenchPart>() {
+			@Override
+			public void run() {
+				setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart());
+			}
+		};
+
+		Display.getDefault().syncExec(runnable);
+
+		return runnable.getResult();
+	}
+
+	/**
+	 * Get the active editor instance.
+	 *
+	 * @return active editor
+	 */
+	@WrapToScript
+	public IEditorPart getActiveEditor() {
+		final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
+			@Override
+			public void run() {
+				setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor());
 			}
 		};
 

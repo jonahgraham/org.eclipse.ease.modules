@@ -21,6 +21,9 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
@@ -439,6 +442,45 @@ public class UIModule extends AbstractScriptModule {
 			@Override
 			public void run() {
 				setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor());
+			}
+		};
+
+		Display.getDefault().syncExec(runnable);
+
+		return runnable.getResult();
+	}
+
+	/**
+	 * Write text data to the clipboard.
+	 *
+	 * @param data
+	 *            data to write to the clipboard
+	 */
+	@WrapToScript
+	public void setClipboard(final String data) {
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				Clipboard clipboard = new Clipboard(Display.getDefault());
+				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
+			}
+		};
+
+		Display.getDefault().syncExec(runnable);
+	}
+
+	/**
+	 * Get text data from the clipboard.
+	 *
+	 * @return clipboard text
+	 */
+	@WrapToScript
+	public Object getClipboard() {
+		final RunnableWithResult<Object> runnable = new RunnableWithResult<Object>() {
+			@Override
+			public void run() {
+				Clipboard clipboard = new Clipboard(Display.getDefault());
+				setResult(clipboard.getContents(TextTransfer.getInstance()));
 			}
 		};
 

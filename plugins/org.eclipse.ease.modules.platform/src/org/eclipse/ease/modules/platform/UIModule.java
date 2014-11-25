@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
+import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.ease.tools.RunnableWithResult;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -256,43 +257,47 @@ public class UIModule extends AbstractScriptModule {
 	/**
 	 * Opens a file in an editor.
 	 *
-	 * @param file
-	 *            workspace file to open
+	 * @param location
+	 *            file location to open, either {@link IFile} or workspace file location
 	 * @return editor instance or <code>null</code>
 	 * @throws PartInitException
 	 *             when editor cannot be created
 	 */
 	@WrapToScript(alias = "openEditor")
-	public IEditorPart showEditor(final IFile file) throws PartInitException {
-		IEditorDescriptor descriptor = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
-		if (descriptor == null)
-			descriptor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+	public IEditorPart showEditor(final Object location) throws PartInitException {
+		final Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
+		if (file instanceof IFile) {
 
-		if (descriptor != null) {
-			final IEditorDescriptor editorDescriptor = descriptor;
-			final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
+			IEditorDescriptor descriptor = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(((IFile) file).getName());
+			if (descriptor == null)
+				descriptor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
 
-				@Override
-				public void run() {
-					try {
+			if (descriptor != null) {
+				final IEditorDescriptor editorDescriptor = descriptor;
+				final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
+
+					@Override
+					public void run() {
 						try {
+							try {
 
-							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-									.openEditor(new FileEditorInput(file), editorDescriptor.getId()));
-						} catch (final NullPointerException e) {
-							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
-								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput(file),
-										editorDescriptor.getId()));
+								setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+										.openEditor(new FileEditorInput((IFile) file), editorDescriptor.getId()));
+							} catch (final NullPointerException e) {
+								if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
+									setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput((IFile) file),
+											editorDescriptor.getId()));
+							}
+						} catch (final PartInitException e) {
+							// cannot handle that one, giving up
 						}
-					} catch (final PartInitException e) {
-						// cannot handle that one, giving up
 					}
-				}
-			};
+				};
 
-			Display.getDefault().syncExec(runnable);
+				Display.getDefault().syncExec(runnable);
 
-			return runnable.getResult();
+				return runnable.getResult();
+			}
 		}
 
 		return null;

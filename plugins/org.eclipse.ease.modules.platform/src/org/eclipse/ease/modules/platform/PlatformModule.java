@@ -13,6 +13,8 @@ import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ui.PlatformUI;
@@ -79,7 +81,7 @@ public class PlatformModule {
 	 * @return system property for <i>key</i>
 	 */
 	@WrapToScript
-	public String getSystemProperty(String key) {
+	public String getSystemProperty(final String key) {
 		return System.getProperty(key);
 	}
 
@@ -94,7 +96,7 @@ public class PlatformModule {
 	 * @return {@link Future} object tracking the program
 	 */
 	@WrapToScript
-	public Future runProcess(String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) String[] args) {
+	public Future runProcess(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String[] args) {
 		final List<String> arguments = new ArrayList<String>();
 		arguments.add(name);
 		if (args != null) {
@@ -107,6 +109,86 @@ public class PlatformModule {
 			return new Future(builder.start());
 		} catch (final IOException e) {
 			return new Future(e);
+		}
+	}
+
+	/**
+	 * Read a preferences value. The <i>defaultValue</i> is optional, but contains type information if used. Provide instances of Boolean, Integer, Double,
+	 * Float, Long, byte[], or String to get the appropriate return value of same type.
+	 *
+	 * @param node
+	 *            node to read from
+	 * @param key
+	 *            key name to read from
+	 * @param defaultValue
+	 *            default value to use, if value is not set
+	 * @return
+	 */
+	@WrapToScript
+	public Object readPreferences(final String node, final String key, @ScriptParameter(defaultValue = "") final Object defaultValue) {
+
+		IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
+		if (root != null) {
+			if (defaultValue instanceof Boolean)
+				return root.getBoolean(key, (Boolean) defaultValue);
+
+			else if (defaultValue instanceof Integer)
+				return root.getInt(key, (Integer) defaultValue);
+
+			else if (defaultValue instanceof Double)
+				return root.getDouble(key, (Double) defaultValue);
+
+			else if (defaultValue instanceof Float)
+				return root.getFloat(key, (Float) defaultValue);
+
+			else if (defaultValue instanceof Long)
+				return root.getLong(key, (Long) defaultValue);
+
+			else if (defaultValue instanceof byte[])
+				return root.getByteArray(key, (byte[]) defaultValue);
+
+			else
+				return root.get(key, (defaultValue != null) ? defaultValue.toString() : "");
+		}
+
+		return null;
+	}
+
+	/**
+	 * Set a preferences value. Valid types for <i>value</i> are: Boolean, Integer, Double, Float, Long, byte[], and String.
+	 *
+	 * @param node
+	 *            node to write to
+	 * @param key
+	 *            key to store to
+	 * @param value
+	 *            value to store
+	 */
+	@WrapToScript
+	public void writePreferences(final String node, final String key, final Object value) {
+
+		IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
+		if (root != null) {
+			if (value instanceof Boolean)
+				root.putBoolean(key, (Boolean) value);
+
+			else if (value instanceof Integer)
+				root.putInt(key, (Integer) value);
+
+			else if (value instanceof Double)
+				root.putDouble(key, (Double) value);
+
+			else if (value instanceof Float)
+				root.putFloat(key, (Float) value);
+
+			else if (value instanceof Long)
+				root.putLong(key, (Long) value);
+
+			else if (value instanceof byte[])
+				root.putByteArray(key, (byte[]) value);
+
+			else
+				root.put(key, (value != null) ? value.toString() : "");
 		}
 	}
 }

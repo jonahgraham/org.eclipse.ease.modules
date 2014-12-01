@@ -164,6 +164,18 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
+	 * Verifies that a specific file exists.
+	 *
+	 * @param location
+	 *            file location to verify
+	 * @return <code>true</code> if file exists
+	 */
+	@WrapToScript
+	boolean fileExists(final Object location) {
+		return ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true) != null;
+	}
+
+	/**
 	 * Close a file. Releases system resources bound by an open file.
 	 *
 	 * @param handle

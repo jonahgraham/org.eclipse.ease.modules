@@ -85,6 +85,21 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
+	 * Get a workspace or file system file. Resolves relative and absolute file locations. Relative files are resolved against the current script file. If
+	 * <i>exists</i> is <code>false</code> this method also returns files that do not exist yet. If <code>true</code> only existing instances are returned
+	 *
+	 * @param location
+	 *            file location/path to resolve
+	 * @param exists
+	 *            whether the resolved file needs to exist
+	 * @return resolved {@link IFile} or {@link File} instance
+	 */
+	@WrapToScript
+	public Object getFile(final String location, @ScriptParameter(defaultValue = "true") final boolean exists) {
+		return ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), exists);
+	}
+
+	/**
 	 * Create a new workspace project. Will create a new project if it now already exists. If creation fails, <code>null</code> is returned.
 	 *
 	 * @param name

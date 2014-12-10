@@ -229,6 +229,22 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
+	 * Copies a file from location to targetLocation.
+	 *
+	 * @param location
+	 *            file location, file handle or file instance
+	 * @param targetLocation
+	 *            file location, file handle or file instance * @throws Exception problems on file access
+	 */
+	@WrapToScript
+	public void copyFile(final Object sourceLocation, final Object targetLocation) throws Exception {
+
+		IFileHandle handle = writeFile(targetLocation, readFile(sourceLocation, -1), IFileHandle.WRITE);
+		if (handle != null)
+			handle.close();
+	}
+
+	/**
 	 * Read a single line from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@link #openFile(String, int)} and use the
 	 * handle for <i>location</i>.
 	 *

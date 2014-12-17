@@ -37,7 +37,7 @@
 										</repository>
 									</source>
 									<append>true</append>
-									<latestVersionOnly>true</latestVersionOnly>
+									<latestVersionOnly>false</latestVersionOnly>
 									<destination>${DESTINATION}</destination>
 								</configuration>
 							</execution>

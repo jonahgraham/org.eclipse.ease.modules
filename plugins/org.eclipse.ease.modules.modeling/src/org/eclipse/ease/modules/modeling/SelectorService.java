@@ -37,7 +37,7 @@ import com.google.common.collect.TreeMultimap;
  */
 public class SelectorService {
 
-	private static final String SELECTOR_EXT_POINT_ID = "org.eclipse.ease.module.platform.Selector";
+	private static final String SELECTOR_EXT_POINT_ID = "org.eclipse.ease.modules.modeling.selector";
 
 	private static class SingletonHolder {
 
@@ -143,7 +143,7 @@ public class SelectorService {
 			final IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(SELECTOR_EXT_POINT_ID);
 
 			for (final IConfigurationElement e : config) {
-				if ("Selector".equals(e.getName())) {
+				if ("selector".equals(e.getName())) {
 					String id = e.getAttribute("id");
 					try {
 						ISelector newSelector = (ISelector) e.createExecutableExtension("impl");

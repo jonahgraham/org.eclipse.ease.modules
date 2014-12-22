@@ -23,12 +23,25 @@
       </category>
       <module
             category="org.eclipse.ease.modules.category.modeling"
+            class="org.eclipse.ease.modules.modeling.SelectionModule"
+            id="org.eclipse.ease.modules.modeling.selection"
+            name="SelectionModule"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.module.platform.ui">
+         </dependency>
+      </module>
+      <module
+            category="org.eclipse.ease.modules.category.modeling"
             class="org.eclipse.ease.modules.modeling.EcoreModule"
             id="org.eclipse.ease.modules.modeling.ecore"
             name="ECore"
             visible="true">
          <dependency
                module="org.eclipse.ease.module.platform.ui">
+         </dependency>
+         <dependency
+               module="org.eclipse.ease.modules.modeling.selection">
          </dependency>
       </module>
       <module

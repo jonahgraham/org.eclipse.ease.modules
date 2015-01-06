@@ -3,5 +3,12 @@
    <feature url="features/org.eclipse.ease.modules.feature_0.2.0.qualifier.jar" id="org.eclipse.ease.modules.feature" version="0.2.0.qualifier">
       <category name="Modules"/>
    </feature>
-   <category-def name="Modules" label="Modules"/>
+   <feature url="features/org.eclipse.ease.modules.unittest.feature_0.2.0.qualifier.jar" id="org.eclipse.ease.modules.unittest.feature" version="0.2.0.qualifier">
+      <category name="Modules"/>
+   </feature>
+   <category-def name="Modules" label="Modules">
+      <description>
+         Additional functionality to be loaded into script engines at runtime.
+      </description>
+   </category-def>
 </site>

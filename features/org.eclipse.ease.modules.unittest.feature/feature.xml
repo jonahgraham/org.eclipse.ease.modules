@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.ease.modules.unittest.feature"
+      label="EASE UnitTest"
+      version="0.2.0.qualifier"
+      provider-name="Eclipse.org">
+
+   <description url="http://www.example.com/description">
+      EASE modules to write scriptable unit tests.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      Copyright (c) 2015 Christian Pontesegger.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License
+v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+Contributors:
+Christian Pontesegger - initial API and implementation
+   </copyright>
+
+   <license url="%licenseURL">
+      %licenseURL
+   </license>
+
+   <plugin
+         id="org.eclipse.ease.modules.unittest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ease.modules.unittest.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

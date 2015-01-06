@@ -106,15 +106,19 @@
 
 
 	<modules>
-
 		<!-- Modules -->
 		<module>../../plugins/org.eclipse.ease.modules.platform</module>
 		<module>../../plugins/org.eclipse.ease.modules.modeling</module>
+		<module>../../plugins/org.eclipse.ease.modules.unittest</module>
+		<module>../../plugins/org.eclipse.ease.modules.unittest.ui</module>
+
+		<!-- Features -->
 		<module>../../features/org.eclipse.ease.modules.feature</module>
+		<module>../../features/org.eclipse.ease.modules.unittest.feature</module>
 
 		<!-- releng -->
-		<module>../org.eclipse.ease.modules.releng.p2</module>
 		<module>../org.eclipse.ease.modules.releng.target</module>
+		<module>../org.eclipse.ease.modules.releng.p2</module>
 	</modules>
 
 

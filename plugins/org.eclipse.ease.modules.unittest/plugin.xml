@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+   <extension-point id="report" name="Report" schema="schema/report.exsd"/>
+   <extension id="scriptassertion" name="UnitTest Error" point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent value="false">
+      </persistent>
+   </extension>
+
+<extension
+      point="org.eclipse.ease.modules">
+   <module
+         class="org.eclipse.ease.modules.unittest.modules.UnitModule"
+         id="org.eclipse.ease.modules.unittest"
+         name="Unittest"
+         visible="false">
+      <dependency
+            module="org.eclipse.ease.module.platform.resources">
+      </dependency>
+   </module>
+</extension>
+<extension
+      point="org.eclipse.ease.modules.unittest.report">
+   <generator
+         class="org.eclipse.ease.modules.unittest.reporters.JUnitReportGenerator"
+         name="JUnit">
+   </generator>
+</extension>
+</plugin>

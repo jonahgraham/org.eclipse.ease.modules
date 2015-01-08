@@ -226,7 +226,7 @@ public class UIModule extends AbstractScriptModule {
 	 *             when view cannot be created
 	 */
 	@WrapToScript(alias = "openView")
-	public IViewPart showView(final String name) throws PartInitException {
+	public static IViewPart showView(final String name) throws PartInitException {
 		// find view ID
 		final String viewID = getIDForName(name);
 
@@ -266,38 +266,52 @@ public class UIModule extends AbstractScriptModule {
 	@WrapToScript(alias = "openEditor")
 	public IEditorPart showEditor(final Object location) throws PartInitException {
 		final Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
-		if (file instanceof IFile) {
+		if (file instanceof IFile)
+			return showEditor(file);
 
-			IEditorDescriptor descriptor = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(((IFile) file).getName());
-			if (descriptor == null)
-				descriptor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+		return null;
+	}
 
-			if (descriptor != null) {
-				final IEditorDescriptor editorDescriptor = descriptor;
-				final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
+	/**
+	 * Opens a file in an editor.
+	 *
+	 * @param file
+	 *            file location to open
+	 *
+	 * @return editor instance or <code>null</code>
+	 * @throws PartInitException
+	 *             when editor cannot be created
+	 */
+	public static IEditorPart showEditor(final IFile file) throws PartInitException {
+		IEditorDescriptor descriptor = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+		if (descriptor == null)
+			descriptor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
 
-					@Override
-					public void run() {
+		if (descriptor != null) {
+			final IEditorDescriptor editorDescriptor = descriptor;
+			final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
+
+				@Override
+				public void run() {
+					try {
 						try {
-							try {
 
-								setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-										.openEditor(new FileEditorInput((IFile) file), editorDescriptor.getId()));
-							} catch (final NullPointerException e) {
-								if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
-									setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput((IFile) file),
-											editorDescriptor.getId()));
-							}
-						} catch (final PartInitException e) {
-							// cannot handle that one, giving up
+							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+									.openEditor(new FileEditorInput(file), editorDescriptor.getId()));
+						} catch (final NullPointerException e) {
+							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
+								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput(file),
+										editorDescriptor.getId()));
 						}
+					} catch (final PartInitException e) {
+						// cannot handle that one, giving up
 					}
-				};
+				}
+			};
 
-				Display.getDefault().syncExec(runnable);
+			Display.getDefault().syncExec(runnable);
 
-				return runnable.getResult();
-			}
+			return runnable.getResult();
 		}
 
 		return null;
@@ -360,7 +374,7 @@ public class UIModule extends AbstractScriptModule {
 	 *            name of view
 	 * @return view ID or <code>null</code>
 	 */
-	private String getIDForName(final String name) {
+	private static String getIDForName(final String name) {
 		String id = null;
 
 		final IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
@@ -466,7 +480,7 @@ public class UIModule extends AbstractScriptModule {
 		final Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
-				Clipboard clipboard = new Clipboard(Display.getDefault());
+				final Clipboard clipboard = new Clipboard(Display.getDefault());
 				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 			}
 		};
@@ -484,7 +498,7 @@ public class UIModule extends AbstractScriptModule {
 		final RunnableWithResult<Object> runnable = new RunnableWithResult<Object>() {
 			@Override
 			public void run() {
-				Clipboard clipboard = new Clipboard(Display.getDefault());
+				final Clipboard clipboard = new Clipboard(Display.getDefault());
 				setResult(clipboard.getContents(TextTransfer.getInstance()));
 			}
 		};

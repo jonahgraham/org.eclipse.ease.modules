@@ -33,7 +33,7 @@ public class PlatformModule {
 	 * @return adapted object or <code>null</code>
 	 */
 	@WrapToScript
-	public Object adapt(final Object source, final Class<?> target) {
+	public static Object adapt(final Object source, final Class<?> target) {
 		return Platform.getAdapterManager().getAdapter(source, target);
 	}
 
@@ -45,7 +45,7 @@ public class PlatformModule {
 	 * @return service instance or <code>null</code>
 	 */
 	@WrapToScript
-	public Object getService(final Class<?> type) {
+	public static Object getService(final Class<?> type) {
 		return PlatformUI.getWorkbench().getService(type);
 	}
 
@@ -63,7 +63,7 @@ public class PlatformModule {
 	 * @throws NotHandledException
 	 */
 	@WrapToScript
-	public void executeCommand(final String commandId, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Map<String, String> parameters)
+	public static void executeCommand(final String commandId, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Map<String, String> parameters)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		final Map<String, String> commandParameters = (parameters != null) ? parameters : new HashMap<String, String>();
 		final ICommandService commandService = (ICommandService) getService(ICommandService.class);
@@ -81,7 +81,7 @@ public class PlatformModule {
 	 * @return system property for <i>key</i>
 	 */
 	@WrapToScript
-	public String getSystemProperty(final String key) {
+	public static String getSystemProperty(final String key) {
 		return System.getProperty(key);
 	}
 
@@ -96,7 +96,7 @@ public class PlatformModule {
 	 * @return {@link Future} object tracking the program
 	 */
 	@WrapToScript
-	public Future runProcess(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String[] args) {
+	public static Future runProcess(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String[] args) {
 		final List<String> arguments = new ArrayList<String>();
 		arguments.add(name);
 		if (args != null) {
@@ -125,7 +125,7 @@ public class PlatformModule {
 	 * @return
 	 */
 	@WrapToScript
-	public Object readPreferences(final String node, final String key, @ScriptParameter(defaultValue = "") final Object defaultValue) {
+	public static Object readPreferences(final String node, final String key, @ScriptParameter(defaultValue = "") final Object defaultValue) {
 
 		IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
 		if (root != null) {
@@ -165,7 +165,7 @@ public class PlatformModule {
 	 *            value to store
 	 */
 	@WrapToScript
-	public void writePreferences(final String node, final String key, final Object value) {
+	public static void writePreferences(final String node, final String key, final Object value) {
 
 		IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
 		if (root != null) {

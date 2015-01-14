@@ -30,7 +30,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 * @return script engine instance (not started) or <code>null</code>
 	 */
 	@WrapToScript
-	public IScriptEngine createScriptEngine(final String identifier) {
+	public static IScriptEngine createScriptEngine(final String identifier) {
 		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
 
 		// by ID
@@ -60,7 +60,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 * @return array of engine IDs
 	 */
 	@WrapToScript
-	public String[] listScriptEngines() {
+	public static String[] listScriptEngines() {
 		List<String> result = new ArrayList<String>();
 
 		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
@@ -140,7 +140,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 * @return <code>true</code> when engine is shut down
 	 */
 	@WrapToScript
-	public boolean join(final IScriptEngine engine, @ScriptParameter(defaultValue = "0") final long timeout) {
+	public static boolean join(final IScriptEngine engine, @ScriptParameter(defaultValue = "0") final long timeout) {
 		if (engine instanceof Job) {
 			long stopWaitingTime = System.currentTimeMillis() + timeout;
 			try {

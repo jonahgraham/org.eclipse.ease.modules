@@ -68,7 +68,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return workspace root
 	 */
 	@WrapToScript
-	public IWorkspaceRoot getWorkspace() {
+	public static IWorkspaceRoot getWorkspace() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
@@ -80,7 +80,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return project or <code>null</code>
 	 */
 	@WrapToScript
-	public IProject getProject(final String name) {
+	public static IProject getProject(final String name) {
 		return getWorkspace().getProject(name);
 	}
 
@@ -107,7 +107,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return <code>null</code> or project
 	 */
 	@WrapToScript
-	public IProject createProject(final String name) {
+	public static IProject createProject(final String name) {
 		final IProject project = getProject(name);
 		if (!project.exists()) {
 			try {
@@ -186,7 +186,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return <code>true</code> if file exists
 	 */
 	@WrapToScript
-	boolean fileExists(final Object location) {
+	public boolean fileExists(final Object location) {
 		return ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true) != null;
 	}
 
@@ -197,7 +197,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            handle to be closed
 	 */
 	@WrapToScript
-	public void closeFile(final IFileHandle handle) {
+	public static void closeFile(final IFileHandle handle) {
 		handle.close();
 	}
 

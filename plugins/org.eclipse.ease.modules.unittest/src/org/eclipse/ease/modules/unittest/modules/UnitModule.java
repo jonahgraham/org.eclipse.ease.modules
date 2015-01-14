@@ -168,7 +168,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return String array containing available report types
 	 */
 	@WrapToScript
-	public String[] getReportTypes() {
+	public static String[] getReportTypes() {
 		return ReportTools.getReportTemplates().toArray(new String[0]);
 	}
 
@@ -367,7 +367,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return assertion containing comparison result
 	 */
 	@WrapToScript
-	public IAssertion assertEquals(final Object expected, final Object actual,
+	public static IAssertion assertEquals(final Object expected, final Object actual,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		if (expected != null)
 			return new DefaultAssertion(expected.equals(actual), (errorDescription == null) ? "Objects do not match: expected<" + expected + ">, actual <"
@@ -388,7 +388,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return assertion containing comparison result
 	 */
 	@WrapToScript
-	public IAssertion assertNotEquals(final Object expected, final Object actual,
+	public static IAssertion assertNotEquals(final Object expected, final Object actual,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		if (expected != null)
 			return new DefaultAssertion(!expected.equals(actual), (errorDescription == null) ? "Objects match" : errorDescription.toString());
@@ -406,7 +406,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return assertion depending on <code>actual</code> value
 	 */
 	@WrapToScript
-	public IAssertion assertNull(final Object actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
+	public static IAssertion assertNull(final Object actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		return new DefaultAssertion(actual == null, (errorDescription == null) ? "Object is not null, actual <" + actual + ">" : errorDescription.toString());
 	}
 
@@ -420,7 +420,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return assertion depending on <code>actual</code> value
 	 */
 	@WrapToScript
-	public IAssertion assertNotNull(final Object actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
+	public static IAssertion assertNotNull(final Object actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		return new DefaultAssertion(actual != null, (errorDescription == null) ? "Object is null" : errorDescription.toString());
 	}
 
@@ -434,7 +434,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return assertion depending on <code>actual</code> value
 	 */
 	@WrapToScript
-	public IAssertion assertTrue(final boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
+	public static IAssertion assertTrue(final boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		return new DefaultAssertion(actual, (errorDescription == null) ? "Value is false" : errorDescription.toString());
 	}
 
@@ -448,7 +448,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return assertion depending on <code>actual</code> value
 	 */
 	@WrapToScript
-	public IAssertion assertFalse(final boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
+	public static IAssertion assertFalse(final boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		return new DefaultAssertion(!actual, (errorDescription == null) ? "Value is true" : errorDescription.toString());
 	}
 
@@ -492,7 +492,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 * @return <code>true</code> on success, <code>false</code> if test was interrupted
 	 */
 	@WrapToScript
-	public boolean waitForCompletion(final TestComposite testObject) {
+	public static boolean waitForCompletion(final TestComposite testObject) {
 		try {
 			while ((testObject.getStatus() == TestStatus.NOT_RUN) || (testObject.getStatus() == TestStatus.RUNNING))
 				Thread.sleep(1000);

@@ -60,7 +60,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> in UI thread
 	 */
 	@WrapToScript
-	public boolean isUIThread() {
+	public static boolean isUIThread() {
 		return Thread.currentThread().equals(Display.getDefault().getThread());
 	}
 
@@ -73,7 +73,7 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript(alias = "showMessageDialog")
-	public void showInfoDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
+	public static void showInfoDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -93,7 +93,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
 	 */
 	@WrapToScript
-	public boolean showQuestionDialog(final String message, @ScriptParameter(defaultValue = "Question") final String title) {
+	public static boolean showQuestionDialog(final String message, @ScriptParameter(defaultValue = "Question") final String title) {
 
 		final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
 
@@ -120,7 +120,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
 	 */
 	@WrapToScript
-	public String showInputDialog(final String message, @ScriptParameter(defaultValue = "") final String initialValue,
+	public static String showInputDialog(final String message, @ScriptParameter(defaultValue = "") final String initialValue,
 			@ScriptParameter(defaultValue = "Info") final String title) {
 
 		final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
@@ -148,7 +148,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> when accepted
 	 */
 	@WrapToScript
-	public boolean showConfirmDialog(final String message, @ScriptParameter(defaultValue = "Confirmation") final String title) {
+	public static boolean showConfirmDialog(final String message, @ScriptParameter(defaultValue = "Confirmation") final String title) {
 		final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
 
 			@Override
@@ -170,7 +170,7 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript
-	public void showWarningDialog(final String message, @ScriptParameter(defaultValue = "Warning") final String title) {
+	public static void showWarningDialog(final String message, @ScriptParameter(defaultValue = "Warning") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -189,7 +189,7 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript
-	public void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
+	public static void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -203,7 +203,7 @@ public class UIModule extends AbstractScriptModule {
 	 * Close the application. On unsaved editors user will be asked to save before closing.
 	 */
 	@WrapToScript
-	public void exitApplication() {
+	public static void exitApplication() {
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
@@ -326,7 +326,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return current selection
 	 */
 	@WrapToScript
-	public ISelection getSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
+	public static ISelection getSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
 		final ISelectionService selectionService = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getSelectionService();
 
 		if ((name != null) && (!name.isEmpty())) {
@@ -357,7 +357,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return converted elements
 	 */
 	@WrapToScript
-	public Object convertSelection(final ISelection selection) {
+	public static Object convertSelection(final ISelection selection) {
 		if (selection instanceof IStructuredSelection)
 			return ((IStructuredSelection) selection).toArray();
 
@@ -399,7 +399,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return result of dialog.open() method
 	 */
 	@WrapToScript
-	public int openDialog(final Window dialog) {
+	public static int openDialog(final Window dialog) {
 		final RunnableWithResult<Integer> run = new RunnableWithResult<Integer>() {
 
 			@Override
@@ -418,7 +418,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return shell
 	 */
 	@WrapToScript
-	public Shell getShell() {
+	public static Shell getShell() {
 		final RunnableWithResult<Shell> runnable = new RunnableWithResult<Shell>() {
 			@Override
 			public void run() {
@@ -437,7 +437,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return active view
 	 */
 	@WrapToScript
-	public IWorkbenchPart getActiveView() {
+	public static IWorkbenchPart getActiveView() {
 		final RunnableWithResult<IWorkbenchPart> runnable = new RunnableWithResult<IWorkbenchPart>() {
 			@Override
 			public void run() {
@@ -456,7 +456,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return active editor
 	 */
 	@WrapToScript
-	public IEditorPart getActiveEditor() {
+	public static IEditorPart getActiveEditor() {
 		final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
 			@Override
 			public void run() {
@@ -476,7 +476,7 @@ public class UIModule extends AbstractScriptModule {
 	 *            data to write to the clipboard
 	 */
 	@WrapToScript
-	public void setClipboard(final String data) {
+	public static void setClipboard(final String data) {
 		final Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
@@ -494,7 +494,7 @@ public class UIModule extends AbstractScriptModule {
 	 * @return clipboard text
 	 */
 	@WrapToScript
-	public Object getClipboard() {
+	public static Object getClipboard() {
 		final RunnableWithResult<Object> runnable = new RunnableWithResult<Object>() {
 			@Override
 			public void run() {

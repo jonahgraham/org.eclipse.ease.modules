@@ -154,5 +154,14 @@ public abstract class TestComposite extends TestEntity implements ITestListener,
 		return Collections.emptyList();
 	}
 
+	@Override
+	public void addMetaData(String identifier, String content) {
+		if (fCurrentTest != null)
+			fCurrentTest.addMetaData(identifier, content);
+
+		else
+			super.addMetaData(identifier, content);
+	}
+
 	public abstract Collection<? extends TestEntity> getChildren();
 }

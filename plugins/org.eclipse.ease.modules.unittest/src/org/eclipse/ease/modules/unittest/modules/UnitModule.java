@@ -502,4 +502,18 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 
 		return true;
 	}
+
+	/**
+	 * Add metadata to the current test/testfile/testsuite. Metadata will be attached to only one of the defined classes, starting to determine the current
+	 * test. Metadata is stored as a Map, so setting with an already existing keyword will override the previous setting.
+	 *
+	 * @param key
+	 *            metadata keyword
+	 * @param data
+	 *            metadata
+	 */
+	@WrapToScript
+	public void addMetaData(String key, String data) {
+		getTestObject().addMetaData(key, data);
+	}
 }

@@ -324,15 +324,18 @@
                <with
                      variable="selection">
                   <and>
-                     <count
-                           value="1">
-                     </count>
                      <iterate>
-                        <not>
+                        <or>
                            <instanceof
-                                 value="org.eclipse.ease.modules.unittest.components.Test">
+                                 value="org.eclipse.ease.modules.unittest.components.TestSuite">
                            </instanceof>
-                        </not>
+                           <instanceof
+                                 value="org.eclipse.ease.modules.unittest.components.TestFile">
+                           </instanceof>
+                           <instanceof
+                                 value="org.eclipse.core.runtime.IPath">
+                           </instanceof>
+                        </or>
                      </iterate>
                   </and>
                </with>

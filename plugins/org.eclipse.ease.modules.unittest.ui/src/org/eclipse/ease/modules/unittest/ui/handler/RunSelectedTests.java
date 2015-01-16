@@ -12,17 +12,23 @@ package org.eclipse.ease.modules.unittest.ui.handler;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ease.modules.unittest.ITestSetFilter;
 import org.eclipse.ease.modules.unittest.components.TestFile;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
 import org.eclipse.ease.modules.unittest.ui.sourceprovider.TestSuiteSource;
+import org.eclipse.ease.modules.unittest.ui.views.UnitTestView;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -35,7 +41,7 @@ public class RunSelectedTests extends AbstractHandler implements IHandler {
 			// save dirty editors
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
 
-			// collect test sets to run
+			// collect test files to run
 			final Collection<TestFile> testFiles = new HashSet<TestFile>();
 			for (final Object element : ((IStructuredSelection) selection).toArray()) {
 				if (element instanceof TestFile)
@@ -44,7 +50,27 @@ public class RunSelectedTests extends AbstractHandler implements IHandler {
 				else if (element instanceof TestSuite)
 					testFiles.addAll(((TestSuite) element).getChildren());
 
-				// TODO deal with path elements and extract children
+				else if (element instanceof IPath) {
+					// we need to contact the context provider and extract all child nodes
+					final IWorkbenchPart part = HandlerUtil.getActivePart(event);
+					if (part instanceof UnitTestView) {
+						final IContentProvider contentProvider = ((UnitTestView) part).getTreeViewer().getContentProvider();
+
+						final LinkedList<Object> parentElements = new LinkedList<Object>();
+						parentElements.add(element);
+
+						// iterate over tree nodes looking for leaves
+						while (!parentElements.isEmpty()) {
+							final Object parent = parentElements.removeFirst();
+							for (final Object child : ((ITreeContentProvider) contentProvider).getChildren(parent)) {
+								if (child instanceof TestFile)
+									testFiles.add((TestFile) child);
+								else
+									parentElements.add(child);
+							}
+						}
+					}
+				}
 			}
 
 			// run test sets

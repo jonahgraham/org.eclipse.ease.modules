@@ -142,7 +142,7 @@ public class Variables extends AbstractEditorPage {
 		tableViewerColumn_1.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(final Object element) {
-				return ((Variable) element).getName();
+				return ((Variable) element).getContent();
 			}
 		});
 		tableViewerColumn_1.setEditingSupport(new EditingSupport(tableViewer) {

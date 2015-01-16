@@ -308,7 +308,8 @@ public class Components extends AbstractEditorPage {
 		fTestTree.setCheckedElements(new Object[0]);
 		for (final String fileLocation : model.getTestFiles()) {
 			final Object file = ResourceTools.resolveFile(fileLocation, model.getFile(), true);
-			fTestTree.setChecked(file, true);
+			if (file != null)
+				fTestTree.setChecked(file, true);
 		}
 
 		final int maxThreads = model.getFlag(TestSuiteModel.FLAG_MAX_THREADS, 1);

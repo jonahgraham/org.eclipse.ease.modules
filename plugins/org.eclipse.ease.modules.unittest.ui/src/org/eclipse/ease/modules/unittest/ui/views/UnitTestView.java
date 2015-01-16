@@ -573,7 +573,6 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 				lblFailureCount.setText(Integer.toString(fStatistics.getCounter(STATISTICS_TEST_FAILURE)));
 				lblFailureCount.getParent().layout();
 
-				System.out.println(">>>>>>>>>>>>> setting progressbar selection = " + fStatistics.getCounter(STATISTICS_TESTFILES_FINISHED));
 				fProgressBar.setSelection(fStatistics.getCounter(STATISTICS_TESTFILES_FINISHED));
 				lblTimeLeft.setText(getEstimatedTime());
 
@@ -637,7 +636,6 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 					fStatistics.reset();
 					fStatistics.updateCounter(STATISTICS_TESTFILE_COUNT, ((TestSuite) testObject).getActiveTestCount());
-					System.out.println(">>>>>>>>>>>>> setting progressbar max = " + ((TestSuite) testObject).getActiveTestCount());
 
 					// initialize progress bar
 					fProgressBar.setMaximum(fStatistics.getCounter(STATISTICS_TESTFILE_COUNT));
@@ -691,7 +689,6 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					}
 
 				} else if (testObject instanceof TestFile) {
-					System.out.println(">>>>>> finished " + testObject + ", " + ((TestFile) testObject).getStatus() + ", adding +1 to count");
 					fStatistics.updateCounter(STATISTICS_TESTFILES_FINISHED, 1);
 				}
 			}

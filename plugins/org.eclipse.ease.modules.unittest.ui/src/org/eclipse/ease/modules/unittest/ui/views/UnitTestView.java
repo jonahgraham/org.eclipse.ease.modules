@@ -115,7 +115,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 	private static final String XML_CURRENT_SUITE = "currentSuite";
 
-	private static final Object STATISTICS_TESTFILES = "testFiles";
+	private static final Object STATISTICS_TESTFILES_FINISHED = "testFiles";
 
 	private static final Object STATISTICS_TEST_ERROR = "test errors";
 
@@ -123,9 +123,9 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 	private static final Object STATISTICS_TEST_VALID = "valid tests";
 
-	private static final Object STATISTICS_TESTFILE_COUNT = "testset count";
+	private static final Object STATISTICS_TESTFILE_COUNT = "testFile count";
 
-	private static final Object STATISTICS_TEST_COUNT = "test count";
+	private static final Object STATISTICS_TEST_FINISHED = "test count";
 
 	private Table ftable;
 	private ProgressBar fProgressBar;
@@ -568,22 +568,19 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 			// update statistics
 			if (!fProgressBar.isDisposed()) {
-				if (fStatistics.getCounter(STATISTICS_TESTFILES) == 0) {
-					fProgressBar.setMaximum(fStatistics.getCounter(STATISTICS_TESTFILE_COUNT));
-					fProgressBar.setForeground(null);
-				}
 
 				lblErrorCount.setText(Integer.toString(fStatistics.getCounter(STATISTICS_TEST_ERROR)));
 				lblFailureCount.setText(Integer.toString(fStatistics.getCounter(STATISTICS_TEST_FAILURE)));
 				lblFailureCount.getParent().layout();
 
-				fProgressBar.setSelection(fStatistics.getCounter(STATISTICS_TESTFILES));
+				System.out.println(">>>>>>>>>>>>> setting progressbar selection = " + fStatistics.getCounter(STATISTICS_TESTFILES_FINISHED));
+				fProgressBar.setSelection(fStatistics.getCounter(STATISTICS_TESTFILES_FINISHED));
 				lblTimeLeft.setText(getEstimatedTime());
 
 				if ((fStatistics.getCounter(STATISTICS_TEST_ERROR) > 0) || (fStatistics.getCounter(STATISTICS_TEST_FAILURE) > 0))
 					fProgressBar.setForeground(fResourceManager.createColor(new RGB(0xaa, 0, 0)));
 
-				else if (fStatistics.getCounter(STATISTICS_TESTFILES) == fStatistics.getCounter(STATISTICS_TESTFILE_COUNT)) {
+				else if (fStatistics.getCounter(STATISTICS_TESTFILES_FINISHED) == fStatistics.getCounter(STATISTICS_TESTFILE_COUNT)) {
 					if ((fStatistics.getCounter(STATISTICS_TEST_ERROR) == 0) && (fStatistics.getCounter(STATISTICS_TEST_FAILURE) == 0))
 						fProgressBar.setForeground(fResourceManager.createColor(new RGB(0, 0xaa, 0)));
 				}
@@ -638,6 +635,15 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 						throw new RuntimeException(e);
 					}
 
+					fStatistics.reset();
+					fStatistics.updateCounter(STATISTICS_TESTFILE_COUNT, ((TestSuite) testObject).getActiveTestCount());
+					System.out.println(">>>>>>>>>>>>> setting progressbar max = " + ((TestSuite) testObject).getActiveTestCount());
+
+					// initialize progress bar
+					fProgressBar.setMaximum(fStatistics.getCounter(STATISTICS_TESTFILE_COUNT));
+					fProgressBar.setSelection(0);
+					fProgressBar.setForeground(null);
+
 					// create console
 					if (fConsole == null)
 						fConsole = ScriptConsole.create(testObject.toString(), null);
@@ -656,13 +662,13 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 		} else {
 			// update statistics
-			if (status != TestStatus.RUNNING) {
+			if ((status != TestStatus.RUNNING) && (status != TestStatus.NOT_RUN)) {
 				// test finished
 
 				if (testObject instanceof Test) {
 					// do not track when this is a temporary tests in test count
 					if (!((Test) testObject).isTransient())
-						fStatistics.updateCounter(STATISTICS_TEST_COUNT, 1);
+						fStatistics.updateCounter(STATISTICS_TEST_FINISHED, 1);
 
 					// do not track when this is a temporary test that passed
 					if ((!((Test) testObject).isTransient()) || (!((Test) testObject).getMessages().isEmpty())) {
@@ -684,8 +690,10 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 						}
 					}
 
-				} else if (testObject instanceof TestFile)
-					fStatistics.updateCounter(STATISTICS_TESTFILES, 1);
+				} else if (testObject instanceof TestFile) {
+					System.out.println(">>>>>> finished " + testObject + ", " + ((TestFile) testObject).getStatus() + ", adding +1 to count");
+					fStatistics.updateCounter(STATISTICS_TESTFILES_FINISHED, 1);
+				}
 			}
 		}
 
@@ -765,10 +773,6 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 			}
 		}
 
-		fStatistics.reset();
-		fStatistics.updateCounter(STATISTICS_TESTFILE_COUNT, suite.getActiveTestCount());
-
-		fProgressBar.setMaximum(suite.getActiveTestCount());
 		fFileTreeViewer.refresh();
 		fFileTreeViewer.expandAll();
 	}

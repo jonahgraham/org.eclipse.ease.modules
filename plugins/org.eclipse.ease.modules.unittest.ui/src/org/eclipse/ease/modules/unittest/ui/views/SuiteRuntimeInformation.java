@@ -82,6 +82,9 @@ public class SuiteRuntimeInformation implements ITestListener {
 		fTestSuite = suite;
 		load();
 
+		// suite might already have started
+		fTestFiles = fTestSuite.getActiveTestFiles();
+
 		suite.addTestListener(this);
 	}
 
@@ -149,7 +152,7 @@ public class SuiteRuntimeInformation implements ITestListener {
 		}
 	}
 
-	private static String createTestToken(TestFile testFile) {
+	private static String createTestToken(final TestFile testFile) {
 		final Object file = testFile.getFile();
 
 		if (file instanceof IFile)

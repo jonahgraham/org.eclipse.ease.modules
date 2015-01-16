@@ -33,7 +33,9 @@ public class TestSuiteLabelProvider extends LabelProvider {
 		if (element instanceof TestSuite) {
 			final IFile file = ((TestSuite) element).getModel().getFile();
 			return (file != null) ? file.getName() : "<dynamic>";
-		}
+
+		} else if (element instanceof IPath)
+			return ((IPath) element).lastSegment();
 
 		return super.getText(element);
 	}

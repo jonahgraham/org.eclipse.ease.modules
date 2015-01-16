@@ -24,6 +24,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
@@ -66,6 +67,7 @@ public class SetupTeardown extends AbstractEditorPage {
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		super.createFormContent(managedForm);
+		managedForm.getForm().getBody().setLayout(new GridLayout(2, false));
 
 		final Label lblCustomCodeUsed = new Label(managedForm.getForm().getBody(), SWT.NONE);
 		lblCustomCodeUsed.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
@@ -83,31 +85,16 @@ public class SetupTeardown extends AbstractEditorPage {
 		lblLocation.setText("Location:");
 
 		final CCombo combo_1 = new CCombo(managedForm.getForm().getBody(), SWT.READ_ONLY | SWT.FLAT);
+		final GridData gd_combo_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_combo_1.widthHint = 300;
+		combo_1.setLayoutData(gd_combo_1);
 		combo_1.setEditable(true);
 		combo_1.setVisibleItemCount(10);
-		final GridData gd_combo_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_combo_1.widthHint = 218;
 		combo_1.setLayoutData(gd_combo_1);
 		cmbCodeFragment = new ComboViewer(combo_1);
 		managedForm.getToolkit().paintBordersFor(combo_1);
-		new Label(managedForm.getForm().getBody(), SWT.NONE);
 		cmbCodeFragment.setContentProvider(ArrayContentProvider.getInstance());
 		cmbCodeFragment.setInput(getLocations());
-
-		txtCode = new Text(managedForm.getForm().getBody(), SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		txtCode.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				if (fEnableChangeTracker) {
-					getModel().setCodeFragment(combo_1.getText(), txtCode.getText());
-					setDirty();
-				}
-			}
-		});
-		txtCode.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		managedForm.getToolkit().adapt(txtCode, true, true);
-		new Label(managedForm.getForm().getBody(), SWT.NONE);
-		new Label(managedForm.getForm().getBody(), SWT.NONE);
 
 		combo_1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -123,6 +110,21 @@ public class SetupTeardown extends AbstractEditorPage {
 				fEnableChangeTracker = true;
 			}
 		});
+
+		txtCode = new Text(managedForm.getForm().getBody(), SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		txtCode.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(final ModifyEvent e) {
+				if (fEnableChangeTracker) {
+					getModel().setCodeFragment(combo_1.getText(), txtCode.getText());
+					setDirty();
+				}
+			}
+		});
+		final GridData gd_txtCode = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		gd_txtCode.verticalIndent = 10;
+		txtCode.setLayoutData(gd_txtCode);
+		managedForm.getToolkit().adapt(txtCode, true, true);
 	}
 
 	private static String getDefaultText(final String location) {
@@ -177,6 +179,5 @@ public class SetupTeardown extends AbstractEditorPage {
 	@Override
 	protected void update() {
 		cmbCodeFragment.setInput(getLocations());
-
 	}
 }

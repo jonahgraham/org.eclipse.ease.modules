@@ -339,6 +339,17 @@ public class TestSuite extends TestComposite {
 			throw new RuntimeException(e);
 		}
 
+		// reload model
+		try {
+			fTestModel.reload();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		super.reset();
 	}
 

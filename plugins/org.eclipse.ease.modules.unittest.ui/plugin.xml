@@ -317,7 +317,7 @@
             locationURI="popup:org.eclipse.ease.views.unittest">
          <command
                commandId="org.eclipse.ease.unittest.commands.runSelected"
-               icon="imagesx/run_all.gif"
+               icon="icons/elcl16/run_all.png"
                style="push">
             <visibleWhen
                   checkEnabled="false">

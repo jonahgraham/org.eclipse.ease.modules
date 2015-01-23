@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ease.Script;
 import org.eclipse.ease.ScriptResult;
 import org.eclipse.ease.debugging.IScriptDebugFrame;
+import org.eclipse.ease.debugging.ScriptDebugFrame;
 import org.eclipse.ease.modules.unittest.Bundle;
 import org.eclipse.ease.modules.unittest.ITestSetFilter;
 import org.eclipse.ease.modules.unittest.components.TestSuiteModel.Variable;

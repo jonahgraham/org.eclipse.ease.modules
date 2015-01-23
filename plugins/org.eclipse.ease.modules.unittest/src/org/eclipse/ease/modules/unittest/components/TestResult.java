@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ease.debugging.IScriptDebugFrame;
+import org.eclipse.ease.debugging.ScriptDebugFrame;
 
 /**
  * Test problem.

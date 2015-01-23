@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ease.debugging.IScriptDebugFrame;
+import org.eclipse.ease.debugging.ScriptDebugFrame;
 import org.eclipse.ease.modules.unittest.Bundle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 

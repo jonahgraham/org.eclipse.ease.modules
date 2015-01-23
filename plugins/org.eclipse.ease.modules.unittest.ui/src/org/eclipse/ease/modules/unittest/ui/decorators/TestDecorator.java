@@ -24,10 +24,10 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 public class TestDecorator implements ILightweightLabelDecorator {
 
-	private static final String IMAGE_OK = "decorator_valid.gif";
-	private static final String IMAGE_ERROR = "decorator_error.gif";
-	private static final String IMAGE_FAILURE = "decorator_failure.png";
-	private static final String IMAGE_RUNNING = "decorator_running.gif";
+	private static final String IMAGE_OK = "status_pass.png";
+	private static final String IMAGE_ERROR = "status_error.png";
+	private static final String IMAGE_FAILURE = "status_failure.png";
+	private static final String IMAGE_RUNNING = "status_running.png";
 
 	@Override
 	public void addListener(final ILabelProviderListener listener) {
@@ -73,7 +73,7 @@ public class TestDecorator implements ILightweightLabelDecorator {
 	}
 
 	private ImageDescriptor getImage(final String image) {
-		return Activator.getImageDescriptor("/images/" + image);
+		return Activator.getImageDescriptor("/icons/ovr16/" + image);
 	}
 
 	private void addOverlay(final TestStatus status, final IDecoration decoration) {

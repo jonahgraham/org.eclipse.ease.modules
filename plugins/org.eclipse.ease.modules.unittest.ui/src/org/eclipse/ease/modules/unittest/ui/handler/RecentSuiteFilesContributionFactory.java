@@ -56,7 +56,7 @@ public class RecentSuiteFilesContributionFactory extends CompoundContributionIte
 
 			contributionParameter.visibleEnabled = true;
 			Activator.getDefault();
-			contributionParameter.icon = Activator.getImageDescriptor("/images/test_suite.gif");
+			contributionParameter.icon = Activator.getImageDescriptor(Activator.ICON_TEST_SUITE);
 
 			items[index++] = new CommandContributionItem(contributionParameter);
 		}

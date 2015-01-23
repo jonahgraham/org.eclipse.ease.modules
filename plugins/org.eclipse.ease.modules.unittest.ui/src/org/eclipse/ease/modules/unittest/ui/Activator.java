@@ -35,6 +35,16 @@ public class Activator extends AbstractUIPlugin {
 	/** Max amount of testsuite files to store. */
 	private static final int MAX_RECENT_FILES = 5;
 
+	public static final String ICON_TEST_SUITE = "/icons/eobj16/testsuite.png";
+
+	public static final String ICON_ERROR = "/icons/eobj16/status_error.png";
+
+	public static final String ICON_FAILURE = "/icons/eobj16/status_failure.png";
+
+	public static final String ICON_PASS = "/icons/eobj16/status_pass.png";
+
+	public static final String ICON_RUNNING = "/icons/eobj16/status_running.png";
+
 	/** Activator instance. */
 	private static Activator fInstance;
 

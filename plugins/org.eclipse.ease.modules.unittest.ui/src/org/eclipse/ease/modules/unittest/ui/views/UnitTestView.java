@@ -183,7 +183,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 		final GridData gdLblErrorIcon = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gdLblErrorIcon.horizontalIndent = 50;
 		lblErrorIcon.setLayoutData(gdLblErrorIcon);
-		lblErrorIcon.setImage(fResourceManager.createImage(Activator.getImageDescriptor("/images/status_error.gif")));
+		lblErrorIcon.setImage(fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_ERROR)));
 
 		final Label lblErrors = new Label(composite, SWT.NONE);
 		lblErrors.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -199,7 +199,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 		final GridData gdLblFailureIcon = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gdLblFailureIcon.horizontalIndent = 50;
 		lblFailureIcon.setLayoutData(gdLblFailureIcon);
-		lblFailureIcon.setImage(fResourceManager.createImage(Activator.getImageDescriptor("/images/status_failure.png")));
+		lblFailureIcon.setImage(fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_FAILURE)));
 
 		final Label lblFailures = new Label(composite, SWT.NONE);
 		lblFailures.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -396,13 +396,13 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 				if (status != null) {
 					switch (status) {
 					case PASS:
-						return fResourceManager.createImage(Activator.getImageDescriptor("/images/status_valid.png"));
+						return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_PASS));
 					case ERROR:
-						return fResourceManager.createImage(Activator.getImageDescriptor("/images/status_error.gif"));
+						return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_ERROR));
 					case FAILURE:
-						return fResourceManager.createImage(Activator.getImageDescriptor("/images/status_failure.png"));
+						return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_FAILURE));
 					case RUNNING:
-						return fResourceManager.createImage(Activator.getImageDescriptor("/images/status_running.png"));
+						return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_RUNNING));
 					default:
 						return super.getImage(element);
 					}

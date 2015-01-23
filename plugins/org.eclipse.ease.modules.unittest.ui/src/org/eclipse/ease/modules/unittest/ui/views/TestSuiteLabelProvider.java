@@ -43,7 +43,7 @@ public class TestSuiteLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(final Object element) {
 		if (element instanceof TestSuite)
-			return fResourceManager.createImage(Activator.getImageDescriptor("/images/test_suite.gif"));
+			return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_TEST_SUITE));
 
 		if (element instanceof IPath)
 			return fResourceManager.createImage(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));

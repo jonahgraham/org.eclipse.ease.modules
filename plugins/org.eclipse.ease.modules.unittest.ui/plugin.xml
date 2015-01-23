@@ -6,7 +6,7 @@
       <wizard
             category="org.eclipse.ease.newWizard.category"
             class="org.eclipse.ease.modules.unittest.ui.wizards.TestSuiteWizard"
-            icon="images/test_suite.gif"
+            icon="icons/eobj16/testsuite.png"
             id="org.eclipse.ease.unittest.wizard.newTestSuiteWizard"
             name="Script Testsuite">
       </wizard>
@@ -16,7 +16,7 @@
       <editor
             class="org.eclipse.ease.modules.unittest.ui.editor.TestSuiteEditor"
             default="true"
-            icon="images/test_suite.gif"
+            icon="icons/eobj16/testsuite.png"
             id="org.eclipse.ease.editor.suiteEditor"
             name="Test Suite Editor">
          <contentTypeBinding
@@ -39,7 +39,7 @@
       <view
             category="org.eclipse.ease.ui.views.category.scripting"
             class="org.eclipse.ease.modules.unittest.ui.views.UnitTestView"
-            icon="images/test.png"
+            icon="icons/eview16/unit_test.png"
             id="org.eclipse.ease.views.unittest"
             name="Script Unit Test"
             restorable="true">
@@ -72,7 +72,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="org.eclipse.ease.unittest.launchConfigurationType"
-            icon="images/test.png"
+            icon="icons/eobj16/testsuite.png"
             id="org.eclipse.ease.unittest.launchConfigurationType.image">
       </launchConfigurationTypeImage>
    </extension>
@@ -88,7 +88,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="org.eclipse.ease.modules.unittest.ui.launching.TestSuiteLaunchDelegate"
-            icon="images/test.png"
+            icon="icons/eobj16/testsuite.png"
             id="org.eclipse.ease.unittest.launchShortcut"
             label="EASE UnitTest"
             modes="run,debug">
@@ -253,7 +253,7 @@
             locationURI="toolbar:org.eclipse.ease.editor.suiteEditor">
          <command
                commandId="org.eclipse.ease.unittest.commands.runTestSuite"
-               icon="images/run.gif"
+               icon="icons/elcl16/run_suite.png"
                style="push">
          </command>
       </menuContribution>
@@ -262,7 +262,7 @@
             locationURI="toolbar:org.eclipse.ease.views.unittest">
          <command
                commandId="org.eclipse.ease.unittest.commands.loadTestSuite"
-               icon="images/test_suite.gif"
+               icon="icons/eobj16/testsuite.png"
                id="org.eclipse.ease.unittest.commands.loadTestSuite.popup"
                style="pulldown">
          </command>
@@ -276,7 +276,7 @@
          </command>
          <command
                commandId="org.eclipse.ease.unittest.commands.filterTests"
-               icon="images/toggle_valid_tests.gif"
+               icon="icons/elcl16/pass_filter.png"
                style="toggle">
          </command>
          <separator
@@ -284,22 +284,22 @@
          </separator>
          <command
                commandId="org.eclipse.ease.unittest.commands.createReport"
-               icon="images/create_report.gif"
+               icon="icons/elcl16/create_report.png"
                style="push">
          </command>
          <command
                commandId="org.eclipse.ease.unittest.commands.exportErrorsToSuite"
-               icon="images/export.gif"
+               icon="icons/elcl16/export_error_suite.png"
                style="push">
          </command>
          <command
                commandId="org.eclipse.ease.unittest.commands.runAll"
-               icon="images/run_all.gif"
+               icon="icons/elcl16/run_all.png"
                style="push">
          </command>
          <command
                commandId="org.eclipse.ease.unittest.commands.runFailed"
-               icon="images/run_invalid.gif"
+               icon="icons/elcl16/run_fails.png"
                style="push">
          </command>
          <command
@@ -317,7 +317,7 @@
             locationURI="popup:org.eclipse.ease.views.unittest">
          <command
                commandId="org.eclipse.ease.unittest.commands.runSelected"
-               icon="images/run_all.gif"
+               icon="imagesx/run_all.gif"
                style="push">
             <visibleWhen
                   checkEnabled="false">

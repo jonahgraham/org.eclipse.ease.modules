@@ -607,7 +607,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					return "calculating...";
 
 				if (time < 60000)
-					return new SimpleDateFormat("ss.SSS 'seconds'").format(time);
+					return new SimpleDateFormat("ss 'seconds'").format(time);
 
 				if (time < 3600000)
 					return new SimpleDateFormat("mm:ss").format(time);

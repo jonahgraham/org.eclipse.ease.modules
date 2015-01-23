@@ -64,6 +64,12 @@ public class CreateReport extends AbstractHandler implements IHandler {
 								if (Platform.getOS().startsWith("win"))
 									Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + new File(filename).toURI().toString());
 
+								else if ((Platform.getOS().startsWith("linux")) && ("KDE".equals(System.getenv("XDG_CURRENT_DESKTOP"))))
+									Runtime.getRuntime().exec("kfmclient exec " + new File(filename).toURI().toString());
+
+								else if ((Platform.getOS().startsWith("linux")) && ("GNOME".equals(System.getenv("XDG_CURRENT_DESKTOP"))))
+									Runtime.getRuntime().exec("execute gnome-open " + new File(filename).toURI().toString());
+
 								else {
 									// TODO add support for other platforms
 									MessageDialog.openError(HandlerUtil.getActiveShell(event), "Could not open report", "Support for your platform ("

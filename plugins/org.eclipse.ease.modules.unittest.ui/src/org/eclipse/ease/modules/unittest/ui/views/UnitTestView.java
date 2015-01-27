@@ -413,8 +413,10 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 			@Override
 			public String getToolTipText(final Object element) {
-				if (element instanceof Test)
-					return (((Test) element).getDescription().isEmpty()) ? null : ((Test) element).getDescription();
+				if (element instanceof Test) {
+					if ((((Test) element).getDescription() != null) && (!((Test) element).getDescription().isEmpty()))
+						return ((Test) element).getDescription();
+				}
 
 				return super.getToolTipText(element);
 			}

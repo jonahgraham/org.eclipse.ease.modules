@@ -111,19 +111,20 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 				runCodeFragment(TestSuiteModel.CODE_LOCATION_TESTFILE_TEARDOWN, monitor);
 
 			} catch (final InterruptedException e) {
-				return Status.CANCEL_STATUS;
 
-			} finally {
 				// run teardown code
 				if (getTestSuite().getModel().getFlag(TestSuiteModel.FLAG_EXECUTE_TEARDOWN_ON_FAILURE, true)) {
 					try {
 						runCodeFragment(TestSuiteModel.CODE_LOCATION_TESTFILE_TEARDOWN, monitor);
-					} catch (final InterruptedException e) {
+					} catch (final InterruptedException e1) {
 						// TODO handle this exception (but for now, at least know it happened)
-						throw new RuntimeException(e);
+						throw new RuntimeException(e1);
 					}
 				}
 
+				return Status.CANCEL_STATUS;
+
+			} finally {
 				// terminate all tests that are still marked as running
 				// used for badly written test cases and when tests fail by throwing an exception
 				for (final Test test : getTests())

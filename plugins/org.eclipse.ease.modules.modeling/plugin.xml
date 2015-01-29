@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ease.modules.modeling.selector">
       <selector
-            id="GMFSemanticSeletor"
+            id="GMFSemanticSelector"
             impl="org.eclipse.ease.modules.modeling.selector.GMFSemanticSeletor"
             priority="50">
       </selector>
@@ -53,6 +53,9 @@
          <dependency
                module="org.eclipse.ease.module.platform.ui">
          </dependency>
+         <dependency
+               module="org.eclipse.ease.modules.modeling.selection">
+         </dependency>
       </module>
       <module
             category="org.eclipse.ease.modules.category.modeling"
@@ -63,6 +66,9 @@
          <dependency
                module="org.eclipse.ease.module.platform.ui">
          </dependency>
+         <dependency
+               module="org.eclipse.ease.modules.modeling.selection">
+         </dependency>
       </module>
       <module
             category="org.eclipse.ease.modules.category.modeling"
@@ -70,6 +76,19 @@
             id="org.eclipse.ease.modules.modeling.papyrus"
             name="Papyrus"
             visible="true">
+      </module>
+      <module
+            category="org.eclipse.ease.modules.category.modeling"
+            class="org.eclipse.ease.modules.modeling.SYSMLModule"
+            id="org.eclipse.ease.modules.modeling.sysml"
+            name="SYSML"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.module.platform.ui">
+         </dependency>
+         <dependency
+               module="org.eclipse.ease.modules.modeling.selection">
+         </dependency>
       </module>
    </extension>
 

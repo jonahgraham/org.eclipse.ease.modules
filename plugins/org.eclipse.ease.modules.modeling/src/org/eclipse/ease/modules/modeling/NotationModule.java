@@ -38,7 +38,7 @@ public class NotationModule extends EcoreModule {
 
 	@Override
 	public EObject getSelection() {
-		Object selection = selectionModule.getCustomSelectionFromSelector(GMFNotationSelector.SELECTOR_ID);
+		Object selection = getSelectionModule().getCustomSelectionFromSelector(GMFNotationSelector.SELECTOR_ID);
 		if (selection instanceof EObject) {
 			return (EObject) selection;
 		} else {
@@ -46,5 +46,9 @@ public class NotationModule extends EcoreModule {
 			getEnvironment().getModule(UIModule.class).showErrorDialog("Error", message);
 			return null;
 		}
+	}
+
+	private SelectionModule getSelectionModule() {
+		return (SelectionModule) getEnvironment().getModule(SelectionModule.class);
 	}
 }

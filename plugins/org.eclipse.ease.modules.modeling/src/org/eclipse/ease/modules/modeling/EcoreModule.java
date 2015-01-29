@@ -38,6 +38,7 @@ import org.eclipse.ease.modules.platform.ResourcesModule;
 import org.eclipse.ease.modules.platform.UIModule;
 import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.emf.common.command.AbstractCommand;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EFactory;
@@ -61,6 +62,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Stereotype;
+import org.eclipse.uml2.uml.util.UMLUtil;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -77,8 +81,6 @@ import com.google.common.collect.Collections2;
  */
 public class EcoreModule extends AbstractScriptModule {
 
-	protected SelectionModule selectionModule = new SelectionModule();
-
 	private String uri;
 
 	/**
@@ -87,14 +89,21 @@ public class EcoreModule extends AbstractScriptModule {
 	 * @return the currently selected model element.
 	 */
 	public EObject getSelection() {
-		Object selection = selectionModule.getCustomSelectionFromSelector(GMFSemanticSeletor.SELECTOR_ID);
+		Object selection = getSelectionModule().getCustomSelectionFromSelector(GMFSemanticSeletor.SELECTOR_ID);
 		if (selection instanceof EObject) {
+			if(selection instanceof Element) {
+				EList<Stereotype> appliedStereotypes = ((Element) selection).getAppliedStereotypes();
+			}
 			return (EObject) selection;
 		} else {
 			String message = "Unable to retreive a EObject from the selection";
 			getEnvironment().getModule(UIModule.class).showErrorDialog("Error", message);
 			return null;
 		}
+	}
+	
+	private SelectionModule getSelectionModule() {
+		return (SelectionModule) getEnvironment().getModule(SelectionModule.class);
 	}
 
 	/**

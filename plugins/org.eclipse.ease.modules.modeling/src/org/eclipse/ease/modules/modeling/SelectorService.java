@@ -37,7 +37,7 @@ import com.google.common.collect.TreeMultimap;
  */
 public class SelectorService {
 
-	private static final String SELECTOR_EXT_POINT_ID = "org.eclipse.ease.modules.modeling.selector";
+	private static final String SELECTOR_EXT_POINT_ID = Activator.PLUGIN_ID + ".selector";
 
 	private static class SingletonHolder {
 

@@ -149,6 +149,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 
 	public void setFlag(final String flagID, final String content) {
 		fFlags.put(flagID, content);
+		fDirty = true;
 	}
 
 	public void setFlag(final String flagID, final boolean content) {
@@ -253,6 +254,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 
 	public void addTestFile(final String fileLocation) {
 		fTestFiles.add(fileLocation);
+		fDirty = true;
 	}
 
 	public IFile getFile() {
@@ -265,6 +267,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 
 	public void addVariable(final String identifier, final String content, final String description) {
 		fVariables.add(new Variable(identifier, content, description));
+		fDirty = true;
 	}
 
 	public String getCodeFragment(final String identifier) {
@@ -276,10 +279,13 @@ public class TestSuiteModel implements IResourceChangeListener {
 			fCodeFragments.remove(identifier);
 		else
 			fCodeFragments.put(identifier, code);
+
+		fDirty = true;
 	}
 
 	public void setDescription(final String description) {
 		fDescription = description;
+		fDirty = true;
 	}
 
 	public String getDescription() {

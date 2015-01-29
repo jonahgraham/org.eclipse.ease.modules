@@ -105,7 +105,6 @@ public class TestSuite extends TestComposite {
 
 			getScriptEngine().schedule();
 
-			final int maxSimultaneousThreads = Math.max(1, fTestModel.getFlag(TestSuiteModel.FLAG_MAX_THREADS, 1));
 			fCurrentTestCount = 0;
 
 			// parse variables
@@ -130,6 +129,10 @@ public class TestSuite extends TestComposite {
 				final List<TestFile> filesUnderTest = new ArrayList<TestFile>(fActiveTestFiles);
 				synchronized (TestSuite.this) {
 					while ((!fTerminated) && ((fCurrentTestCount > 0) || (!filesUnderTest.isEmpty()))) {
+
+						// always read number of threads. some testsuites adjust load dynamically
+						final int maxSimultaneousThreads = Math.max(1, fTestModel.getFlag(TestSuiteModel.FLAG_MAX_THREADS, 1));
+
 						if ((!filesUnderTest.isEmpty()) && (fCurrentTestCount < maxSimultaneousThreads)) {
 							// start another test
 							final TestFile testFile = filesUnderTest.remove(0);
@@ -343,10 +346,10 @@ public class TestSuite extends TestComposite {
 		// reload model
 		try {
 			fTestModel.reload();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

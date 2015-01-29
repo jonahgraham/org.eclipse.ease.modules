@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ease.modules.unittest.reporters.IReportGenerator;
@@ -261,8 +262,8 @@ public class CreateReportDialog extends Dialog {
 
 	private void saveHistory(final Map<String, String> data) {
 		final XMLMemento memento = XMLMemento.createWriteRoot("history");
-		for (final String key : data.keySet())
-			memento.createChild(key).putTextData(data.get(key));
+		for (final Entry<String, String> entry : data.entrySet())
+			memento.createChild(entry.getKey()).putTextData(entry.getValue());
 
 		try {
 			final IPath location = Activator.getDefault().getStateLocation();

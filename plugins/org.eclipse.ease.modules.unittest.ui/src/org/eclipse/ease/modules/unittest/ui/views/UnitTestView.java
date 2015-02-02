@@ -539,12 +539,19 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 			// update tree elements
 			for (final Object element : localElements) {
-				if (element instanceof TestComposite) {
+				TestComposite affectedComposite = null;
+				if (element instanceof Test)
+					affectedComposite = ((Test) element).getParent();
+
+				else if (element instanceof TestComposite)
+					affectedComposite = (TestComposite) element;
+
+				if (affectedComposite != null) {
 					// update tree element and all its parents
 					// Object node = element;
 					// FIXME stalls UI thread in an endless loop
 					// do {
-					fFileTreeViewer.update(element, new String[] { TEST_STATUS_PROPERTY });
+					fFileTreeViewer.update(affectedComposite, new String[] { TEST_STATUS_PROPERTY });
 					// node = ((ITreeContentProvider) treeViewer.getContentProvider()).getParent(element);
 					// } while (node != null);
 				}

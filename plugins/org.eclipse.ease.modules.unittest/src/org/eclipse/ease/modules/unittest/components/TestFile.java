@@ -72,6 +72,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 			// start engine
 			getScriptEngine().schedule();
 
+			boolean runTeardown = true;
 			try {
 				// check for user abort request
 				if (monitor.isCanceled()) {
@@ -97,6 +98,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 					if (!(testFileResult.getException() instanceof ExitException)) {
 						// we had a real exception, inform user
 						addTestResult(TestStatus.FAILURE, TestSuite.getExceptionMessage(testFileResult.getException()));
+						runTeardown = getTestSuite().getModel().getFlag(TestSuiteModel.FLAG_EXECUTE_TEARDOWN_ON_FAILURE, true);
 						return Status.OK_STATUS;
 					}
 				}
@@ -107,24 +109,21 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 					return Status.CANCEL_STATUS;
 				}
 
-				// testFile setup()
-				runCodeFragment(TestSuiteModel.CODE_LOCATION_TESTFILE_TEARDOWN, monitor);
-
 			} catch (final InterruptedException e) {
-
-				// run teardown code
-				if (getTestSuite().getModel().getFlag(TestSuiteModel.FLAG_EXECUTE_TEARDOWN_ON_FAILURE, true)) {
-					try {
-						runCodeFragment(TestSuiteModel.CODE_LOCATION_TESTFILE_TEARDOWN, monitor);
-					} catch (final InterruptedException e1) {
-						// TODO handle this exception (but for now, at least know it happened)
-						throw new RuntimeException(e1);
-					}
-				}
-
+				runTeardown = getTestSuite().getModel().getFlag(TestSuiteModel.FLAG_EXECUTE_TEARDOWN_ON_FAILURE, true);
 				return Status.CANCEL_STATUS;
 
 			} finally {
+				// testFile teardown()
+				if (runTeardown) {
+					try {
+						runCodeFragment(TestSuiteModel.CODE_LOCATION_TESTFILE_TEARDOWN, monitor);
+					} catch (final InterruptedException e) {
+						// TODO handle this exception (but for now, at least know it happened)
+						throw new RuntimeException(e);
+					}
+				}
+
 				// terminate all tests that are still marked as running
 				// used for badly written test cases and when tests fail by throwing an exception
 				for (final Test test : getTests())

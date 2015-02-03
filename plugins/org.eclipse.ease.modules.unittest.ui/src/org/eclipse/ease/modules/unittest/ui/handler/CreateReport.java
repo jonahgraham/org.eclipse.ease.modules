@@ -51,7 +51,7 @@ public class CreateReport extends AbstractHandler implements IHandler {
 
 						try {
 							String filename = dialog.getFileName();
-							final String extension = dialog.getReport().getDefaultExtension();
+							final String extension = "." + dialog.getReport().getDefaultExtension();
 							if (!filename.toLowerCase().endsWith(extension))
 								filename += extension;
 

@@ -267,7 +267,7 @@ public class UIModule extends AbstractScriptModule {
 	public IEditorPart showEditor(final Object location) throws PartInitException {
 		final Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
 		if (file instanceof IFile)
-			return showEditor(file);
+			return showEditor((IFile) file);
 
 		return null;
 	}

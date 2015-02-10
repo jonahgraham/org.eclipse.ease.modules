@@ -158,7 +158,7 @@
 							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
 							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
 							<docletPath>${doclet.path}</docletPath>
-							<additionalparam>-root ${basedir}</additionalparam>
+							<additionalparam>-root ${basedir} -apiLinks "java.*|http://docs.oracle.com/javase/8/docs/api;org.eclipse.*|/help/topic/org.eclipse.platform.doc.isv/reference/api"</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 						</configuration>
 						<executions>

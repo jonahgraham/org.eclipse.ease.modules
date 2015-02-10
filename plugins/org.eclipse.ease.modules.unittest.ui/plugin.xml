@@ -65,7 +65,8 @@
             delegate="org.eclipse.ease.modules.unittest.ui.launching.TestSuiteLaunchDelegate"
             id="org.eclipse.ease.unittest.launchConfigurationType"
             modes="run,debug"
-            name="EASE UnitTest">
+            name="EASE UnitTest"
+            sourceLocatorId="org.eclipse.ease.sourceLocator.generic">
       </launchConfigurationType>
    </extension>
    <extension

@@ -26,8 +26,6 @@ import org.eclipse.ease.ScriptResult;
 import org.eclipse.ease.modules.EnvironmentModule;
 import org.eclipse.ease.modules.unittest.Bundle;
 import org.eclipse.ease.modules.unittest.modules.UnitModule;
-import org.eclipse.ease.service.IScriptService;
-import org.eclipse.ease.service.ScriptService;
 import org.eclipse.ease.tools.ResourceTools;
 
 public class TestFile extends TestComposite implements Comparable<TestFile> {
@@ -46,11 +44,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 			setStatus(TestStatus.RUNNING);
 
 			// setup engine
-			final IScriptService scriptService = ScriptService.getService();
-
-			// get engine depending on script type
-			final String engineID = getTestSuite().getScriptEngineID();
-			setScriptEngine(scriptService.getEngineByID(engineID).createEngine());
+			setScriptEngine(getTestSuite().createScriptEngine());
 
 			// connect output streams
 			getScriptEngine().setOutputStream(getTestSuite().getOutputStream());

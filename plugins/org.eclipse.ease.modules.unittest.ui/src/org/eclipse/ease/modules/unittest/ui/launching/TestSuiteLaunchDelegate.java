@@ -38,7 +38,7 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 	private static final String LAUNCH_CONFIGURATION_ID = "org.eclipse.ease.unittest.launchConfigurationType";
 
 	@Override
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 
 		final Object resource = ResourceTools.resolveFile(getFileLocation(configuration), null, true);
 		if (resource instanceof IFile) {
@@ -60,6 +60,11 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 				if (view instanceof ITestListener)
 					suiteToRun.addTestListener((ITestListener) view);
 
+				// set debug options
+				if (ILaunchManager.DEBUG_MODE.equals(mode)) {
+					suiteToRun.setDebugOptions(launch);
+				}
+
 				suiteToRun.run();
 			} catch (final IOException e) {
 				// TODO Auto-generated catch block
@@ -74,7 +79,7 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 	}
 
 	@Override
-	protected ILaunchConfiguration createLaunchConfiguration(IResource file, String mode) throws CoreException {
+	protected ILaunchConfiguration createLaunchConfiguration(final IResource file, final String mode) throws CoreException {
 		final ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		final ILaunchConfigurationType type = manager.getLaunchConfigurationType(LAUNCH_CONFIGURATION_ID);
 
@@ -88,7 +93,7 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 	}
 
 	@Override
-	protected String getFileLocation(ILaunchConfiguration configuration) throws CoreException {
+	protected String getFileLocation(final ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(LaunchConstants.FILE_LOCATION, "");
 	}
 
@@ -96,28 +101,4 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 	protected String getLaunchConfigurationId() {
 		return LAUNCH_CONFIGURATION_ID;
 	}
-
-	// private void setupDebugger(final IScriptEngine engine, final ILaunchConfiguration configuration, final ILaunch launch) {
-	// if (engine instanceof IDebugEngine) {
-	// boolean suspendOnStartup = false;
-	// try {
-	// suspendOnStartup = configuration.getAttribute(LaunchConstants.SUSPEND_ON_STARTUP, false);
-	// } catch (final CoreException e) {
-	// }
-	//
-	// boolean suspendOnScriptLoad = false;
-	// try {
-	// suspendOnScriptLoad = configuration.getAttribute(LaunchConstants.SUSPEND_ON_SCRIPT_LOAD, false);
-	// } catch (final CoreException e) {
-	// }
-	//
-	// boolean showDynamicCode = false;
-	// try {
-	// showDynamicCode = configuration.getAttribute(LaunchConstants.DISPLAY_DYNAMIC_CODE, false);
-	// } catch (final CoreException e) {
-	// }
-	//
-	// ((IDebugEngine) engine).setupDebugger(launch, suspendOnStartup, suspendOnScriptLoad, showDynamicCode);
-	// }
-	// }
 }

@@ -27,6 +27,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.ease.IDebugEngine;
+import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.Script;
 import org.eclipse.ease.ScriptResult;
 import org.eclipse.ease.debugging.IScriptDebugFrame;
@@ -37,6 +41,7 @@ import org.eclipse.ease.modules.unittest.components.TestSuiteModel.Variable;
 import org.eclipse.ease.modules.unittest.modules.UnitModule;
 import org.eclipse.ease.service.IScriptService;
 import org.eclipse.ease.service.ScriptService;
+import org.eclipse.ease.ui.launching.LaunchConstants;
 
 public class TestSuite extends TestComposite {
 
@@ -70,6 +75,7 @@ public class TestSuite extends TestComposite {
 	private OutputStream fOutputStream = System.out;
 	private OutputStream fErrorStream = System.err;
 	private Map<String, Object> fSetupVariables;
+	private ILaunch fDebugLaunch;
 
 	private class TestSuiteJob extends Job {
 
@@ -88,10 +94,7 @@ public class TestSuite extends TestComposite {
 				file.reset();
 
 			// create master engine, performing testsuite setup & teardown
-			final IScriptService scriptService = ScriptService.getService();
-
-			// TODO create engine depending on script type
-			setScriptEngine(scriptService.getEngineByID(getScriptEngineID()).createEngine());
+			setScriptEngine(createScriptEngine());
 			getScriptEngine().addExecutionListener(TestSuite.this);
 			getScriptEngine().setTerminateOnIdle(false);
 
@@ -327,9 +330,45 @@ public class TestSuite extends TestComposite {
 			fErrorStream = errorStream;
 	}
 
-	public String getScriptEngineID() {
-		// TODO get correct engine
-		return "org.eclipse.ease.javascript.rhinoDebugger";
+	public IScriptEngine createScriptEngine() {
+		final IScriptService scriptService = ScriptService.getService();
+
+		if (fDebugLaunch != null) {
+
+			ILaunchConfiguration configuration = fDebugLaunch.getLaunchConfiguration();
+			String engineID = "";
+			try {
+				engineID = configuration.getAttribute(LaunchConstants.SCRIPT_ENGINE, "");
+			} catch (CoreException e1) {
+			}
+
+			IScriptEngine engine = scriptService.getEngineByID(engineID).createEngine();
+			if (engine instanceof IDebugEngine) {
+				boolean suspendOnStartup = false;
+				try {
+					suspendOnStartup = configuration.getAttribute(LaunchConstants.SUSPEND_ON_STARTUP, false);
+				} catch (final CoreException e) {
+				}
+
+				boolean suspendOnScriptLoad = false;
+				try {
+					suspendOnScriptLoad = configuration.getAttribute(LaunchConstants.SUSPEND_ON_SCRIPT_LOAD, false);
+				} catch (final CoreException e) {
+				}
+
+				boolean showDynamicCode = false;
+				try {
+					showDynamicCode = configuration.getAttribute(LaunchConstants.DISPLAY_DYNAMIC_CODE, false);
+				} catch (final CoreException e) {
+				}
+
+				((IDebugEngine) engine).setupDebugger(fDebugLaunch, suspendOnStartup, suspendOnScriptLoad, showDynamicCode);
+			}
+
+			return engine;
+		}
+
+		return scriptService.getEngineByID("org.eclipse.ease.javascript.rhinoDebugger").createEngine();
 	}
 
 	@Override
@@ -359,5 +398,9 @@ public class TestSuite extends TestComposite {
 
 	Map<String, Object> getVariables() {
 		return fSetupVariables;
+	}
+
+	public void setDebugOptions(final ILaunch launch) {
+		fDebugLaunch = launch;
 	}
 }

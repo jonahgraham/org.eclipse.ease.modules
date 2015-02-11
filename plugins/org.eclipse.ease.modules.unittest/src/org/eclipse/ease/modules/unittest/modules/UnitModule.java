@@ -25,6 +25,7 @@ import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ease.modules.platform.ResourcesModule;
 import org.eclipse.ease.modules.unittest.components.Test;
 import org.eclipse.ease.modules.unittest.components.TestComposite;
+import org.eclipse.ease.modules.unittest.components.TestEntity;
 import org.eclipse.ease.modules.unittest.components.TestFile;
 import org.eclipse.ease.modules.unittest.components.TestStatus;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
@@ -318,6 +319,27 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 		return null;
 	}
 
+	/**
+	 * Get a {@link Test} instance. if no <i>name</i> is provided, the current test instance is returned. When provided, this method searches for a test with
+	 * the given title.
+	 *
+	 * @param name
+	 *            test name to look for
+	 * @return current test or <code>null</code>
+	 */
+	@WrapToScript
+	public Test getTest(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
+		if (name == null)
+			return getTestFile().getCurrentTest();
+
+		for (TestEntity test : getTestFile().getChildren()) {
+			if ((test instanceof Test) && (name.equals(((Test) test).getTitle())))
+				return (Test) test;
+		}
+
+		return null;
+	}
+
 	private TestComposite getTestObject() {
 		return (TestComposite) getScriptEngine().getVariable(TestComposite.CURRENT_TESTCOMPOSITE);
 	}
@@ -513,7 +535,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 *            metadata
 	 */
 	@WrapToScript
-	public void addMetaData(String key, String data) {
+	public void addMetaData(final String key, final String data) {
 		getTestObject().addMetaData(key, data);
 	}
 }

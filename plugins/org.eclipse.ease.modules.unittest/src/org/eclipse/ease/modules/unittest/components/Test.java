@@ -26,7 +26,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 public class Test extends TestEntity {
 
 	private final String fTitle;
-	private final String fDescription;
+	private String fDescription;
 	private List<IScriptDebugFrame> fTestLocation = null;
 
 	private final List<TestResult> fResults = new ArrayList<TestResult>();
@@ -35,7 +35,7 @@ public class Test extends TestEntity {
 		super(parent);
 
 		fTitle = title;
-		fDescription = description;
+		setDescription(description);
 	}
 
 	public Test(final TestComposite parent, final String title) {
@@ -76,6 +76,16 @@ public class Test extends TestEntity {
 
 	public String getDescription() {
 		return fDescription;
+	}
+
+	/**
+	 * Sets the test description. A previous description gets replaced by the new one.
+	 *
+	 * @param description
+	 *            description to use
+	 */
+	public void setDescription(final String description) {
+		fDescription = description;
 	}
 
 	public void addMessage(final TestResult message) {

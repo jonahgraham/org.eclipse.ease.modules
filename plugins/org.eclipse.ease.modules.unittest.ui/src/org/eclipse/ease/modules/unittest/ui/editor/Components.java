@@ -136,7 +136,7 @@ public class Components extends AbstractEditorPage {
 					final Object element = selection.getFirstElement();
 					if (element instanceof IFile) {
 						try {
-							new UIModule().showEditor(element);
+							UIModule.showEditor((IFile) element);
 						} catch (final PartInitException e) {
 							// TODO handle this exception (but for now, at least know it happened)
 							throw new RuntimeException(e);

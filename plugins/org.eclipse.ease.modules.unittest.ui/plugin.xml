@@ -371,7 +371,7 @@
       <perspectiveExtension
             targetID="*">
          <view
-               id="com.infineon.views.script.unittest"
+               id="org.eclipse.ease.views.unittest"
                minimized="false"
                relationship="stack"
                relative="org.eclipse.ui.navigator.ProjectExplorer"

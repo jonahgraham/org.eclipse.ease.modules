@@ -15,7 +15,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class TestSuite extends TestComposite {
 
 	private final TestSuiteModel fTestModel;
 	private boolean fTerminated = false;
-	private final Collection<TestFile> fTestFiles = new HashSet<TestFile>();
+	private final Map<String, TestFile> fTestFiles = new HashMap<String, TestFile>();
 
 	private int fCurrentTestCount;
 	private List<TestFile> fActiveTestFiles = Collections.emptyList();
@@ -227,7 +227,7 @@ public class TestSuite extends TestComposite {
 		fTestModel = model;
 
 		for (final String location : fTestModel.getTestFiles())
-			fTestFiles.add(new TestFile(this, location));
+			fTestFiles.put(location, new TestFile(this, location));
 	}
 
 	public TestSuite(final IFile file) throws IOException, CoreException {
@@ -267,7 +267,7 @@ public class TestSuite extends TestComposite {
 
 	@Override
 	public Collection<TestFile> getChildren() {
-		return fTestFiles;
+		return fTestFiles.values();
 	}
 
 	public void run() {
@@ -278,7 +278,7 @@ public class TestSuite extends TestComposite {
 
 		// filter tests
 		fActiveTestFiles = new LinkedList<TestFile>();
-		for (final TestFile testFile : fTestFiles) {
+		for (final TestFile testFile : fTestFiles.values()) {
 			if (filter.matches(testFile))
 				fActiveTestFiles.add(testFile);
 		}
@@ -335,14 +335,14 @@ public class TestSuite extends TestComposite {
 
 		if (fDebugLaunch != null) {
 
-			ILaunchConfiguration configuration = fDebugLaunch.getLaunchConfiguration();
+			final ILaunchConfiguration configuration = fDebugLaunch.getLaunchConfiguration();
 			String engineID = "";
 			try {
 				engineID = configuration.getAttribute(LaunchConstants.SCRIPT_ENGINE, "");
-			} catch (CoreException e1) {
+			} catch (final CoreException e1) {
 			}
 
-			IScriptEngine engine = scriptService.getEngineByID(engineID).createEngine();
+			final IScriptEngine engine = scriptService.getEngineByID(engineID).createEngine();
 			if (engine instanceof IDebugEngine) {
 				boolean suspendOnStartup = false;
 				try {
@@ -383,14 +383,26 @@ public class TestSuite extends TestComposite {
 		}
 
 		// reload model
-		try {
-			fTestModel.reload();
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (fTestModel.isDirty()) {
+
+			try {
+				fTestModel.reload();
+			} catch (final IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (final CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// add new test files
+			for (final String location : fTestModel.getTestFiles()) {
+				if (!fTestFiles.containsKey(location))
+					fTestFiles.put(location, new TestFile(this, location));
+			}
+
+			// remove obsolete test files
+			fTestFiles.keySet().retainAll(fTestModel.getTestFiles());
 		}
 
 		super.reset();

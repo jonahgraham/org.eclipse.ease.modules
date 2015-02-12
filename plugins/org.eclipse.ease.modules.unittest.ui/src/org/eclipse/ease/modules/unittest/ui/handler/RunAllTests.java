@@ -16,6 +16,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
 import org.eclipse.ease.modules.unittest.ui.sourceprovider.TestSuiteSource;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 public class RunAllTests extends AbstractHandler implements IHandler {
@@ -27,12 +29,23 @@ public class RunAllTests extends AbstractHandler implements IHandler {
 		if (instance != null) {
 			final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
 			if (suite instanceof TestSuite) {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
+				updateSources((TestSuite) suite);
 
 				((TestSuite) suite).run();
 			}
 		}
 
 		return null;
+	}
+
+	protected void updateSources(final TestSuite suite) {
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
+
+		if (suite.getModel().isDirty()) {
+			final boolean reloadSuite = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Test Suite change detected",
+					"Your test suite has changed.\nDo you want to reload suite data before test execution?");
+			if (reloadSuite)
+				suite.reset();
+		}
 	}
 }

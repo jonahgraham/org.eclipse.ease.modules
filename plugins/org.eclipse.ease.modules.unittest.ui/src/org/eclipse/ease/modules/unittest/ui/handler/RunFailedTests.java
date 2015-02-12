@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.ui.handler;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -19,9 +18,8 @@ import org.eclipse.ease.modules.unittest.components.TestFile;
 import org.eclipse.ease.modules.unittest.components.TestStatus;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
 import org.eclipse.ease.modules.unittest.ui.sourceprovider.TestSuiteSource;
-import org.eclipse.ui.PlatformUI;
 
-public class RunFailedTests extends AbstractHandler implements IHandler {
+public class RunFailedTests extends RunAllTests implements IHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -30,7 +28,8 @@ public class RunFailedTests extends AbstractHandler implements IHandler {
 		if (instance != null) {
 			final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
 			if (suite instanceof TestSuite) {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
+
+				updateSources((TestSuite) suite);
 
 				((TestSuite) suite).run(new ITestSetFilter() {
 

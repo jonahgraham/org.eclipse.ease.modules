@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -32,7 +31,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-public class RunSelectedTests extends AbstractHandler implements IHandler {
+public class RunSelectedTests extends RunAllTests implements IHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -78,6 +77,9 @@ public class RunSelectedTests extends AbstractHandler implements IHandler {
 			if (instance != null) {
 				final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
 				if (suite instanceof TestSuite) {
+
+					updateSources((TestSuite) suite);
+
 					((TestSuite) suite).run(new ITestSetFilter() {
 
 						@Override

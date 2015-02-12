@@ -301,7 +301,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 			load(ResourceTools.toString(fFile.getContents()));
 	}
 
-	private boolean isDirty() {
+	public boolean isDirty() {
 		return fDirty;
 	}
 

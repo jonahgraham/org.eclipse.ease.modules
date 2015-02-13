@@ -11,7 +11,7 @@
 <extension
       point="org.eclipse.ease.modules">
    <module
-         class="org.eclipse.ease.modules.unittest.modules.UnitModule"
+         class="org.eclipse.ease.modules.unittest.modules.UnitTestModule"
          id="org.eclipse.ease.modules.unittest"
          name="Unittest"
          visible="false">

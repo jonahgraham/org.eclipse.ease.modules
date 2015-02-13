@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,6 +39,7 @@ import org.eclipse.ease.modules.unittest.ui.Activator;
 import org.eclipse.ease.modules.unittest.ui.sourceprovider.TestSuiteSource;
 import org.eclipse.ease.ui.console.ScriptConsole;
 import org.eclipse.ease.ui.tools.DecoratedLabelProvider;
+import org.eclipse.ease.ui.tools.StringTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.JFaceResources;
@@ -442,6 +444,37 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					return ((TestResult) element).getDescription();
 
 				return super.getText(element);
+			}
+
+			@Override
+			public Image getImage(Object element) {
+				if ((element instanceof Test) && (!((Test) element).getMetaData().isEmpty()))
+					return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_METADATA));
+
+				return super.getImage(element);
+			}
+
+			@Override
+			public Image getToolTipImage(Object object) {
+				if ((object instanceof Test) && (!((Test) object).getMetaData().isEmpty()))
+					return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_METADATA));
+
+				return super.getToolTipImage(object);
+			}
+
+			@Override
+			public String getToolTipText(Object element) {
+				if ((element instanceof Test) && (!((Test) element).getMetaData().isEmpty())) {
+					final StringBuilder text = new StringBuilder();
+					for (final Entry<String, String> entry : ((Test) element).getMetaData().entrySet())
+						text.append(entry.getKey()).append(": ").append(entry.getValue()).append(StringTools.LINE_DELIMITER);
+
+					text.delete(text.length() - StringTools.LINE_DELIMITER.length(), text.length());
+
+					return text.toString();
+				}
+
+				return super.getToolTipText(element);
 			}
 		});
 		ColumnViewerToolTipSupport.enableFor(fTestTableViewer, ToolTip.NO_RECREATE);

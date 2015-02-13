@@ -25,7 +25,7 @@ import org.eclipse.ease.ExitException;
 import org.eclipse.ease.ScriptResult;
 import org.eclipse.ease.modules.EnvironmentModule;
 import org.eclipse.ease.modules.unittest.Bundle;
-import org.eclipse.ease.modules.unittest.modules.UnitModule;
+import org.eclipse.ease.modules.unittest.modules.UnitTestModule;
 import org.eclipse.ease.tools.ResourceTools;
 
 public class TestFile extends TestComposite implements Comparable<TestFile> {
@@ -61,7 +61,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 
 			// load unit module
 			// TODO make sure this is compatible with any engine
-			getScriptEngine().executeAsync("loadModule('" + UnitModule.MODULE_NAME + "')");
+			getScriptEngine().executeAsync("loadModule('" + UnitTestModule.MODULE_NAME + "')");
 
 			// start engine
 			getScriptEngine().schedule();
@@ -205,6 +205,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 		return fFileLocation.compareTo(o.fFileLocation);
 	}
 
+	@Override
 	public Object getFile() {
 		return ResourceTools.resolveFile(fFileLocation, getTestSuite().getModel().getFile(), true);
 	}

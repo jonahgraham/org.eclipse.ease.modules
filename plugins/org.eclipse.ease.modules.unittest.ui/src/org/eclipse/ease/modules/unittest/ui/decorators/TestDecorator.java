@@ -72,7 +72,14 @@ public class TestDecorator implements ILightweightLabelDecorator {
 		}
 	}
 
-	private ImageDescriptor getImage(final String image) {
+	/**
+	 * Get an image descriptor from the overlay folder.
+	 * 
+	 * @param image
+	 *            image file name in ovr16 folder
+	 * @return image descriptor or <code>null</code>
+	 */
+	public static ImageDescriptor getImage(final String image) {
 		return Activator.getImageDescriptor("/icons/ovr16/" + image);
 	}
 

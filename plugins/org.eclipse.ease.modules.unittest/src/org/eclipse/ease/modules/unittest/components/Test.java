@@ -12,8 +12,10 @@ package org.eclipse.ease.modules.unittest.components;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -30,6 +32,8 @@ public class Test extends TestEntity {
 	private List<IScriptDebugFrame> fTestLocation = null;
 
 	private final List<TestResult> fResults = new ArrayList<TestResult>();
+
+	private final Map<String, String> fMetaData = new HashMap<String, String>();
 
 	public Test(final TestComposite parent, final String title, final String description) {
 		super(parent);
@@ -60,7 +64,9 @@ public class Test extends TestEntity {
 	@Override
 	public void reset() {
 		super.reset();
+
 		fResults.clear();
+		fMetaData.clear();
 	}
 
 	public void setTestLocation(final List<IScriptDebugFrame> stackTrace) {
@@ -152,5 +158,14 @@ public class Test extends TestEntity {
 	public boolean isTransient() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public void addMetaData(final String identifier, final String content) {
+		fMetaData.put(identifier, content);
+		fireTestEvent(this, getStatus());
+	}
+
+	public Map<String, String> getMetaData() {
+		return Collections.unmodifiableMap(fMetaData);
 	}
 }

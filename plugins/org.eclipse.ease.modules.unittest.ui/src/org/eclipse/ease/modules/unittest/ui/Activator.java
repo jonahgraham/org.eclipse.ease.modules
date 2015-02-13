@@ -45,6 +45,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String ICON_RUNNING = "/icons/eobj16/status_running.png";
 
+	public static final String ICON_METADATA = "/icons/eobj16/metadata.png";
+
 	/** Activator instance. */
 	private static Activator fInstance;
 

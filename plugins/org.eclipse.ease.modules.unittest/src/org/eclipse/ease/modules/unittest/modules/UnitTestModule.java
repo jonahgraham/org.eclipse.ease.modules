@@ -39,7 +39,7 @@ import org.eclipse.ease.tools.ResourceTools;
  * Every function result returned inbetween will be checked for a response of type {@link IAssertion}. If such a response is detected its result will
  * automatically be applied to the current unit test.
  */
-public class UnitModule extends AbstractScriptModule implements IScriptFunctionModifier {
+public class UnitTestModule extends AbstractScriptModule implements IScriptFunctionModifier {
 
 	public static final String MODULE_NAME = "Unittest";
 	private static final String ASSERTION_FUNCION_NAME = "assertion";
@@ -50,25 +50,12 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	private int fAssertionsToBeIgnored = 0;
 
 	/**
-	 * Add metadata to a testfile. Such generic data will be stored along with the testfile but has no influence on the test results whatsoever.
-	 *
-	 * @param identifier
-	 *            identifier for metadata
-	 * @param content
-	 *            data
-	 */
-	@WrapToScript
-	public void setMetaData(final String identifier, final String content) {
-		final TestComposite testObject = getTestObject();
-		testObject.addMetaData(identifier, content);
-	}
-
-	/**
 	 * Run a unit test. If the file addressed is a suite, then the whole suite is started. If the file is a simple JavaScript file, then a dynamic suite is
 	 * created that contains just the one file.
 	 *
 	 * @param filename
-	 * @return
+	 *            location of testsuite or testfile. Must be a file from the workspace
+	 * @return {@link TestSuite} definition or <code>null</code>
 	 */
 	@WrapToScript
 	public TestSuite runUnitTest(Object executable) {
@@ -526,8 +513,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	}
 
 	/**
-	 * Add metadata to the current test/testfile/testsuite. Metadata will be attached to only one of the defined classes, starting to determine the current
-	 * test. Metadata is stored as a Map, so setting with an already existing keyword will override the previous setting.
+	 * Add metadata to the current test object. Metadata is stored as a Map, so setting with an already existing keyword will override the previous setting.
 	 *
 	 * @param key
 	 *            metadata keyword
@@ -536,6 +522,7 @@ public class UnitModule extends AbstractScriptModule implements IScriptFunctionM
 	 */
 	@WrapToScript
 	public void addMetaData(final String key, final String data) {
-		getTestObject().addMetaData(key, data);
+		final TestComposite testObject = getTestObject();
+		testObject.getCurrentTest().addMetaData(key, data);
 	}
 }

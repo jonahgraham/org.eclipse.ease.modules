@@ -58,6 +58,18 @@
                   name="org.eclipse.ease.modules.unittest.components.TestComposite">
             </objectClass></enablement>
       </decorator>
+      <decorator
+            class="org.eclipse.ease.modules.unittest.ui.decorators.MetadataDecorator"
+            id="org.eclipse.ease.modules.unittest.metadata.decorator"
+            label="Script Unit Test Metadata"
+            lightweight="true"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.ease.modules.unittest.components.TestComposite">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -179,6 +191,13 @@
             description="Export failed tests as new test suite"
             id="org.eclipse.ease.unittest.commands.exportErrorsToSuite"
             name="Export errors to suite">
+      </command>
+      <command
+            categoryId="org.eclipse.ease.commands.category.unittest"
+            defaultHandler="org.eclipse.ease.modules.unittest.ui.handler.AddMetadataHandler"
+            description="Add metadata to a test element"
+            id="org.eclipse.ease.unittest.commands.addMetadata"
+            name="Add Metadata">
       </command>
    </extension>
    <extension
@@ -337,6 +356,27 @@
                                  value="org.eclipse.core.runtime.IPath">
                            </instanceof>
                         </or>
+                     </iterate>
+                  </and>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ease.unittest.commands.addMetadata"
+               icon="icons/eobj16/metadata.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <and>
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <instanceof
+                              value="org.eclipse.ease.modules.unittest.components.TestComposite">
+                        </instanceof>
                      </iterate>
                   </and>
                </with>

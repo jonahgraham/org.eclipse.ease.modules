@@ -38,7 +38,7 @@ import org.eclipse.ease.debugging.ScriptDebugFrame;
 import org.eclipse.ease.modules.unittest.Bundle;
 import org.eclipse.ease.modules.unittest.ITestSetFilter;
 import org.eclipse.ease.modules.unittest.components.TestSuiteModel.Variable;
-import org.eclipse.ease.modules.unittest.modules.UnitModule;
+import org.eclipse.ease.modules.unittest.modules.UnitTestModule;
 import org.eclipse.ease.service.IScriptService;
 import org.eclipse.ease.service.ScriptService;
 import org.eclipse.ease.ui.launching.LaunchConstants;
@@ -101,10 +101,10 @@ public class TestSuite extends TestComposite {
 			getScriptEngine().setOutputStream(getOutputStream());
 			getScriptEngine().setErrorStream(getErrorStream());
 
-			getScriptEngine().setVariable(UnitModule.FAIL_ON_ERROR_VARIABLE, getModel().getFlag(TestSuiteModel.FLAG_PROMOTE_ERRORS_TO_FAILURES, false));
+			getScriptEngine().setVariable(UnitTestModule.FAIL_ON_ERROR_VARIABLE, getModel().getFlag(TestSuiteModel.FLAG_PROMOTE_ERRORS_TO_FAILURES, false));
 			getScriptEngine().setVariable(CURRENT_TESTCOMPOSITE, TestSuite.this);
 
-			getScriptEngine().executeAsync("loadModule('" + UnitModule.MODULE_NAME + "')");
+			getScriptEngine().executeAsync("loadModule('" + UnitTestModule.MODULE_NAME + "')");
 
 			getScriptEngine().schedule();
 
@@ -414,5 +414,10 @@ public class TestSuite extends TestComposite {
 
 	public void setDebugOptions(final ILaunch launch) {
 		fDebugLaunch = launch;
+	}
+
+	@Override
+	public Object getFile() {
+		return getModel().getFile();
 	}
 }

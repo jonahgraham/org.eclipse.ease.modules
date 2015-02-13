@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.components;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ease.modules.unittest.ITestListener;
 
@@ -22,8 +18,6 @@ public class TestEntity {
 	private TestStatus fStatus = TestStatus.NOT_RUN;
 
 	private final ListenerList fTestListeners = new ListenerList();
-
-	private final Map<String, String> fMetaData = new HashMap<String, String>();
 
 	private long fStartTime = 0;
 
@@ -95,14 +89,6 @@ public class TestEntity {
 
 	public long getStartTime() {
 		return fStartTime;
-	}
-
-	public void addMetaData(final String identifier, final String content) {
-		fMetaData.put(identifier, content);
-	}
-
-	public Map<String, String> getMetaData() {
-		return Collections.unmodifiableMap(fMetaData);
 	}
 
 	public TestComposite getParent() {

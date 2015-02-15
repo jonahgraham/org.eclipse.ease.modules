@@ -39,9 +39,8 @@ import org.eclipse.ease.modules.unittest.ui.Activator;
 import org.eclipse.ease.modules.unittest.ui.sourceprovider.TestSuiteSource;
 import org.eclipse.ease.ui.console.ScriptConsole;
 import org.eclipse.ease.ui.tools.DecoratedLabelProvider;
-import org.eclipse.ease.ui.tools.StringTools;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -57,9 +56,8 @@ import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
@@ -73,8 +71,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -129,18 +125,12 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 	private static final Object STATISTICS_TEST_FINISHED = "test count";
 
-	private Table ftable;
 	private ProgressBar fProgressBar;
 	private TreeViewer fFileTreeViewer;
-	private TableViewer fTestTableViewer;
+	private TreeViewer fTestTreeViewer;
 	private SashForm sashForm;
 
 	private int[] fSashWeights = new int[] { 70, 30 };
-	private TableColumn tblclmnType;
-	private TableViewerColumn tableViewerColumn1;
-	private TableColumn tblclmnMessage;
-	private TableViewerColumn tableViewerColumn2;
-	private Composite composite1;
 
 	private IMemento mMemento;
 
@@ -279,16 +269,16 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 				if (element instanceof TestComposite) {
 					// test set selected
-					fTestTableViewer.setInput(element);
+					fTestTreeViewer.setInput(element);
 
 					if (sashForm.getWeights()[1] == 0)
 						sashForm.setWeights(fSashWeights);
 
-					fTestTableViewer.refresh();
+					fTestTreeViewer.refresh();
 
 				} else {
 					// test container selected, or no selection at all
-					fTestTableViewer.setInput(null);
+					fTestTreeViewer.setInput(null);
 
 					if (sashForm.getWeights()[1] != 0)
 						fSashWeights = sashForm.getWeights();
@@ -298,13 +288,62 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 			}
 		});
 
-		composite1 = new Composite(sashForm, SWT.NONE);
-		final TableColumnLayout layout = new TableColumnLayout();
-		composite1.setLayout(layout);
+		// create tree viewer for tests
+		fTestTreeViewer = createTestArea(sashForm);
 
-		fTestTableViewer = new TableViewer(composite1, SWT.BORDER | SWT.FULL_SELECTION);
-		ftable = fTestTableViewer.getTable();
-		fTestTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+		sashForm.setWeights(new int[] { 1, 1 });
+
+		// add context menu support
+		final MenuManager menuManager = new MenuManager();
+		final Menu menu = menuManager.createContextMenu(fFileTreeViewer.getTree());
+		fFileTreeViewer.getTree().setMenu(menu);
+		getSite().registerContextMenu(menuManager, fFileTreeViewer);
+
+		final MenuManager menuManager2 = new MenuManager();
+		final Menu menu2 = menuManager2.createContextMenu(fFileTreeViewer.getTree());
+		fTestTreeViewer.getTree().setMenu(menu2);
+		getSite().registerContextMenu(menuManager2, fTestTreeViewer);
+
+		// add collapseAll/expandAll handlers
+		final IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		mCollapseAllHandler = new CollapseAllHandler(fFileTreeViewer);
+		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, mCollapseAllHandler);
+		mExpandAllHandler = new ExpandAllHandler(fFileTreeViewer);
+		handlerService.activateHandler(ExpandAllHandler.COMMAND_ID, mExpandAllHandler);
+
+		// menuManager.setRemoveAllWhenShown(true);
+
+		// load last suite
+		if (mMemento != null) {
+			final IMemento currentSuiteNode = mMemento.getChild(XML_CURRENT_SUITE);
+			if (currentSuiteNode != null) {
+				final Path path = new Path(currentSuiteNode.getTextData());
+				final IFile suiteFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+				try {
+					loadSuite(new TestSuite(new TestSuiteModel(suiteFile)));
+				} catch (final Exception e) {
+					// loading failed, ignore
+				}
+			}
+		}
+
+		// register for console events
+		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(UnitTestView.this);
+
+		final MultiSelectionProvider selectionProvider = new MultiSelectionProvider();
+		selectionProvider.addSelectionProvider(fFileTreeViewer);
+		selectionProvider.addSelectionProvider(fTestTreeViewer);
+
+		getSite().setSelectionProvider(selectionProvider);
+	}
+
+	private TreeViewer createTestArea(final Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		final TreeColumnLayout layout = new TreeColumnLayout();
+		composite.setLayout(layout);
+
+		final TreeViewer viewer = new TreeViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
 			@Override
 			public void doubleClick(final DoubleClickEvent event) {
@@ -347,7 +386,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 					} else {
 						// we do not have a trace, open test set
-						final Object input = fTestTableViewer.getInput();
+						final Object input = viewer.getInput();
 						if (input instanceof TestFile) {
 
 							try {
@@ -365,29 +404,35 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 				}
 			}
 		});
-		ftable.setHeaderVisible(true);
-		ftable.setLinesVisible(true);
 
-		fTestTableViewer.setContentProvider(new TestFileContentProvider());
-		// ColumnViewerToolTipSupport.enableFor(tableViewer,
-		// ToolTip.NO_RECREATE);
+		viewer.getTree().setHeaderVisible(true);
+		viewer.getTree().setLinesVisible(true);
 
-		tableViewerColumn1 = new TableViewerColumn(fTestTableViewer, SWT.NONE);
-		tblclmnType = tableViewerColumn1.getColumn();
-		tblclmnType.setWidth(100);
-		tblclmnType.setText("Test");
-		layout.setColumnData(tblclmnType, new ColumnWeightData(30, 50, true));
-		tableViewerColumn1.setLabelProvider(new ColumnLabelProvider() {
+		viewer.setContentProvider(new TestFileContentProvider());
+
+		TreeViewerColumn testColumn = new TreeViewerColumn(viewer, SWT.NONE);
+		testColumn.getColumn().setWidth(100);
+		testColumn.getColumn().setText("Test");
+		layout.setColumnData(testColumn.getColumn(), new ColumnWeightData(30, 50, true));
+		testColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(final Object element) {
 				if (element instanceof Test)
 					return ((Test) element).getTitle();
 
-				return super.getText(element);
+				if (element instanceof Entry<?, ?>)
+					// metadata
+					return ((Entry<?, ?>) element).getKey().toString();
+
+				return "";
 			}
 
 			@Override
 			public Image getImage(final Object element) {
+
+				if (element instanceof Entry<?, ?>)
+					// metadata
+					return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_METADATA));
 
 				TestStatus status = null;
 				if (element instanceof Test)
@@ -424,12 +469,11 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 			}
 		});
 
-		tableViewerColumn2 = new TableViewerColumn(fTestTableViewer, SWT.NONE);
-		tblclmnMessage = tableViewerColumn2.getColumn();
-		tblclmnMessage.setWidth(100);
-		tblclmnMessage.setText("Message");
-		layout.setColumnData(tblclmnMessage, new ColumnWeightData(70, 50, true));
-		tableViewerColumn2.setLabelProvider(new ColumnLabelProvider() {
+		TreeViewerColumn messageColumn = new TreeViewerColumn(viewer, SWT.NONE);
+		messageColumn.getColumn().setWidth(100);
+		messageColumn.getColumn().setText("Message");
+		layout.setColumnData(messageColumn.getColumn(), new ColumnWeightData(70, 50, true));
+		messageColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(final Object element) {
 				if (element instanceof Test) {
@@ -440,90 +484,17 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					return ((Test) element).getDescription();
 				}
 
-				if (element instanceof TestResult)
-					return ((TestResult) element).getDescription();
+				if (element instanceof Entry<?, ?>)
+					// metadata
+					return ((Entry<?, ?>) element).getValue().toString();
 
 				return super.getText(element);
 			}
-
-			@Override
-			public Image getImage(Object element) {
-				if ((element instanceof Test) && (!((Test) element).getMetaData().isEmpty()))
-					return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_METADATA));
-
-				return super.getImage(element);
-			}
-
-			@Override
-			public Image getToolTipImage(Object object) {
-				if ((object instanceof Test) && (!((Test) object).getMetaData().isEmpty()))
-					return fResourceManager.createImage(Activator.getImageDescriptor(Activator.ICON_METADATA));
-
-				return super.getToolTipImage(object);
-			}
-
-			@Override
-			public String getToolTipText(Object element) {
-				if ((element instanceof Test) && (!((Test) element).getMetaData().isEmpty())) {
-					final StringBuilder text = new StringBuilder();
-					for (final Entry<String, String> entry : ((Test) element).getMetaData().entrySet())
-						text.append(entry.getKey()).append(": ").append(entry.getValue()).append(StringTools.LINE_DELIMITER);
-
-					text.delete(text.length() - StringTools.LINE_DELIMITER.length(), text.length());
-
-					return text.toString();
-				}
-
-				return super.getToolTipText(element);
-			}
 		});
-		ColumnViewerToolTipSupport.enableFor(fTestTableViewer, ToolTip.NO_RECREATE);
 
-		sashForm.setWeights(new int[] { 1, 1 });
+		ColumnViewerToolTipSupport.enableFor(viewer, ToolTip.NO_RECREATE);
 
-		// add context menu support
-		final MenuManager menuManager = new MenuManager();
-		final Menu menu = menuManager.createContextMenu(fFileTreeViewer.getTree());
-		fFileTreeViewer.getTree().setMenu(menu);
-		getSite().registerContextMenu(menuManager, fFileTreeViewer);
-
-		final MenuManager menuManager2 = new MenuManager();
-		final Menu menu2 = menuManager2.createContextMenu(fFileTreeViewer.getTree());
-		fTestTableViewer.getTable().setMenu(menu2);
-		getSite().registerContextMenu(menuManager2, fTestTableViewer);
-
-		// add collapseAll/expandAll handlers
-		final IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-		mCollapseAllHandler = new CollapseAllHandler(fFileTreeViewer);
-		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, mCollapseAllHandler);
-		mExpandAllHandler = new ExpandAllHandler(fFileTreeViewer);
-		handlerService.activateHandler(ExpandAllHandler.COMMAND_ID, mExpandAllHandler);
-
-		// RemarksContributionFactory.addContextMenu("com.infineon.views.javascript.unittest.testfile.remarks");
-		menuManager.setRemoveAllWhenShown(true);
-
-		// load last suite
-		if (mMemento != null) {
-			final IMemento currentSuiteNode = mMemento.getChild(XML_CURRENT_SUITE);
-			if (currentSuiteNode != null) {
-				final Path path = new Path(currentSuiteNode.getTextData());
-				final IFile suiteFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-				try {
-					loadSuite(new TestSuite(new TestSuiteModel(suiteFile)));
-				} catch (final Exception e) {
-					// loading failed, ignore
-				}
-			}
-		}
-
-		// register for console events
-		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(UnitTestView.this);
-
-		final MultiSelectionProvider selectionProvider = new MultiSelectionProvider();
-		selectionProvider.addSelectionProvider(fFileTreeViewer);
-		selectionProvider.addSelectionProvider(fTestTableViewer);
-
-		getSite().setSelectionProvider(selectionProvider);
+		return viewer;
 	}
 
 	@Override
@@ -531,14 +502,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 		// nothing to do
 	}
 
-	public void collapseTests(final boolean collapse) {
-		if (collapse)
-			fFileTreeViewer.collapseAll();
-		else
-			fFileTreeViewer.expandAll();
-	}
-
-	public TreeViewer getTreeViewer() {
+	public TreeViewer getFileTreeViewer() {
 		return fFileTreeViewer;
 	}
 
@@ -591,14 +555,14 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 			}
 
 			// update table
-			if (fTestTableViewer.getInput() != null) {
+			if (fTestTreeViewer.getInput() != null) {
 				// update only if tableviewer is visible at all
 				for (final Object element : localElements) {
 					if (element instanceof Test) {
 						final TestComposite testComposite = ((Test) element).getParent();
 
-						if (fTestTableViewer.getInput().equals(testComposite)) {
-							fTestTableViewer.refresh();
+						if (fTestTreeViewer.getInput().equals(testComposite)) {
+							fTestTreeViewer.refresh();
 							// TODO scroll to last element
 
 							// one refresh is enough for the whole table, so bail out
@@ -740,7 +704,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 	}
 
 	public StructuredViewer getTableViewer() {
-		return fTestTableViewer;
+		return fTestTreeViewer;
 	}
 
 	@Override

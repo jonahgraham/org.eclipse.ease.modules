@@ -11,7 +11,7 @@
 package org.eclipse.ease.modules.unittest.ui.handler;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.ease.modules.unittest.components.TestFile;
+import org.eclipse.ease.modules.unittest.components.TestEntity;
 import org.eclipse.ease.modules.unittest.components.TestStatus;
 import org.eclipse.ease.modules.unittest.ui.views.UnitTestView;
 import org.eclipse.ease.ui.tools.ToggleHandler;
@@ -26,8 +26,8 @@ public class ToggleTestFilter extends ToggleHandler {
 		@Override
 		public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
 
-			if (element instanceof TestFile) {
-				final TestStatus status = ((TestFile) element).getStatus();
+			if (element instanceof TestEntity) {
+				final TestStatus status = ((TestEntity) element).getStatus();
 				return (status != TestStatus.PASS);
 			}
 
@@ -49,11 +49,11 @@ public class ToggleTestFilter extends ToggleHandler {
 			if (checked) {
 				final ViewerFilter[] filter = new ViewerFilter[] { new Filter() };
 
-				((UnitTestView) part).getTreeViewer().setFilters(filter);
+				((UnitTestView) part).getFileTreeViewer().setFilters(filter);
 				((UnitTestView) part).getTableViewer().setFilters(filter);
 
 			} else {
-				((UnitTestView) part).getTreeViewer().setFilters(new ViewerFilter[0]);
+				((UnitTestView) part).getFileTreeViewer().setFilters(new ViewerFilter[0]);
 				((UnitTestView) part).getTableViewer().setFilters(new ViewerFilter[0]);
 			}
 		}

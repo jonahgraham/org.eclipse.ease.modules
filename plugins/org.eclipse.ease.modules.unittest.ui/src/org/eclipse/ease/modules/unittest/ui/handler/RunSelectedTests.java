@@ -53,7 +53,7 @@ public class RunSelectedTests extends RunAllTests implements IHandler {
 					// we need to contact the context provider and extract all child nodes
 					final IWorkbenchPart part = HandlerUtil.getActivePart(event);
 					if (part instanceof UnitTestView) {
-						final IContentProvider contentProvider = ((UnitTestView) part).getTreeViewer().getContentProvider();
+						final IContentProvider contentProvider = ((UnitTestView) part).getFileTreeViewer().getContentProvider();
 
 						final LinkedList<Object> parentElements = new LinkedList<Object>();
 						parentElements.add(element);

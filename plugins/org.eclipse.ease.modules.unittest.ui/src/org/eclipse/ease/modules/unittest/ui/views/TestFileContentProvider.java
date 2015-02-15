@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.ui.views;
 
+import org.eclipse.ease.modules.unittest.components.Test;
 import org.eclipse.ease.modules.unittest.components.TestComposite;
 import org.eclipse.ease.modules.unittest.components.TestStatus;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class TestFileContentProvider implements IStructuredContentProvider {
+public class TestFileContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void dispose() {
@@ -35,5 +36,26 @@ public class TestFileContentProvider implements IStructuredContentProvider {
 		}
 
 		return new Object[0];
+	}
+
+	@Override
+	public Object[] getChildren(final Object parentElement) {
+		if (parentElement instanceof Test)
+			return ((Test) parentElement).getMetaData().entrySet().toArray();
+
+		return new Object[0];
+	}
+
+	@Override
+	public Object getParent(final Object element) {
+		return null;
+	}
+
+	@Override
+	public boolean hasChildren(final Object element) {
+		if (element instanceof Test)
+			return !((Test) element).getMetaData().isEmpty();
+
+		return false;
 	}
 }

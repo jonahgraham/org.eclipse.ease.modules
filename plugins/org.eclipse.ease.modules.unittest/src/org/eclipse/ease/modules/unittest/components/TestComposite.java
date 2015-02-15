@@ -100,7 +100,7 @@ public abstract class TestComposite extends TestEntity implements ITestListener,
 
 	public Test getCurrentTest() {
 		if (fCurrentTest == null) {
-			fGlobalTestScope = new Test(this, GLOBAL_TEST_SCOPE);
+			fGlobalTestScope = new Test(this, GLOBAL_TEST_SCOPE, true);
 
 			synchronized (fTests) {
 				fTests.add(0, fGlobalTestScope);
@@ -113,9 +113,16 @@ public abstract class TestComposite extends TestEntity implements ITestListener,
 	}
 
 	public List<Test> getTests() {
+		List<Test> result = new ArrayList<Test>();
+
 		synchronized (fTests) {
-			return new ArrayList<Test>(fTests);
+			for (Test test : fTests) {
+				if ((!test.isTransient()) || (test.getStatus() != TestStatus.PASS) || (!test.getMetaData().isEmpty()))
+					result.add(test);
+			}
 		}
+
+		return result;
 	}
 
 	public void addTestResult(final TestStatus status, final String message) {

@@ -200,7 +200,7 @@ public class TestSuite extends TestComposite {
 		private boolean runCode(final String identifier, final String code, final IProgressMonitor monitor) throws InterruptedException {
 			if ((code != null) && (!code.trim().isEmpty())) {
 
-				addTest(new Test(TestSuite.this, "[" + identifier + "]"));
+				addTest(new Test(TestSuite.this, "[" + identifier + "]", true));
 				final ScriptResult result = getScriptEngine().executeSync(code);
 
 				if (result.hasException()) {

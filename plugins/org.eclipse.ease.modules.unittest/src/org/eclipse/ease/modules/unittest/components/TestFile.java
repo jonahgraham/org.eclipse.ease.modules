@@ -136,7 +136,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 			final String fragmentCode = getCodeFragment(fragmentID);
 			if ((fragmentCode != null) && (!fragmentCode.trim().isEmpty())) {
 
-				addTest(new Test(TestFile.this, "[" + fragmentID + "]"));
+				addTest(new Test(TestFile.this, "[" + fragmentID + "]", true));
 				final ScriptResult setupResult = getScriptEngine().executeSync(fragmentCode);
 
 				if (setupResult.hasException()) {

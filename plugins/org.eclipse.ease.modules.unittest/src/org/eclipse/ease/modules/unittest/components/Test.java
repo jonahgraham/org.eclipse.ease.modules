@@ -34,6 +34,7 @@ public class Test extends TestEntity {
 	private final List<TestResult> fResults = new ArrayList<TestResult>();
 
 	private final Map<String, String> fMetaData = new HashMap<String, String>();
+	private boolean fTransient = false;
 
 	public Test(final TestComposite parent, final String title, final String description) {
 		super(parent);
@@ -46,6 +47,12 @@ public class Test extends TestEntity {
 		this(parent, title, null);
 	}
 
+	public Test(final TestComposite parent, final String title, final boolean isTransient) {
+		this(parent, title, null);
+
+		fTransient = isTransient;
+	}
+
 	public String getTitle() {
 		return fTitle;
 	}
@@ -53,6 +60,9 @@ public class Test extends TestEntity {
 	@Override
 	public TestStatus getStatus() {
 		TestStatus status = super.getStatus();
+
+		if ((isTransient()) && (status == TestStatus.RUNNING))
+			status = TestStatus.PASS;
 
 		// merge status of own messages
 		for (final TestResult message : getMessages())
@@ -156,8 +166,7 @@ public class Test extends TestEntity {
 	}
 
 	public boolean isTransient() {
-		// TODO Auto-generated method stub
-		return false;
+		return fTransient;
 	}
 
 	public void addMetaData(final String identifier, final String content) {

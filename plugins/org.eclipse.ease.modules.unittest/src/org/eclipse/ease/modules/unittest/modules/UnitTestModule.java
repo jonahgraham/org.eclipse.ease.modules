@@ -105,7 +105,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 * @throws CoreException
 	 */
 	@WrapToScript
-	public TestSuite openTestsuite(final String filename) throws IOException, CoreException {
+	public TestSuite openTestSuite(final String filename) throws IOException, CoreException {
 		final Object file = ResourceTools.resolveFile(filename, getScriptEngine().getExecutedFile(), true);
 		if ((file instanceof IFile) && (((IFile) file).exists())) {
 			if ("suite".equalsIgnoreCase(((IFile) file).getFileExtension())) {

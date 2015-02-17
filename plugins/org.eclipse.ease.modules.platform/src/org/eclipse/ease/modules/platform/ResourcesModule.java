@@ -409,7 +409,7 @@ public class ResourcesModule extends AbstractScriptModule {
 						dialog.setInput(dialogRoot);
 
 						if (dialog.open() == Window.OK)
-							setResult("workspace:/" + ((IPath) dialog.getFirstResult()).toPortableString());
+							setResult("workspace:/" + ((IResource) dialog.getFirstResult()).getFullPath().toPortableString());
 					}
 				}
 			};

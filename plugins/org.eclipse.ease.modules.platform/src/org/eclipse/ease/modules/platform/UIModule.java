@@ -121,7 +121,7 @@ public class UIModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static String showInputDialog(final String message, @ScriptParameter(defaultValue = "") final String initialValue,
-			@ScriptParameter(defaultValue = "Info") final String title) {
+			@ScriptParameter(defaultValue = "Information request") final String title) {
 
 		final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
@@ -189,7 +189,7 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript
-	public static void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
+	public static void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Error") final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override

@@ -1,13 +1,16 @@
 package org.eclipse.ease.modules.platform;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ease.AbstractScriptEngine;
 import org.eclipse.ease.IScriptEngine;
+import org.eclipse.ease.IScriptable;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
@@ -39,8 +42,8 @@ public class ScriptingModule extends AbstractScriptModule {
 			return engine.createEngine();
 
 		// by literal name
-		Collection<EngineDescription> engines = scriptService.getEngines();
-		for (EngineDescription description : engines) {
+		final Collection<EngineDescription> engines = scriptService.getEngines();
+		for (final EngineDescription description : engines) {
 			if (description.getName().equals(identifier))
 				return description.createEngine();
 		}
@@ -61,10 +64,10 @@ public class ScriptingModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static String[] listScriptEngines() {
-		List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<String>();
 
 		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
-		for (EngineDescription description : scriptService.getEngines())
+		for (final EngineDescription description : scriptService.getEngines())
 			result.add(description.getID());
 
 		return result.toArray(new String[result.size()]);
@@ -89,10 +92,10 @@ public class ScriptingModule extends AbstractScriptModule {
 
 		if (engineID == null) {
 			// try to find engine for script type
-			String location = ResourceTools.toAbsoluteLocation(resource, getScriptEngine().getExecutedFile());
-			ScriptType scriptType = scriptService.getScriptType(location);
+			final String location = ResourceTools.toAbsoluteLocation(resource, getScriptEngine().getExecutedFile());
+			final ScriptType scriptType = scriptService.getScriptType(location);
 			if (scriptType != null) {
-				List<EngineDescription> engines = scriptType.getEngines();
+				final List<EngineDescription> engines = scriptType.getEngines();
 				if (!engines.isEmpty())
 					engineID = engines.get(0).getID();
 			}
@@ -100,7 +103,7 @@ public class ScriptingModule extends AbstractScriptModule {
 
 		if (engineID != null) {
 			// engine found
-			IScriptEngine engine = scriptService.getEngineByID(engineID).createEngine();
+			final IScriptEngine engine = scriptService.getEngineByID(engineID).createEngine();
 
 			// connect streams
 			engine.setOutputStream(getScriptEngine().getOutputStream());
@@ -116,7 +119,7 @@ public class ScriptingModule extends AbstractScriptModule {
 				try {
 					// no file available, try to resolve URI
 					scriptObject = URI.create(resource.toString());
-				} catch (IllegalArgumentException e) {
+				} catch (final IllegalArgumentException e) {
 					// could not resolve URI, giving up
 					return null;
 				}
@@ -142,10 +145,10 @@ public class ScriptingModule extends AbstractScriptModule {
 	@WrapToScript
 	public static boolean join(final IScriptEngine engine, @ScriptParameter(defaultValue = "0") final long timeout) {
 		if (engine instanceof Job) {
-			long stopWaitingTime = System.currentTimeMillis() + timeout;
+			final long stopWaitingTime = System.currentTimeMillis() + timeout;
 			try {
 				while (((Job) engine).getState() != Job.NONE) {
-					long now = System.currentTimeMillis();
+					final long now = System.currentTimeMillis();
 					if (timeout == 0)
 						Thread.sleep(1000);
 
@@ -156,7 +159,7 @@ public class ScriptingModule extends AbstractScriptModule {
 						// timeout depleted
 						return false;
 				}
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				// we got interrupted - ev the current engine is shutting down?
 				return false;
 			}
@@ -167,5 +170,66 @@ public class ScriptingModule extends AbstractScriptModule {
 
 		// cannot evaluate engine state
 		throw new RuntimeException("Cannot evaluate engine state");
+	}
+
+	/**
+	 * Run a code fragment in a synchronized block. Executes <i>code</i> within a synchronized block on the <i>monitor</i> object. The code object might be a
+	 * {@link String}, {@link File}, {@link IFile} or any other object that can be adapted to {@link IScriptable}.
+	 *
+	 * @param monitor
+	 *            monitor to synchronize on
+	 * @param code
+	 *            code to run.
+	 * @return
+	 */
+	@WrapToScript
+	public Object executeSync(final Object monitor, final Object code) {
+		synchronized (monitor) {
+			return getScriptEngine().inject(code);
+		}
+	}
+
+	/**
+	 * Causes the current thread to wait until either another thread invokes the {@link java.lang.Object#notify()} method or the
+	 * {@link java.lang.Object#notifyAll()} method for this object, or a specified amount of time has elapsed. Calls the java method monitor.wait(timeout).
+	 *
+	 * @param monitor
+	 *            monitor to wait for
+	 * @param timeout
+	 *            max timeout (0 does not time out)
+	 * @throws InterruptedException
+	 *             when wait gets interrupted
+	 */
+	@WrapToScript
+	public void wait(final Object monitor, @ScriptParameter(defaultValue = "0") final long timeout) throws InterruptedException {
+		synchronized (monitor) {
+			monitor.wait(timeout);
+		}
+	}
+
+	/**
+	 * Wakes up a single thread that is waiting on the monitor. Calls the java method monitor.notify().
+	 *
+	 * @param monitor
+	 *            monitor to notify
+	 */
+	@WrapToScript
+	public void notify(final Object monitor) {
+		synchronized (monitor) {
+			monitor.notify();
+		}
+	}
+
+	/**
+	 * Wakes up all threads that are waiting on the monitor. Calls the java method monitor.notifyAll().
+	 *
+	 * @param monitor
+	 *            monitor to notify
+	 */
+	@WrapToScript
+	public void notifyAll(final Object monitor) {
+		synchronized (monitor) {
+			monitor.notifyAll();
+		}
 	}
 }

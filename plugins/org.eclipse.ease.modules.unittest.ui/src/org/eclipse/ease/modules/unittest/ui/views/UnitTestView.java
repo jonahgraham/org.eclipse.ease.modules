@@ -338,7 +338,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 	}
 
 	private TreeViewer createTestArea(final Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		final Composite composite = new Composite(parent, SWT.NONE);
 		final TreeColumnLayout layout = new TreeColumnLayout();
 		composite.setLayout(layout);
 
@@ -410,7 +410,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 		viewer.setContentProvider(new TestFileContentProvider());
 
-		TreeViewerColumn testColumn = new TreeViewerColumn(viewer, SWT.NONE);
+		final TreeViewerColumn testColumn = new TreeViewerColumn(viewer, SWT.NONE);
 		testColumn.getColumn().setWidth(100);
 		testColumn.getColumn().setText("Test");
 		layout.setColumnData(testColumn.getColumn(), new ColumnWeightData(30, 50, true));
@@ -469,7 +469,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 			}
 		});
 
-		TreeViewerColumn messageColumn = new TreeViewerColumn(viewer, SWT.NONE);
+		final TreeViewerColumn messageColumn = new TreeViewerColumn(viewer, SWT.NONE);
 		messageColumn.getColumn().setWidth(100);
 		messageColumn.getColumn().setText("Message");
 		layout.setColumnData(messageColumn.getColumn(), new ColumnWeightData(70, 50, true));
@@ -543,14 +543,10 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 				else if (element instanceof TestComposite)
 					affectedComposite = (TestComposite) element;
 
-				if (affectedComposite != null) {
-					// update tree element and all its parents
-					// Object node = element;
-					// FIXME stalls UI thread in an endless loop
-					// do {
+				while (affectedComposite != null) {
+					// update tree element and all its parents (no folders)
 					fFileTreeViewer.update(affectedComposite, new String[] { TEST_STATUS_PROPERTY });
-					// node = ((ITreeContentProvider) treeViewer.getContentProvider()).getParent(element);
-					// } while (node != null);
+					affectedComposite = affectedComposite.getParent();
 				}
 			}
 

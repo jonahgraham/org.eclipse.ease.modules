@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.eclipse.ease.modules.help</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<parent>
+		<groupId>org.eclipse.ease.modules</groupId>
+		<artifactId>org.eclipse.ease.modules.releng</artifactId>
+		<version>0.2.0-SNAPSHOT</version>
+		<relativePath>../../releng/org.eclipse.ease.modules.releng</relativePath>
+	</parent>
+
+	<properties>
+		<platform-isv>org.eclipse.platform.doc.isv/reference/api</platform-isv>
+	</properties>
+
+	<profiles>
+		<profile>
+			<!-- Do the javadoc generation in a profile to keep standard builds (e.g. 
+				gerrit) fast. -->
+			<id>api-docs</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-document-bundle-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<executions>
+							<execution>
+								<id>eclipse-javadoc</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>javadoc</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
+									<tocFile>${project.basedir}/help/api_docs.xml</tocFile>
+									<tocOptions>
+										<mainLabel>Modules API</mainLabel>
+									</tocOptions>
+									<javadocOptions>
+										<additionalArguments>
+											<additionalArgument>${javadoc-args}</additionalArgument>
+											<additionalArgument>
+												-linkoffline
+												http://docs.oracle.com/javase/8/docs/api/
+												${project.basedir}/package-lists/java8/
+											</additionalArgument>
+											<additionalArgument>
+												-linkoffline
+												../../${platform-isv}
+												${project.basedir}/package-lists/eclipse-luna/
+											</additionalArgument>
+											<additionalArgument>-public</additionalArgument>
+										</additionalArguments>
+									</javadocOptions>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

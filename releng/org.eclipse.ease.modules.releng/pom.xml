@@ -111,6 +111,7 @@
 		<module>../../plugins/org.eclipse.ease.modules.modeling</module>
 		<module>../../plugins/org.eclipse.ease.modules.unittest</module>
 		<module>../../plugins/org.eclipse.ease.modules.unittest.ui</module>
+		<module>../../plugins/org.eclipse.ease.modules.help</module>
 
 		<!-- Features -->
 		<module>../../features/org.eclipse.ease.modules.feature</module>

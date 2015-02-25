@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ease.Logger;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
@@ -239,7 +241,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	@WrapToScript
 	public void copyFile(final Object sourceLocation, final Object targetLocation) throws Exception {
 
-		IFileHandle handle = writeFile(targetLocation, readFile(sourceLocation, -1), IFileHandle.WRITE);
+		final IFileHandle handle = writeFile(targetLocation, readFile(sourceLocation, -1), IFileHandle.WRITE);
 		if (handle != null)
 			handle.close();
 	}
@@ -579,5 +581,40 @@ public class ResourcesModule extends AbstractScriptModule {
 		}
 
 		return result.toArray(new Object[result.size()]);
+	}
+
+	/**
+	 * Links a project into the current workspace. Does not copy resources to the workspace.
+	 *
+	 * @param location
+	 *            location of project (needs to contain <i>.project</i> file)
+	 * @return link result
+	 */
+	@WrapToScript
+	public boolean linkProject(final String location) {
+		final Object resolvedLocation = ResourceTools.resolveFolder(location, getScriptEngine().getExecutedFile(), true);
+
+		if (resolvedLocation instanceof IContainer) {
+			Logger.logWarning("The folder to link is already part of the workspace: " + location);
+			return false;
+
+		} else if (resolvedLocation instanceof File) {
+			final Path projectPath = new Path(((File) resolvedLocation).getAbsoluteFile() + File.separator + ".project");
+			try {
+				final IProjectDescription description = ResourcesPlugin.getWorkspace().loadProjectDescription(projectPath);
+				final IProject project = getProject(description.getName());
+				project.create(description, null);
+				project.open(null);
+
+				return true;
+			} catch (final CoreException e) {
+				Logger.logError("Could not link to project", e);
+				return false;
+			}
+
+		} else {
+			Logger.logWarning("Could not resolve location: " + location);
+			return false;
+		}
 	}
 }

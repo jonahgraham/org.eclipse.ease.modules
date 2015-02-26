@@ -1,33 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
    <extension point="org.eclipse.ease.modules">
-      <module
-            category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.modules.platform.UIModule"
-            id="org.eclipse.ease.module.platform.ui"
-            name="UI"
-            visible="true">
+      <module category="org.eclipse.ease.category.system" class="org.eclipse.ease.modules.platform.UIModule" id="org.eclipse.ease.modules.platform.ui" name="UI" visible="true">
       </module>
-      <module
-            category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.modules.platform.ResourcesModule"
-            id="org.eclipse.ease.module.platform.resources"
-            name="Resources"
-            visible="true">
+      <module category="org.eclipse.ease.category.system" class="org.eclipse.ease.modules.platform.ResourcesModule" id="org.eclipse.ease.modules.platform.resources" name="Resources" visible="true">
       </module>
-      <module
-            category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.modules.platform.ScriptingModule"
-            id="org.eclipse.ease.module.platform.scripting"
-            name="Scripting"
-            visible="true">
+      <module category="org.eclipse.ease.category.system" class="org.eclipse.ease.modules.platform.ScriptingModule" id="org.eclipse.ease.modules.platform.scripting" name="Scripting" visible="true">
       </module>
-      <module
-            category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.modules.platform.PlatformModule"
-            id="org.eclipse.ease.module.platform.platform"
-            name="Platform"
-            visible="true">
+      <module category="org.eclipse.ease.category.system" class="org.eclipse.ease.modules.platform.PlatformModule" id="org.eclipse.ease.modules.platform.platform" name="Platform" visible="true">
       </module>
    </extension>
 

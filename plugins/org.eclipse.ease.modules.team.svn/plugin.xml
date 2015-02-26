@@ -6,7 +6,7 @@
       <module
             category="org.eclipse.ease.category.system"
             class="org.eclipse.ease.modules.svn.SVNModule"
-            id="org.eclipse.ease.modules.svn"
+            id="org.eclipse.ease.modules.team.svn"
             name="SVN"
             visible="true">
       </module>

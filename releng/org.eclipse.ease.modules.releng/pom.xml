@@ -161,7 +161,7 @@
 							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
 							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
 							<docletPath>${doclet.path}</docletPath>
-							<additionalparam>-root ${basedir} -linkOffline http://docs.oracle.com/javase/8/docs/api ${basedir}/../../../ease.core/plugins/org.eclipse.ease.help/package-lists/java8 -linkOffline /help/topic/org.eclipse.platform.doc.isv/reference/api ${basedir}/../../../ease.core/plugins/org.eclipse.ease.help/package-lists/eclipse-luna"</additionalparam>
+							<additionalparam>-root ${basedir} -linkOffline http://docs.oracle.com/javase/8/docs/api ${basedir}/../../../ease.core/plugins/org.eclipse.ease.help/package-lists/java8 -linkOffline /help/topic/org.eclipse.platform.doc.isv/reference/api ${basedir}/../../../ease.core/plugins/org.eclipse.ease.help/package-lists/eclipse-luna</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 						</configuration>
 						<executions>

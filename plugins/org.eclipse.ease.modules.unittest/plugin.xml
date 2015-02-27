@@ -16,7 +16,7 @@
          name="Unittest"
          visible="false">
       <dependency
-            module="org.eclipse.ease.module.platform.resources">
+            module="org.eclipse.ease.modules.platform.resources">
       </dependency>
    </module>
 </extension>

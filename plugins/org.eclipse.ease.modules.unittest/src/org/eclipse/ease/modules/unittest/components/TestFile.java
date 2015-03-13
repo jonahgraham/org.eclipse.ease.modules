@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ease.ExitException;
+import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.ScriptResult;
 import org.eclipse.ease.modules.EnvironmentModule;
 import org.eclipse.ease.modules.unittest.Bundle;
@@ -174,7 +175,9 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 		if (fJob != null) {
 			fJob.cancel();
 
-			getScriptEngine().terminateCurrent();
+			final IScriptEngine engine = getScriptEngine();
+			if (engine != null)
+				engine.terminateCurrent();
 		}
 	}
 

@@ -171,8 +171,11 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 	}
 
 	public void terminate() {
-		if (fJob != null)
+		if (fJob != null) {
 			fJob.cancel();
+
+			getScriptEngine().terminateCurrent();
+		}
 	}
 
 	public TestSuite getTestSuite() {

@@ -31,6 +31,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -220,13 +221,42 @@ public class UIModule extends AbstractScriptModule {
 	 * If the view is already visible it will be given focus.
 	 *
 	 * @param name
-	 *            name or id of viw to open
+	 *            name or id of view to open
 	 * @return view instance or <code>null</code>
 	 * @throws PartInitException
 	 *             when view cannot be created
 	 */
-	@WrapToScript(alias = "openView")
 	public static IViewPart showView(final String name) throws PartInitException {
+		return showView(name, null, IWorkbenchPage.VIEW_ACTIVATE);
+	}
+
+	/**
+	 * Shows a view in this page with the given id and secondary id. The Behavior of this method varies based on the supplied mode. If
+	 * <code>VIEW_ACTIVATE</code> is supplied, the view is given focus. If <code>VIEW_VISIBLE</code> is supplied, then it is made visible but not given focus.
+	 * Finally, if <code>VIEW_CREATE</code> is supplied the view is created and will only be made visible if it is not created in a folder that already contains
+	 * visible views.
+	 * <p>
+	 * This allows multiple instances of a particular view to be created. They are disambiguated using the secondary id. If a secondary id is given, the view
+	 * must allow multiple instances by having specified allowMultiple="true" in its extension.
+	 * </p>
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @param secondaryId
+	 *            the secondary id to use, or <code>null</code> for no secondary id, Default is <code>null</code>
+	 * @param mode
+	 *            the activation mode. Must be {@link #VIEW_ACTIVATE}, {@link #VIEW_VISIBLE} or {@link #VIEW_CREATE}, Default is {@link #VIEW_ACTIVATE}
+	 * @return a view
+	 * @exception PartInitException
+	 *                if the view could not be initialized
+	 * @exception IllegalArgumentException
+	 *                if the supplied mode is not valid
+	 * @since 3.0
+	 */
+	@WrapToScript(alias = "openView")
+	public static IViewPart showView(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String secondaryId,
+			@ScriptParameter(defaultValue = "" + IWorkbenchPage.VIEW_ACTIVATE) final int mode) throws PartInitException {
+
 		// find view ID
 		final String viewID = getIDForName(name);
 
@@ -237,10 +267,10 @@ public class UIModule extends AbstractScriptModule {
 				public void run() {
 					try {
 						try {
-							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID));
+							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID, secondaryId, mode));
 						} catch (final NullPointerException e) {
 							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
-								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView(viewID));
+								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView(viewID, secondaryId, mode));
 						}
 					} catch (final PartInitException e) {
 					}

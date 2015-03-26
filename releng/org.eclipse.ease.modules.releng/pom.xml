@@ -107,6 +107,7 @@
 
 	<modules>
 		<!-- Modules -->
+		<module>../../plugins/org.eclipse.ease.modules.charting</module>
 		<module>../../plugins/org.eclipse.ease.modules.platform</module>
 		<module>../../plugins/org.eclipse.ease.modules.modeling</module>
 		<module>../../plugins/org.eclipse.ease.modules.unittest</module>
@@ -118,6 +119,7 @@
 		<module>../../features/org.eclipse.ease.modules.feature</module>
 		<module>../../features/org.eclipse.ease.modules.unittest.feature</module>
 		<module>../../features/org.eclipse.ease.modules.team.svn.feature</module>
+		<module>../../features/org.eclipse.ease.modules.charting.feature</module>
 
 		<!-- releng -->
 		<module>../org.eclipse.ease.modules.releng.target</module>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ease.ui.views.category.scripting"
+            class="org.eclipse.ease.modules.charting.views.ChartView"
+            icon="icons/Chart.png"
+            id="org.eclipse.ease.modules.charting.views.ChartView"
+            name="Chart"
+            restorable="false">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ease.modules">
+      <module
+            class="org.eclipse.ease.modules.charting.modules.ChartingModule"
+            id="org.eclipse.ease.modules.charting.ChartingModule"
+            name="Charting"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.modules.platform.resources">
+         </dependency>
+      </module>
+   </extension>
+
+</plugin>

@@ -22,6 +22,7 @@ import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.IScriptFunctionModifier;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
+import org.eclipse.ease.modules.platform.IFileHandle;
 import org.eclipse.ease.modules.platform.ResourcesModule;
 import org.eclipse.ease.modules.unittest.components.Test;
 import org.eclipse.ease.modules.unittest.components.TestComposite;
@@ -143,7 +144,8 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 		final IReportGenerator report = ReportTools.getReport(reportType);
 		if (report != null) {
 			final String reportData = report.createReport(title, description, suite);
-			getEnvironment().getModule(ResourcesModule.class).writeFile(file, reportData, ResourcesModule.WRITE);
+			IFileHandle handle = getEnvironment().getModule(ResourcesModule.class).writeFile(file, reportData, ResourcesModule.WRITE);
+			ResourcesModule.closeFile(handle);
 			return true;
 		}
 

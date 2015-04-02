@@ -25,6 +25,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ScriptingModule extends AbstractScriptModule {
 
+	public static final String MODULE_ID = "/System/Scripting";
+
 	/**
 	 * Create a new script engine instance.
 	 *

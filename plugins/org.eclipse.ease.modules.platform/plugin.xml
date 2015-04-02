@@ -10,5 +10,12 @@
       <module category="org.eclipse.ease.category.system" class="org.eclipse.ease.modules.platform.PlatformModule" id="org.eclipse.ease.modules.platform.platform" name="Platform" visible="true">
       </module>
    </extension>
+   <extension
+         point="org.eclipse.ease.ui.shell">
+      <dropHandler
+            class="org.eclipse.ease.modules.platform.dnd.ForkDropHandler"
+            priority="5">
+      </dropHandler>
+   </extension>
 
 </plugin>

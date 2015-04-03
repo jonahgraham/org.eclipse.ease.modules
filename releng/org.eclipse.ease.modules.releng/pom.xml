@@ -17,7 +17,7 @@
 
 		<!-- build parameters -->
 		<compiler.compliance>1.6</compiler.compliance>
-		<jacoco.report.path>../../releng/org.eclipse.ease.releng/target/coverage-reports/jacoco.exec</jacoco.report.path>
+		<jacoco.report.path>../coverage-report/jacoco.exec</jacoco.report.path>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -99,7 +99,7 @@
 					<jgit.ignore>
 						pom.xml
 					</jgit.ignore>
-					<format>${build-prefix}yyyyMMddHHmm</format>
+					<format>'${build-prefix}'yyyyMMddHHmm</format>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -143,7 +143,7 @@
 			</activation>
 
 			<properties>
-				<build-prefix>'I'</build-prefix>
+				<build-prefix>I</build-prefix>
 			</properties>
 		</profile>
 
@@ -241,6 +241,48 @@
 		</profile>
 
 		<profile>
+			<id>test</id>
+			<modules>
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<useUIHarness>false</useUIHarness>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<environments>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86_64</arch>
+								</environment>
+							</environments>
+							<dependency-resolution>
+								<extraRequirements>
+									<requirement>
+										<type>eclipse-plugin</type>
+										<id>org.hamcrest</id>
+										<versionRange>0.0.0</versionRange>
+									</requirement>
+								</extraRequirements>
+							</dependency-resolution>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
 			<!-- sign plugins and features using the eclipse.org certificate. Works 
 				only when running on the eclipse build servers (hudson) -->
 			<id>sign</id>
@@ -266,4 +308,5 @@
 			</build>
 		</profile>
 	</profiles>
+	
 </project>

@@ -18,7 +18,7 @@
 			<build>
 				<plugins>
 
-					<!-- enable module documentation builder -->
+					<!-- update remote p2 repository -->
 					<plugin>
 						<artifactId>tycho-p2-extras-plugin</artifactId>
 						<groupId>org.eclipse.tycho.extras</groupId>
@@ -36,9 +36,9 @@
 											<url>${project.build.directory}/repository</url>
 										</repository>
 									</source>
-									<append>true</append>
-									<latestVersionOnly>false</latestVersionOnly>
-									<destination>${DESTINATION}</destination>
+									<append>${p2.append}</append>
+									<latestVersionOnly>${p2.keepLatestOnly}</latestVersionOnly>
+									<destination>${p2.destination}</destination>
 								</configuration>
 							</execution>
 						</executions>
@@ -47,5 +47,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

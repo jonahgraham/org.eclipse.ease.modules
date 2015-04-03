@@ -11,7 +11,8 @@
 	</parent>
 
 	<properties>
-		<platform-isv>org.eclipse.platform.doc.isv/reference/api</platform-isv>
+		<platform.api>org.eclipse.platform.doc.isv/reference/api</platform.api>
+		<ease.api>org.eclipse.ease.help/help/api-docs/javadoc</ease.api>
 	</properties>
 
 	<profiles>
@@ -48,8 +49,13 @@
 											</additionalArgument>
 											<additionalArgument>
 												-linkoffline
-												../../${platform-isv}
-												${project.basedir}/package-lists/eclipse-luna/
+												../../${platform.api}
+												http://help.eclipse.org/luna/topic/org.eclipse.platform.doc.isv/reference/api/
+											</additionalArgument>
+											<additionalArgument>
+												-linkoffline
+												../../${ease.api}
+												https://hudson.eclipse.org/ease/job/ease-core-nightly/javadoc/
 											</additionalArgument>
 											<additionalArgument>-public</additionalArgument>
 										</additionalArguments>

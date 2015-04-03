@@ -40,6 +40,9 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
+/**
+ * Methods invoking code interfering with the UI thread.
+ */
 public class UIModule extends AbstractScriptModule {
 
 	/**
@@ -239,7 +242,7 @@ public class UIModule extends AbstractScriptModule {
 	 * This allows multiple instances of a particular view to be created. They are disambiguated using the secondary id. If a secondary id is given, the view
 	 * must allow multiple instances by having specified allowMultiple="true" in its extension.
 	 * </p>
-	 * 
+	 *
 	 * @param viewId
 	 *            the id of the view extension to use
 	 * @param secondaryId

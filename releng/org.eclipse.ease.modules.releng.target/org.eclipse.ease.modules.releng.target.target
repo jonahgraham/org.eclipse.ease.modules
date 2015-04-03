@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="Luna" sequenceNumber="1428570389">
+<target name="Luna" sequenceNumber="1432195630">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.platform.feature.group" version="4.4.2.v20150204-1700"/>
@@ -15,6 +15,8 @@
       <unit id="org.eclipse.papyrus.uml.diagram.feature.feature.group" version="1.0.2.v201502181349"/>
       <unit id="org.eclipse.uml2.uml" version="5.0.2.v20150202-0947"/>
       <unit id="org.eclipse.gmf.runtime.diagram.ui" version="1.8.0.201408201453"/>
+      <unit id="org.eclipse.emf.emfstore.client.ui.feature.feature.group" version="1.4.1.v20150218-0800"/>
+      <unit id="org.eclipse.ocl.examples.unified.core.feature.group" version="3.4.3.v20150213-2254"/>
       <unit id="org.eclipse.wst.xml_core.feature.feature.group" version="3.6.3.v201501211904"/>
       <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="3.6.3.v201501292352"/>
       <unit id="org.eclipse.pde.feature.group" version="3.10.1.v20150204-1700"/>

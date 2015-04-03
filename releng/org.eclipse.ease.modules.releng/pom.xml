@@ -62,7 +62,7 @@
 						<artifact>
 							<groupId>org.eclipse.ease.modules</groupId>
 							<artifactId>org.eclipse.ease.modules.releng.target</artifactId>
-							<version>0.2.0-SNAPSHOT</version>
+							<version>0.3.0-SNAPSHOT</version>
 						</artifact>
 					</target>
 				</configuration>
@@ -116,6 +116,7 @@
 		<module>../../plugins/org.eclipse.ease.modules.charting</module>
 		<module>../../plugins/org.eclipse.ease.modules.platform</module>
 		<module>../../plugins/org.eclipse.ease.modules.modeling</module>
+		<module>../../plugins/org.eclipse.ease.modules.modeling.ui</module>
 		<module>../../plugins/org.eclipse.ease.modules.unittest</module>
 		<module>../../plugins/org.eclipse.ease.modules.unittest.ui</module>
 		<module>../../plugins/org.eclipse.ease.modules.help</module>
@@ -123,6 +124,7 @@
 
 		<!-- Features -->
 		<module>../../features/org.eclipse.ease.modules.feature</module>
+		<module>../../features/org.eclipse.ease.modules.modeling.feature</module>
 		<module>../../features/org.eclipse.ease.modules.unittest.feature</module>
 		<module>../../features/org.eclipse.ease.modules.team.svn.feature</module>
 		<module>../../features/org.eclipse.ease.modules.charting.feature</module>

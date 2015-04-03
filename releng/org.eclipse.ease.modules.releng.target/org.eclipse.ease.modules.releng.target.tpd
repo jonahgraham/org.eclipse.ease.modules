@@ -16,7 +16,9 @@ location "http://download.eclipse.org/releases/luna/" {
 	org.eclipse.papyrus.uml.diagram.feature.feature.group
 	org.eclipse.uml2.uml
 	org.eclipse.gmf.runtime.diagram.ui
-	
+	org.eclipse.emf.emfstore.client.ui.feature.feature.group
+	org.eclipse.ocl.examples.unified.core.feature.group
+
 	// unit test modules
 	org.eclipse.wst.xml_core.feature.feature.group
 	org.eclipse.wst.xml_ui.feature.feature.group

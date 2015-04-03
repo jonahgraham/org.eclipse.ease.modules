@@ -16,9 +16,11 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ease.Logger;
 import org.eclipse.ease.modules.AbstractScriptModule;
+import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ease.modules.platform.UIModule;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
 
@@ -73,8 +75,9 @@ public class SelectionModule extends AbstractScriptModule {
 	 * @return
 	 */
 	@WrapToScript
-	public Iterable<Object> getIterableSelection() {
-		ISelection selection = getEnvironment().getModule(UIModule.class).getSelection(null);
+	public Iterable<Object> getIterableSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
+		ISelection selection  = getEnvironment().getModule(UIModule.class).getSelection(name);
+		
 		IIterable result = getAdapter(IIterable.class, selection);
 		if (result != null) {
 			return Lists.newArrayList(result.iterator());

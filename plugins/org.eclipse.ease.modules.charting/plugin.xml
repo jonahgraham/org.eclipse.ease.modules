@@ -25,5 +25,33 @@
          </dependency>
       </module>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ease.modules.charting.views.ChartView">
+         <command
+               commandId="org.eclipse.ease.charting.commands.exportGraph"
+               icon="icons/Photo.png"
+               label="Save Snapshot"
+               style="push"
+               tooltip="Save Snapshot to PNG file">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ease.commands.category.charting"
+            defaultHandler="org.eclipse.ease.modules.charting.commands.ExportGraph"
+            description="Export Graph as PNG file"
+            id="org.eclipse.ease.charting.commands.exportGraph"
+            name="Export Graph">
+      </command>
+      <category
+            id="org.eclipse.ease.commands.category.charting"
+            name="Charting">
+      </category>
+   </extension>
 
 </plugin>

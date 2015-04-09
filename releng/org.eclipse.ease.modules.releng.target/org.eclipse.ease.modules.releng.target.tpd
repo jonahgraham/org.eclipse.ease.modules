@@ -43,5 +43,5 @@ location "http://download.eclipse.org/tools/orbit/downloads/drops/R2014052502125
 
 location "http://download.eclipse.org/technology/nebula/snapshot" {
 	// charting module
-	org.eclipse.nebula.visualization.feature.feature.group
+	org.eclipse.nebula.visualization.feature.feature.group lazy
 }

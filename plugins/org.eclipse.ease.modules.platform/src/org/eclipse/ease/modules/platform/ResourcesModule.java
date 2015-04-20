@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -50,9 +51,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * Provides file access for workspace and file system resources. Methods
- * accepting location objects can deal with {@link String}, {@link URI},
- * {@link IFile} and {@link File} instances.
+ * Provides file access for workspace and file system resources. Methods accepting location objects can deal with {@link String}, {@link URI}, {@link IFile} and
+ * {@link File} instances.
  */
 public class ResourcesModule extends AbstractScriptModule {
 
@@ -67,6 +67,26 @@ public class ResourcesModule extends AbstractScriptModule {
 	/** Access modifier for append mode (4). */
 	@WrapToScript
 	public static final int APPEND = IFileHandle.APPEND;
+
+	/**
+	 * Monitor to wake up listeners when done.
+	 */
+	private class ProgressMonitor extends NullProgressMonitor {
+		private boolean fDone = false;
+
+		@Override
+		public void done() {
+			fDone = true;
+
+			synchronized (this) {
+				notifyAll();
+			}
+		}
+
+		public boolean isDone() {
+			return fDone;
+		}
+	}
 
 	private static final String LINE_DELIMITER = System.getProperty(Platform.PREF_LINE_SEPARATOR);
 
@@ -93,11 +113,11 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Get a workspace or file system file. Resolves relative and absolute file
-	 * locations. Relative files are resolved against the current script file.
-	 * If <i>exists</i> is <code>false</code> this method also returns files
-	 * that do not exist yet. If <code>true</code> only existing instances are
-	 * returned
+	 * Get a workspace or file system file. Resolves relative and absolute file locations. Relative files are resolved against the current script file. If
+	 * <i>exists</i> is <code>false</code> this method also returns files that do not exist yet. If <code>true</code> only existing instances are returned.
+	 *
+	 * @scriptExample getFile("workspace://my project/some folder/file.txt") to get the file.txt resource from the workspace
+	 * @scriptExample getFile("project://some folder/file.txt") to get the file.txt resource as a project relative path
 	 *
 	 * @param location
 	 *            file location/path to resolve
@@ -111,8 +131,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Create a new workspace project. Will create a new project if it now
-	 * already exists. If creation fails, <code>null</code> is returned.
+	 * Create a new workspace project. Will create a new project if it now already exists. If creation fails, <code>null</code> is returned.
 	 *
 	 * @param name
 	 *            name or project to create
@@ -138,8 +157,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *
 	 * @param location
 	 *            folder location
-	 * @return {@link IFolder}, {@link File} or <code>null</code> in case of
-	 *         error
+	 * @return {@link IFolder}, {@link File} or <code>null</code> in case of error
 	 * @throws CoreException
 	 */
 	@WrapToScript
@@ -176,21 +194,18 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Opens a file from the workspace or the file system. If the file does not
-	 * exist and we open it for writing, the file is created automatically.
+	 * Opens a file from the workspace or the file system. If the file does not exist and we open it for writing, the file is created automatically.
 	 *
 	 * @param location
 	 *            file location
 	 * @param mode
-	 *            one of {@module #READ}, {@module #WRITE},
-	 *            {@module #APPEND}
+	 *            one of {@module #READ}, {@module #WRITE}, {@module #APPEND}
 	 * @return file handle instance to be used for file modification commands
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode)
-			throws Exception {
+	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode) throws Exception {
 		return getFileHandle(location, mode);
 	}
 
@@ -218,9 +233,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Read data from a file. To repeatedly read from a file retrieve a
-	 * {@link IFileHandle} first using {@module #openFile(String, int)}
-	 * and use the handle for <i>location</i>.
+	 * Read data from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and use the
+	 * handle for <i>location</i>.
 	 *
 	 * @param location
 	 *            file location, file handle or file instance
@@ -231,8 +245,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public String readFile(final Object location, @ScriptParameter(defaultValue = "-1") final int bytes)
-			throws Exception {
+	public String readFile(final Object location, @ScriptParameter(defaultValue = "-1") final int bytes) throws Exception {
 		final IFileHandle handle = getFileHandle(location, IFileHandle.READ);
 
 		if (handle != null) {
@@ -265,9 +278,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Read a single line from a file. To repeatedly read from a file retrieve a
-	 * {@link IFileHandle} first using {@module #openFile(String, int)}
-	 * and use the handle for <i>location</i>.
+	 * Read a single line from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and
+	 * use the handle for <i>location</i>.
 	 *
 	 * @param location
 	 *            file location, file handle or file instance
@@ -291,24 +303,21 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Write data to a file. When not using an {@link IFileHandle}, previous
-	 * file content will be overridden. Files that do not exist yet will be
-	 * automatically created.
+	 * Write data to a file. When not using an {@link IFileHandle}, previous file content will be overridden. Files that do not exist yet will be automatically
+	 * created.
 	 *
 	 * @param location
 	 *            file location
 	 * @param data
 	 *            data to be written
 	 * @param mode
-	 *            write mode ({@module #WRITE}/{@module
-	 *            #APPEND})
+	 *            write mode ({@module #WRITE}/{@module #APPEND})
 	 * @return file handle to continue write operations
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeFile(final Object location, final String data,
-			@ScriptParameter(defaultValue = "2") final int mode) throws Exception {
+	public IFileHandle writeFile(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
 		final IFileHandle handle = getFileHandle(location, mode);
 
 		if (handle != null)
@@ -318,24 +327,21 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Write a line of data to a file. When not using an {@link IFileHandle},
-	 * previous file content will be overridden. Files that do not exist yet
-	 * will be automatically created.
+	 * Write a line of data to a file. When not using an {@link IFileHandle}, previous file content will be overridden. Files that do not exist yet will be
+	 * automatically created.
 	 *
 	 * @param location
 	 *            file location
 	 * @param data
 	 *            data to be written
 	 * @param mode
-	 *            write mode ({@module #WRITE}/{@module
-	 *            #APPEND})
+	 *            write mode ({@module #WRITE}/{@module #APPEND})
 	 * @return file handle to continue write operations
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeLine(final Object location, final String data,
-			@ScriptParameter(defaultValue = "2") final int mode) throws Exception {
+	public IFileHandle writeLine(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
 		final IFileHandle handle = getFileHandle(location, mode);
 
 		if (handle != null)
@@ -356,9 +362,7 @@ public class ResourcesModule extends AbstractScriptModule {
 			handle = new ResourceHandle((IFile) location, mode);
 
 		else if (location != null)
-			handle = getFileHandle(
-					ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), mode == IFileHandle.READ),
-					mode);
+			handle = getFileHandle(ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), mode == IFileHandle.READ), mode);
 
 		if ((handle != null) && (!handle.exists())) {
 			// create file if it does not exist yet
@@ -369,17 +373,14 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Opens a file dialog. Depending on the <i>rootFolder</i> a workspace
-	 * dialog or a file system dialog will be used. If the folder cannot be
-	 * located, the workspace root folder is used by default. When type is set
-	 * to {@module #WRITE} or {@module #APPEND} a save dialog
-	 * will be shown instead of the default open dialog.
+	 * Opens a file dialog. Depending on the <i>rootFolder</i> a workspace dialog or a file system dialog will be used. If the folder cannot be located, the
+	 * workspace root folder is used by default. When type is set to {@module #WRITE} or {@module #APPEND} a save dialog will be shown instead
+	 * of the default open dialog.
 	 *
 	 * @param rootFolder
 	 *            root folder path to use
 	 * @param type
-	 *            dialog type to use ({@module #WRITE}/           {@module
-	 *  #APPEND} for save dialog, other for open dialog)
+	 *            dialog type to use ({@module #WRITE}/ {@module #APPEND} for save dialog, other for open dialog)
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -387,10 +388,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return full path to selected file
 	 */
 	@WrapToScript
-	public String showFileSelectionDialog(
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(defaultValue = "0") final int type,
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String title,
+	public String showFileSelectionDialog(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
+			@ScriptParameter(defaultValue = "0") final int type, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String title,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
@@ -453,15 +452,14 @@ public class ResourcesModule extends AbstractScriptModule {
 					} else {
 						// open a select file dialog
 
-						final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display.getDefault()
-								.getActiveShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+						final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display.getDefault().getActiveShell(),
+								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 						dialog.setTitle(title);
 						dialog.setMessage(message);
 						dialog.setInput(dialogRoot);
 
 						if (dialog.open() == Window.OK)
-							setResult("workspace:/"
-									+ ((IResource) dialog.getFirstResult()).getFullPath().toPortableString());
+							setResult("workspace:/" + ((IResource) dialog.getFirstResult()).getFullPath().toPortableString());
 					}
 				}
 			};
@@ -474,13 +472,10 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Opens a dialog box which allows the user to select a container (project
-	 * or folder). Workspace paths will always display the workspace as root
-	 * object.
+	 * Opens a dialog box which allows the user to select a container (project or folder). Workspace paths will always display the workspace as root object.
 	 *
 	 * @param rootFolder
-	 *            root folder to display: for workspace paths this will set the
-	 *            default selection
+	 *            root folder to display: for workspace paths this will set the default selection
 	 * @param title
 	 *            dialog title
 	 * @param message
@@ -489,10 +484,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * @return path to selected folder
 	 */
 	@WrapToScript
-	public String showFolderSelectionDialog(
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String title,
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
+	public String showFolderSelectionDialog(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String title, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
@@ -530,8 +523,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 				@Override
 				public void run() {
-					final ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault()
-							.getActiveShell(), dialogRoot, true, message);
+					final ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(), dialogRoot, true, message);
 					dialog.setTitle(title);
 
 					if (dialog.open() == Window.OK)
@@ -550,18 +542,15 @@ public class ResourcesModule extends AbstractScriptModule {
 	 * Return files matching a certain pattern.
 	 *
 	 * @param pattern
-	 *            search pattern: use * and ? as wildcards. If the pattern
-	 *            starts with '^' then a regular expression can be used.
+	 *            search pattern: use * and ? as wildcards. If the pattern starts with '^' then a regular expression can be used.
 	 * @param rootFolder
-	 *            root folder to start your search from. <code>null</code> for
-	 *            workspace root
+	 *            root folder to start your search from. <code>null</code> for workspace root
 	 * @param recursive
 	 *            searches subfolders when set to <code>true</code>
 	 * @return An array of all matching files
 	 */
 	@WrapToScript
-	public Object[] findFiles(final String pattern,
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
+	public Object[] findFiles(final String pattern, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
 			@ScriptParameter(defaultValue = "true") final boolean recursive) {
 
 		// evaluate expression to look for
@@ -627,8 +616,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Links a project into the current workspace. Does not copy resources to
-	 * the workspace.
+	 * Links a project into the current workspace. Does not copy resources to the workspace.
 	 *
 	 * @param location
 	 *            location of project (needs to contain <i>.project</i> file)
@@ -636,8 +624,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public boolean linkProject(final String location) {
-		final Object resolvedLocation = ResourceTools
-				.resolveFolder(location, getScriptEngine().getExecutedFile(), true);
+		final Object resolvedLocation = ResourceTools.resolveFolder(location, getScriptEngine().getExecutedFile(), true);
 
 		if (resolvedLocation instanceof IContainer) {
 			Logger.logWarning("The folder to link is already part of the workspace: " + location);
@@ -646,8 +633,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		} else if (resolvedLocation instanceof File) {
 			final Path projectPath = new Path(((File) resolvedLocation).getAbsoluteFile() + File.separator + ".project");
 			try {
-				final IProjectDescription description = ResourcesPlugin.getWorkspace().loadProjectDescription(
-						projectPath);
+				final IProjectDescription description = ResourcesPlugin.getWorkspace().loadProjectDescription(projectPath);
 				final IProject project = getProject(description.getName());
 				project.create(description, null);
 				project.open(null);
@@ -661,6 +647,38 @@ public class ResourcesModule extends AbstractScriptModule {
 		} else {
 			Logger.logWarning("Could not resolve location: " + location);
 			return false;
+		}
+	}
+
+	/**
+	 * Refresh a given resource and all its child elements.
+	 *
+	 * @scriptExample updateResource(getProject("my project")) to update the project and all its subfolders
+	 * @param resource
+	 *            {@link IFile}, {@link IFolder}, {@link IProject} or workspace root to update
+	 * @throws CoreException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Resource changes are disallowed during certain types of resource change event notification. See {@link IResourceChangeEvent} for more
+	 *             details.</li>
+	 *             </ul>
+	 */
+	@WrapToScript
+	public void refreshResource(IResource resource) throws CoreException {
+
+		final ProgressMonitor monitor = new ProgressMonitor();
+		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+		while (!monitor.isDone()) {
+			synchronized (monitor) {
+				try {
+					// check every second for completion
+					System.out.println("waiting");
+					monitor.wait(1000);
+					System.out.println("wakeup");
+				} catch (final InterruptedException e) {
+				}
+			}
 		}
 	}
 }

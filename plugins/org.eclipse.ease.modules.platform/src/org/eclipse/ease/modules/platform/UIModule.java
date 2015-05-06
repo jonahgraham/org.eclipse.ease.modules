@@ -16,6 +16,7 @@ import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.ease.tools.RunnableWithResult;
+import org.eclipse.ease.ui.console.ScriptConsole;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
@@ -35,6 +36,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -539,5 +542,19 @@ public class UIModule extends AbstractScriptModule {
 		Display.getDefault().syncExec(runnable);
 
 		return runnable.getResult();
+	}
+
+	/**
+	 * Clear the script console.
+	 */
+	@WrapToScript
+	public void clearConsole() {
+		IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+		for (IConsole console : consoles) {
+			if (console instanceof ScriptConsole) {
+				if (getScriptEngine().equals(((ScriptConsole) console).getScriptEngine()))
+					((ScriptConsole) console).clearConsole();
+			}
+		}
 	}
 }

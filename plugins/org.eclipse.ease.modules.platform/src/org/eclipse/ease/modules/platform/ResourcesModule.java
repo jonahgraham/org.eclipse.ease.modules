@@ -322,6 +322,8 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		if (handle != null)
 			handle.write(data);
+		else
+			throw new IOException("Could not access resource: " + location);
 
 		return handle;
 	}
@@ -346,6 +348,8 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		if (handle != null)
 			handle.write(data + LINE_DELIMITER);
+		else
+			throw new IOException("Could not access resource: " + location);
 
 		return handle;
 	}

@@ -181,7 +181,7 @@
 								-linkOffline
 								../../${ease.modules.api}
 								https://hudson.eclipse.org/ease/job/ease-modules-nightly/javadoc/
-							 </additionalparam>
+							</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 						</configuration>
 						<executions>
@@ -221,9 +221,73 @@
 			</build>
 		</profile>
 
-
 		<profile>
 			<id>api-docs</id>
+		</profile>
+
+		<profile>
+			<id>source</id>
+
+			<modules>
+				<module>../org.eclipse.ease.modules.releng.p2.source</module>
+			</modules>
+
+			<build>
+				<plugins>
+					<!-- enable source feature generation -->
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-source-feature-plugin</artifactId>
+						<version>${tycho.extras.version}</version>
+
+						<executions>
+							<execution>
+								<id>source-feature</id>
+								<phase>package</phase>
+								<goals>
+									<goal>source-feature</goal>
+								</goals>
+							</execution>
+						</executions>
+
+						<configuration>
+							<excludes>
+								<plugin id="org.eclipse.ease.modules.help" />
+							</excludes>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-source-plugin</artifactId>
+						<version>${tycho.version}</version>
+
+						<executions>
+							<execution>
+								<id>plugin-source</id>
+								<goals>
+									<goal>plugin-source</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-p2-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<executions>
+							<execution>
+								<id>attached-p2-metadata</id>
+								<phase>package</phase>
+								<goals>
+									<goal>p2-metadata</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<profile>
@@ -325,5 +389,5 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 </project>

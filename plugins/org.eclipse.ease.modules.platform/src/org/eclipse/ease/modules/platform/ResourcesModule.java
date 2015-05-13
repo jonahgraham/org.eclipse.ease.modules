@@ -278,6 +278,63 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
+	 * Delete a file from the workspace or local file system.
+	 *
+	 * @param source
+	 *            file to be deleted
+	 * @throws CoreException
+	 *             on deletion errors
+	 */
+	@WrapToScript
+	public void deleteFile(final Object source) throws CoreException {
+		final Object file = ResourceTools.resolveFile(source, getScriptEngine().getExecutedFile(), true);
+		if (file instanceof IFile)
+			((IFile) file).delete(true, new NullProgressMonitor());
+
+		else if ((file instanceof File) && (((File) file).isFile()))
+			((File) file).delete();
+	}
+
+	/**
+	 * Delete a folder from the workspace or local file system.
+	 *
+	 * @param source
+	 *            folder to be deleted
+	 * @throws CoreException
+	 *             on deletion errors
+	 */
+	@WrapToScript
+	public void deleteFolder(final Object source) throws CoreException {
+		final Object folder = ResourceTools.resolveFolder(source, getScriptEngine().getExecutedFile(), true);
+		if (folder instanceof IFolder)
+			((IFolder) folder).delete(true, new NullProgressMonitor());
+
+		else if ((folder instanceof File) && (((File) folder).isFile()))
+			((File) folder).delete();
+	}
+
+	/**
+	 * Delete a project from the workspace.
+	 *
+	 * @param source
+	 *            project to be deleted
+	 * @throws CoreException
+	 *             on deletion errors
+	 */
+	@WrapToScript
+	public void deleteProject(final Object source) throws CoreException {
+		final Object project = ResourceTools.resolveFolder(source, getScriptEngine().getExecutedFile(), true);
+		if (project instanceof IProject)
+			((IProject) project).delete(true, new NullProgressMonitor());
+
+		else if (source != null) {
+			final IProject localProject = getProject(source.toString());
+			if (localProject != null)
+				localProject.delete(true, new NullProgressMonitor());
+		}
+	}
+
+	/**
 	 * Read a single line from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and
 	 * use the handle for <i>location</i>.
 	 *
@@ -304,7 +361,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 	/**
 	 * Write data to a file. When not using an {@link IFileHandle}, previous file content will be overridden. Files that do not exist yet will be automatically
-	 * created.
+	 * created. After the write operation the file remains open. It needs to be closed explicitly using the {@module #closeFile(IFileHandle)} command
 	 *
 	 * @param location
 	 *            file location

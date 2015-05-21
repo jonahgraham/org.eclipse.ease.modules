@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.ease.modules.feature_0.2.0.qualifier.jar" id="org.eclipse.ease.modules.feature" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.ease.modules.feature_0.3.0.qualifier.jar" id="org.eclipse.ease.modules.feature" version="0.3.0.qualifier">
       <category name="Modules"/>
    </feature>
-   <feature url="features/org.eclipse.ease.modules.unittest.feature_0.2.0.qualifier.jar" id="org.eclipse.ease.modules.unittest.feature" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.ease.modules.unittest.feature_0.3.0.qualifier.jar" id="org.eclipse.ease.modules.unittest.feature" version="0.3.0.qualifier">
       <category name="Modules"/>
    </feature>
-   <feature url="features/org.eclipse.ease.modules.team.svn.feature_0.2.0.qualifier.jar" id="org.eclipse.ease.modules.team.svn.feature" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.ease.modules.team.svn.feature_0.3.0.qualifier.jar" id="org.eclipse.ease.modules.team.svn.feature" version="0.3.0.qualifier">
       <category name="Modules"/>
    </feature>
-   <feature url="features/org.eclipse.ease.modules.charting.feature_0.2.0.qualifier.jar" id="org.eclipse.ease.modules.charting.feature" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.ease.modules.charting.feature_0.3.0.qualifier.jar" id="org.eclipse.ease.modules.charting.feature" version="0.3.0.qualifier">
       <category name="Modules"/>
    </feature>
    <category-def name="Modules" label="Modules">

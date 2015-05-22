@@ -55,6 +55,12 @@ public class DefaultAssertion implements IAssertion {
 
 	@Override
 	public String toString() {
-		return (fDescription != null) ? fDescription : ((isValid()) ? IAssertion.VALID.toString() : IAssertion.INVALID.toString());
+		if (isValid())
+			return IAssertion.VALID.toString();
+
+		if (fDescription != null)
+			return fDescription;
+
+		return IAssertion.INVALID.toString();
 	}
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.ease.modules.modeling.feature"
+      label="EASE Modeling Components (Incubation)"
+      version="0.3.0.qualifier"
+      provider-name="Eclipse.org">
+
+   <description url="http://www.example.com/description">
+      EASE modeling module to interact with EMF models and a refactoring view for EMF models
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      Copyright (c) 2008, 2015 AIRBUS FRANCE, CNES.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+ Contributors:
+   Pierre-Charles David (Obeo)
+   Vincent Hemery (Atos Origin)
+   Arthur Daussy (Atos)
+   Jean-Francois Rolland (Atos)
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.7.101" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ease" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ease.modules.platform" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.common" version="2.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.edit" version="2.7.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.gmfdiag.navigation" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.services.controlmode" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.clazz" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml" version="5.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.gmfdiag.commands" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.gmfdiag.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.sysml" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.services" version="1.2.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.services" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.contexts" version="1.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.di" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.edit.ui"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.emf.emfstore.client.ui"/>
+      <import plugin="org.eclipse.ui.ide" version="3.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.workspace" version="1.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ocl.ecore"/>
+      <import plugin="org.eclipse.ocl.examples.pivot"/>
+      <import plugin="org.eclipse.ease.ui.scripts"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.ease.modules.modeling"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ease.modules.modeling.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

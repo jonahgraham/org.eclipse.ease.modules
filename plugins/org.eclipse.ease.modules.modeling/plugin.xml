@@ -28,7 +28,7 @@
             name="SelectionModule"
             visible="true">
          <dependency
-               module="org.eclipse.ease.module.platform.ui">
+               module="org.eclipse.ease.modules.platform.ui">
          </dependency>
       </module>
       <module
@@ -38,7 +38,7 @@
             name="ECore"
             visible="true">
          <dependency
-               module="org.eclipse.ease.module.platform.ui">
+               module="org.eclipse.ease.modules.platform.ui">
          </dependency>
          <dependency
                module="org.eclipse.ease.modules.modeling.selection">
@@ -51,7 +51,7 @@
             name="Notation"
             visible="true">
          <dependency
-               module="org.eclipse.ease.module.platform.ui">
+               module="org.eclipse.ease.modules.platform.ui">
          </dependency>
          <dependency
                module="org.eclipse.ease.modules.modeling.selection">
@@ -64,7 +64,7 @@
             name="UML"
             visible="true">
          <dependency
-               module="org.eclipse.ease.module.platform.ui">
+               module="org.eclipse.ease.modules.platform.ui">
          </dependency>
          <dependency
                module="org.eclipse.ease.modules.modeling.selection">
@@ -84,7 +84,7 @@
             name="SYSML"
             visible="true">
          <dependency
-               module="org.eclipse.ease.module.platform.ui">
+               module="org.eclipse.ease.modules.platform.ui">
          </dependency>
          <dependency
                module="org.eclipse.ease.modules.modeling.selection">

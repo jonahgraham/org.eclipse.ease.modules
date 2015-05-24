@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="matcher" name="Matcher" schema="schema/matcher.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ease.ui.views.category.scripting"
+            class="org.eclipse.ease.modules.modeling.ui.views.ModelRefactoringView"
+            icon="icons/model_refactoring.gif"
+            id="org.eclipse.ease.modules.modeling.ui.view"
+            name="Model Refactoring"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ease.modules.modeling.ui.view">
+         <command
+               commandId="org.eclipse.ease.modules.modeling.ui.command1"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.ease.modules.modeling.ui.command1"
+            name="Run EASE script">
+         <defaultHandler
+               class="org.eclipse.ease.modules.modeling.ui.handlers.EaseScriptHandler">
+            <parameter
+                  name="org.eclipse.ease.modules.modeling.ui.handlers.parameter1"
+                  value="org.eclipse.ease.modules.modeling.ui.handlers.parameter1">
+            </parameter>
+         </defaultHandler>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ease.modules.modeling.ui.matcher">
+      <matcher
+            instance="org.eclipse.ease.modules.modeling.ui.matchers.AttributeMatcher">
+      </matcher>
+      <matcher
+            instance="org.eclipse.ease.modules.modeling.ui.matchers.OCLMatcher">
+      </matcher>
+      <matcher
+            instance="org.eclipse.ease.modules.modeling.ui.matchers.IdMatcher">
+      </matcher>
+      <matcher
+            instance="org.eclipse.ease.modules.modeling.ui.matchers.TypeMatcher">
+      </matcher>
+   </extension>
+
+</plugin>

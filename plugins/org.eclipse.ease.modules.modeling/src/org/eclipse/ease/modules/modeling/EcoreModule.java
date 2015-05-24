@@ -37,7 +37,6 @@ import org.eclipse.ease.modules.modeling.ui.UriSelectionDialog;
 import org.eclipse.ease.modules.platform.ResourcesModule;
 import org.eclipse.ease.modules.platform.UIModule;
 import org.eclipse.ease.tools.ResourceTools;
-import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClassifier;
@@ -45,11 +44,14 @@ import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.change.util.ChangeRecorder;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
+import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -64,8 +66,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Stereotype;
-import org.eclipse.uml2.uml.util.UMLUtil;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -421,6 +421,9 @@ public class EcoreModule extends AbstractScriptModule {
 			if (domain instanceof EditingDomain) {
 				return (EditingDomain) domain;
 			}
+			if (currentEditorPart instanceof IEditingDomainProvider){
+				return ((IEditingDomainProvider)currentEditorPart).getEditingDomain();
+			}
 
 		} else {
 			Logger.logWarning("Unable to retreive editing domain. There is not opened editor");
@@ -501,44 +504,29 @@ public class EcoreModule extends AbstractScriptModule {
 			// ((EditingDomain)domain).getCommandStack().undo();
 		} else if (domain != null) {
 			// execute the operation in a command
-			domain.getCommandStack().execute(new RunnableCommandWrapper(operation));
+			ChangeRecorder recorder = new ChangeRecorder();
+			domain.getCommandStack().execute(new RunnableCommandWrapper(operation,domain.getResourceSet(), recorder));
+			recorder.dispose();
 		} else {
 			// try simply running the operation
 			operation.run();
 		}
 	}
 
-	protected static class RunnableCommandWrapper extends AbstractCommand {
+	protected static class RunnableCommandWrapper extends ChangeCommand {
 
 		private final Runnable operation;
 
-		public RunnableCommandWrapper(final Runnable operation) {
-			super();
+		public RunnableCommandWrapper(final Runnable operation, ResourceSet set, ChangeRecorder recorder) {
+			super(recorder, set);
 			this.operation = operation;
 		}
 
-		/**
-		 * Execute the operation
-		 */
+
 		@Override
-		public void execute() {
+		protected void doExecute() {
 			operation.run();
-		}
-
-		/**
-		 * Execute the operation
-		 */
-		@Override
-		public void redo() {
-			execute();
-		}
-
-		/**
-		 * Return true
-		 */
-		@Override
-		protected boolean prepare() {
-			return true;
+			
 		}
 	}
 

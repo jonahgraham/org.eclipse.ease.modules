@@ -72,6 +72,7 @@ public class Chart extends Composite {
 		xyGraph.setTitle("Chart");
 		xyGraph.primaryXAxis.setShowMajorGrid(true);
 		xyGraph.primaryYAxis.setShowMajorGrid(true);
+		xyGraph.setZoomType(ZoomType.DYNAMIC_ZOOM);
 		xyGraph.getPlotArea().addMouseListener(new MouseListener() {
 
 			@Override

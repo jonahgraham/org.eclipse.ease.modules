@@ -34,26 +34,26 @@ public class RunTestSuite extends AbstractHandler implements IHandler {
 		final IEditorInput input = HandlerUtil.getActiveEditor(event).getEditorInput();
 
 		if (input instanceof FileEditorInput) {
-			try {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
+			if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true)) {
 
-				// create testsuite
-				final TestSuite suiteToRun = new TestSuite(((FileEditorInput) input).getFile());
+				try {
+					// create testsuite
+					final TestSuite suiteToRun = new TestSuite(((FileEditorInput) input).getFile());
 
-				// TODO activate only if visualization is set to "view"
-				// activate view
-				final IViewPart view = UIModule.showView(UnitTestView.VIEW_ID);
-				if (view instanceof ITestListener)
-					suiteToRun.addTestListener((ITestListener) view);
+					// TODO activate only if visualization is set to "view"
+					// activate view
+					final IViewPart view = UIModule.showView(UnitTestView.VIEW_ID);
+					if (view instanceof ITestListener)
+						suiteToRun.addTestListener((ITestListener) view);
 
-				suiteToRun.run();
-
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (final CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					suiteToRun.run();
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 

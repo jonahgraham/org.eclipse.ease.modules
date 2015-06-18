@@ -326,6 +326,7 @@
 		<profile>
 			<id>test</id>
 			<modules>
+				<module>../../tests/org.eclipse.ease.modules.platform.test</module>
 			</modules>
 			<build>
 				<plugins>

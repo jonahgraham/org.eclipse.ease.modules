@@ -56,6 +56,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class ResourcesModule extends AbstractScriptModule {
 
+	/** Module identifier. */
+	public static final String MODULE_ID = "/System/Resources";
+
 	/** Access modifier for read mode (1). */
 	@WrapToScript
 	public static final int READ = IFileHandle.READ;
@@ -725,7 +728,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *             </ul>
 	 */
 	@WrapToScript
-	public void refreshResource(IResource resource) throws CoreException {
+	public void refreshResource(final IResource resource) throws CoreException {
 
 		final ProgressMonitor monitor = new ProgressMonitor();
 		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);

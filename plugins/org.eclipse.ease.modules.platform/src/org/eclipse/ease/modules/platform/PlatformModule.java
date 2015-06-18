@@ -23,6 +23,9 @@ import org.eclipse.ui.services.IEvaluationService;
 
 public class PlatformModule {
 
+	/** Module identifier. */
+	public static final String MODULE_ID = "/System/Platform";
+
 	/**
 	 * Adapt object to target type. Try to get an adapter for an object.
 	 *

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="Luna" sequenceNumber="1432195630">
+<target name="Luna" sequenceNumber="1434630664">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.platform.feature.group" version="4.4.2.v20150204-1700"/>
@@ -27,6 +27,7 @@
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.ease.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.ease.ui.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.ease.javascript.feature.feature.group" version="0.0.0"/>
       <repository location="http://download.eclipse.org/ease/update/nightly"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">

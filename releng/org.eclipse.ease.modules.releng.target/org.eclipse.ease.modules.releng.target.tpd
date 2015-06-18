@@ -35,6 +35,7 @@ location "http://download.eclipse.org/ease/update/nightly" {
 	// EASE core dependencies
 	org.eclipse.ease.feature.feature.group lazy
 	org.eclipse.ease.ui.feature.feature.group lazy
+	org.eclipse.ease.javascript.feature.feature.group lazy
 }
 
 location "http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/" {

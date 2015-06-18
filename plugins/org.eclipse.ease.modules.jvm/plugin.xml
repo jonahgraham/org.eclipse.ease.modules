@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ease.modules">
+      <module
+            category="org.eclipse.ease.category.system"
+            class="org.eclipse.ease.modules.java.JVMModule"
+            id="org.elcipse.ease.modules.java.module1"
+            name="JVM"
+            visible="true">
+         <dependency
+               module="org.eclipse.ease.modules.platform.resources">
+         </dependency>
+      </module>
+   </extension>
+
+</plugin>

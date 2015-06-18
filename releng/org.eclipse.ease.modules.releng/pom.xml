@@ -121,6 +121,7 @@
 		<module>../../plugins/org.eclipse.ease.modules.unittest.ui</module>
 		<module>../../plugins/org.eclipse.ease.modules.help</module>
 		<module>../../plugins/org.eclipse.ease.modules.team.svn</module>
+		<module>../../plugins/org.eclipse.ease.modules.jvm</module>
 
 		<!-- Features -->
 		<module>../../features/org.eclipse.ease.modules.feature</module>

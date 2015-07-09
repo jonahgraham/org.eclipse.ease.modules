@@ -21,19 +21,19 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.ocl.examples.domain.elements.DomainType;
-import org.eclipse.ocl.examples.domain.evaluation.DomainModelManager;
-import org.eclipse.ocl.examples.domain.utilities.DomainUtil;
-import org.eclipse.ocl.examples.pivot.ParserException;
-import org.eclipse.ocl.examples.pivot.PivotPackage;
-import org.eclipse.ocl.examples.pivot.Type;
-import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
+import org.eclipse.ocl.pivot.Class;
+import org.eclipse.ocl.pivot.PivotPackage;
+import org.eclipse.ocl.pivot.Type;
+import org.eclipse.ocl.pivot.evaluation.ModelManager;
+import org.eclipse.ocl.pivot.utilities.ClassUtil;
+import org.eclipse.ocl.pivot.utilities.MetamodelManager;
+import org.eclipse.ocl.pivot.utilities.ParserException;
 
-public class ModelExtentMap implements DomainModelManager {
+public class ModelExtentMap implements ModelManager {
 
-	private final Map<DomainType, Set<EObject>> modelManager = new HashMap<DomainType, Set<EObject>>();
+	private final Map<Class, Set<EObject>> modelManager = new HashMap<Class, Set<EObject>>();
 
-	private final MetaModelManager metaModelManager;
+	private final MetamodelManager metaModelManager;
 
 	private boolean generatedErrorMessage = false;
 
@@ -47,7 +47,7 @@ public class ModelExtentMap implements DomainModelManager {
 	 *            my context element
 	 */
 
-	public ModelExtentMap(MetaModelManager metamodelmanager, EObject context) {
+	public ModelExtentMap(MetamodelManager metamodelmanager, EObject context) {
 		this.metaModelManager = metamodelmanager;
 		EObject container = EcoreUtil.getRootContainer(context);
 		roots.add(container);
@@ -59,7 +59,8 @@ public class ModelExtentMap implements DomainModelManager {
 	 * @param type
 	 *            a class in the model
 	 */
-	public Set<EObject> get(DomainType type) {
+	@Override
+	public Set<EObject> get(Class type) {
 		Set<EObject> result = modelManager.get(type);
 		if (result == null) {
 			synchronized (modelManager) {
@@ -92,16 +93,16 @@ public class ModelExtentMap implements DomainModelManager {
 	 * @return <code>true</code> if this element is an instance of the given
 	 *         class; <code>false</code> otherwise
 	 */
-	protected boolean isInstance(DomainType requiredType, EObject eObject) {
+	protected boolean isInstance(Class requiredType, EObject eObject) {
 		EClass eClass = eObject.eClass();
 		EPackage ePackage = eClass.getEPackage();
 		Type objectType = null;
 		if (ePackage == PivotPackage.eINSTANCE) {
-			String name = DomainUtil.nonNullEMF(eClass.getName());
-			objectType = metaModelManager.getPivotType(name);
+			String name = ClassUtil.nonNullEMF(eClass.getName());
+			objectType = metaModelManager.getASClass(name);
 		} else {
 			try {
-				objectType = metaModelManager.getPivotOf(Type.class, eClass);
+				objectType = metaModelManager.getASOf(Type.class, eClass);
 			} catch (ParserException e) {
 				if (!generatedErrorMessage) {
 					generatedErrorMessage = true;
@@ -109,11 +110,13 @@ public class ModelExtentMap implements DomainModelManager {
 			}
 		}
 		return (objectType != null)
-				&& objectType.conformsTo(metaModelManager, requiredType);
+				&& objectType.conformsTo(metaModelManager.getStandardLibrary(), requiredType);
 	}
 
 	@Override
 	public String toString() {
 		return modelManager.toString();
 	}
+
+
 }

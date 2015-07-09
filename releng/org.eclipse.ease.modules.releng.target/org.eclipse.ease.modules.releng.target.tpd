@@ -1,13 +1,13 @@
-target "Luna" with source requirements
+target "Mars" with source requirements
 
-location "http://download.eclipse.org/releases/luna/" {
+location "http://download.eclipse.org/releases/mars/" eclipse-mars {
 	org.eclipse.platform.feature.group
 	org.eclipse.rcp.feature.group
 	org.eclipse.jdt.feature.group
 	org.eclipse.equinox.p2.discovery.feature.feature.group
 
 	// for modeling stuff
-	org.eclipse.emf.sdk.feature.group
+	org.eclipse.emf.feature.group
 
 	// modeling modules
 	org.eclipse.papyrus.infra.feature.feature.group
@@ -17,7 +17,8 @@ location "http://download.eclipse.org/releases/luna/" {
 	org.eclipse.uml2.uml
 	org.eclipse.gmf.runtime.diagram.ui
 	org.eclipse.emf.emfstore.client.ui.feature.feature.group
-	org.eclipse.ocl.examples.unified.core.feature.group
+	org.eclipse.ocl.examples.classic.feature.group
+	org.eclipse.ocl.examples.feature.group
 
 	// unit test modules
 	org.eclipse.wst.xml_core.feature.feature.group
@@ -29,6 +30,10 @@ location "http://download.eclipse.org/releases/luna/" {
 	
 	// svn module
 	org.eclipse.team.svn.feature.group
+	
+	// git module
+	org.eclipse.egit.feature.group
+	org.eclipse.jgit.feature.group
 }
 
 location "http://download.eclipse.org/ease/update/nightly" {
@@ -38,7 +43,7 @@ location "http://download.eclipse.org/ease/update/nightly" {
 	org.eclipse.ease.javascript.feature.feature.group lazy
 }
 
-location "http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/" {
+location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/" eclipse-orbit {
 	// for java unit test of modules
 	org.mockito [1.9.5,2.0.0)
 	org.hamcrest [1.1.0,2.0.0)

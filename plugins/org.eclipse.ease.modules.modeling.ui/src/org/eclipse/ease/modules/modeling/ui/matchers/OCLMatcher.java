@@ -20,26 +20,20 @@ import org.eclipse.ease.modules.modeling.ui.utils.SelectionUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.ocl.examples.domain.values.SetValue;
-import org.eclipse.ocl.examples.pivot.ExpressionInOCL;
-import org.eclipse.ocl.examples.pivot.OCL;
-import org.eclipse.ocl.examples.pivot.ParserException;
-import org.eclipse.ocl.examples.pivot.helper.OCLHelper;
-import org.eclipse.ocl.examples.pivot.utilities.PivotEnvironmentFactory;
+import org.eclipse.ocl.pivot.ExpressionInOCL;
+import org.eclipse.ocl.pivot.utilities.OCL;
+import org.eclipse.ocl.pivot.utilities.OCLHelper;
+import org.eclipse.ocl.pivot.utilities.ParserException;
+import org.eclipse.ocl.pivot.values.SetValue;
 
 public class OCLMatcher implements IMatcher {
 
 	@Override
 	public Collection<EObject> getElements(String oclString,
 			IEditingDomainProvider currentEditor) throws MatcherException {
-
-		EPackage.Registry registry = EPackage.Registry.INSTANCE;
 		EObject root = SelectionUtils.getSelection(currentEditor);
-		PivotEnvironmentFactory environmentFactory = new PivotEnvironmentFactory(
-				registry, null);
-
-		OCL ocl = OCL.newInstance(environmentFactory);
-		ocl.setModelManager(new ModelExtentMap(ocl.getMetaModelManager(), root));
+		OCL ocl = OCL.newInstance(EPackage.Registry.INSTANCE);
+		ocl.setModelManager(new ModelExtentMap(ocl.getMetamodelManager(), root));
 		OCLHelper helper = ocl.createOCLHelper(root.eClass());
 
 		try {

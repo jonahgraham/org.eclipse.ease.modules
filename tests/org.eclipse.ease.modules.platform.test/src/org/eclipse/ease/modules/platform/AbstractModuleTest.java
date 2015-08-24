@@ -16,10 +16,10 @@ import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.Method;
 
+import org.eclipse.ease.ICodeFactory;
 import org.eclipse.ease.ScriptResult;
 import org.eclipse.ease.lang.javascript.rhino.RhinoScriptEngine;
 import org.eclipse.ease.modules.EnvironmentModule;
-import org.eclipse.ease.modules.IModuleWrapper;
 import org.eclipse.ease.service.IScriptService;
 import org.eclipse.ease.service.ScriptService;
 import org.junit.Before;
@@ -38,11 +38,10 @@ public abstract class AbstractModuleTest {
 
 	@Test
 	public void loadModule() throws NoSuchMethodException, SecurityException {
-		final IScriptService scriptService = ScriptService.getInstance();
 
-		IModuleWrapper wrapper = scriptService.getModuleWrapper(RhinoScriptEngine.ENGINE_ID);
+		ICodeFactory codeFactory = ScriptService.getCodeFactory(fEngine);
 		Method loadModuleMethod = EnvironmentModule.class.getMethod("loadModule", String.class);
-		String call = wrapper.createFunctionCall(loadModuleMethod, getModuleID());
+		String call = codeFactory.createFunctionCall(loadModuleMethod, getModuleID());
 
 		ScriptResult result = executeCode(call);
 		assertEquals(getModuleClass(), result.getResult().getClass());

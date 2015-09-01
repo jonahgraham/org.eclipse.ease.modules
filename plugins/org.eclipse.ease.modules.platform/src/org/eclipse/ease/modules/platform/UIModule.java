@@ -48,6 +48,9 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class UIModule extends AbstractScriptModule {
 
+	/** Module identifier. */
+	public static final String MODULE_ID = "/System/UI";
+
 	/**
 	 * Run code in UI thread. Needed to interact with SWT elements. Might not be supported by some engines. Might be disabled by the user. Code will be executed
 	 * synchronously and stall UI updates while executed.
@@ -332,8 +335,8 @@ public class UIModule extends AbstractScriptModule {
 					try {
 						try {
 
-							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-									.openEditor(new FileEditorInput(file), editorDescriptor.getId()));
+							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(file),
+									editorDescriptor.getId()));
 						} catch (final NullPointerException e) {
 							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
 								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput(file),

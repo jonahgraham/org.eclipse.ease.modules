@@ -17,5 +17,11 @@
             priority="5">
       </dropHandler>
    </extension>
+   <extension
+         point="org.eclipse.ease.ui.codeCompletionProvider">
+      <codeCompletionProvider
+            class="org.eclipse.ease.modules.platform.completion.ResourcesCompletionProvider">
+      </codeCompletionProvider>
+   </extension>
 
 </plugin>

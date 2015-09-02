@@ -330,7 +330,11 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	}
 
 	private TestComposite getTestObject() {
-		return (TestComposite) getScriptEngine().getVariable(TestComposite.CURRENT_TESTCOMPOSITE);
+		Object testObject = getScriptEngine().getVariable(TestComposite.CURRENT_TESTCOMPOSITE);
+		if (testObject instanceof TestComposite)
+			return (TestComposite) testObject;
+
+		return null;
 	}
 
 	/**
@@ -381,8 +385,8 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	public static IAssertion assertEquals(final Object expected, final Object actual,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		if (expected != null)
-			return new DefaultAssertion(expected.equals(actual), (errorDescription == null) ? "Objects do not match: expected<" + expected + ">, actual <"
-					+ actual + ">" : errorDescription.toString());
+			return new DefaultAssertion(expected.equals(actual),
+					(errorDescription == null) ? "Objects do not match: expected<" + expected + ">, actual <" + actual + ">" : errorDescription.toString());
 
 		return assertNull(actual, errorDescription);
 	}
@@ -491,7 +495,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 */
 	@WrapToScript
 	public void ignoreAssertions(final int count) {
-		assert (count >= 0);
+		assert(count >= 0);
 		fAssertionsToBeIgnored = count;
 	}
 

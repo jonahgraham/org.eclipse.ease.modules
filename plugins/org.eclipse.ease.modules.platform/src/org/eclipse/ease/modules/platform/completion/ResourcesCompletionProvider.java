@@ -71,7 +71,7 @@ public class ResourcesCompletionProvider extends FileLocationCompletionProvider 
 
 		if ((context.getCaller().endsWith("createFile")) || context.getCaller().endsWith("createFolder") || context.getCaller().endsWith("deleteFolder")
 				|| (context.getCaller().endsWith("findFiles")))
-			return !isFileResource(candidate);
+			return !isFile(candidate);
 
 		return super.showCandidate(context, candidate);
 	}

@@ -21,7 +21,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
  */
 public class GMFSemanticSeletor extends ModelingSelector {
 
-	public static final String SELECTOR_ID = "GMFSemanticSeletor";
+	public static final String SELECTOR_ID = "GMFSemanticSelector";
 
 	public GMFSemanticSeletor() {
 	}

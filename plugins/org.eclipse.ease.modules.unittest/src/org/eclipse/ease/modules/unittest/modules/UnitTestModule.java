@@ -111,7 +111,11 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 		if ((file instanceof IFile) && (((IFile) file).exists())) {
 			if ("suite".equalsIgnoreCase(((IFile) file).getFileExtension())) {
 				// we have a test suite
-				return new TestSuite(new TestSuiteModel((IFile) file));
+				final TestSuite suite = new TestSuite(new TestSuiteModel((IFile) file));
+				suite.setOutputStream(getScriptEngine().getOutputStream());
+				suite.setErrorStream(getScriptEngine().getErrorStream());
+
+				return suite;
 			}
 		}
 
@@ -144,7 +148,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 		final IReportGenerator report = ReportTools.getReport(reportType);
 		if (report != null) {
 			final String reportData = report.createReport(title, description, suite);
-			IFileHandle handle = getEnvironment().getModule(ResourcesModule.class).writeFile(file, reportData, ResourcesModule.WRITE);
+			final IFileHandle handle = getEnvironment().getModule(ResourcesModule.class).writeFile(file, reportData, ResourcesModule.WRITE);
 			ResourcesModule.closeFile(handle);
 			return true;
 		}
@@ -321,7 +325,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 		if (name == null)
 			return getTestFile().getCurrentTest();
 
-		for (TestEntity test : getTestFile().getChildren()) {
+		for (final TestEntity test : getTestFile().getChildren()) {
 			if ((test instanceof Test) && (name.equals(((Test) test).getTitle())))
 				return (Test) test;
 		}
@@ -330,7 +334,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	}
 
 	private TestComposite getTestObject() {
-		Object testObject = getScriptEngine().getVariable(TestComposite.CURRENT_TESTCOMPOSITE);
+		final Object testObject = getScriptEngine().getVariable(TestComposite.CURRENT_TESTCOMPOSITE);
 		if (testObject instanceof TestComposite)
 			return (TestComposite) testObject;
 

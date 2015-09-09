@@ -36,7 +36,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static IScriptEngine createScriptEngine(final String identifier) {
-		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
 
 		// by ID
 		EngineDescription engine = scriptService.getEngineByID(identifier);
@@ -68,7 +68,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	public static String[] listScriptEngines() {
 		final List<String> result = new ArrayList<String>();
 
-		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
 		for (final EngineDescription description : scriptService.getEngines())
 			result.add(description.getID());
 
@@ -81,7 +81,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 * @param resource
 	 *            resource to execute (path, URI or file instance)
 	 * @param arguments
-	 *            optional script arguments
+	 *            optional script arguments delimited by commas ','
 	 * @param engineID
 	 *            engine ID to be used
 	 * @return script engine instance or <code>null</code> in case of error
@@ -90,7 +90,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	public IScriptEngine fork(final Object resource, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String arguments,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) String engineID) {
 
-		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
 
 		if (engineID == null) {
 			// try to find engine for script type
@@ -104,7 +104,11 @@ public class ScriptingModule extends AbstractScriptModule {
 		}
 
 		if (engineID != null) {
-			// engine found
+			// engineID available
+			EngineDescription description = scriptService.getEngineByID(engineID);
+			if (description == null)
+				throw new RuntimeException("No script engine found for ID = \"" + engineID + "\"");
+
 			final IScriptEngine engine = scriptService.getEngineByID(engineID).createEngine();
 
 			// connect streams
@@ -132,7 +136,7 @@ public class ScriptingModule extends AbstractScriptModule {
 			return engine;
 		}
 
-		return null;
+		throw new RuntimeException("No script engine found for source \"" + resource + "\"");
 	}
 
 	/**

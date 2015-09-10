@@ -8,7 +8,6 @@
  * Contributors:
  *     Domjan Sansovic - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ease.modules.charting.charts;
 
 import java.io.ByteArrayInputStream;
@@ -52,15 +51,15 @@ import org.eclipse.swt.widgets.MessageBox;
 
 public class Chart extends Composite {
 
-	private final XYGraph xyGraph;
-	private final List<Trace> fTraces = new ArrayList();
-	private final List<CircularBufferDataProvider> fTraceDataProviders = new ArrayList();
+	private final XYGraph fXYGraph;
+	private final List<Trace> fTraces = new ArrayList<Trace>();
+	private final List<CircularBufferDataProvider> fTraceDataProviders = new ArrayList<CircularBufferDataProvider>();
 	private boolean fPerformAutoScale = true;
-	private int index = -1;
-	private Trace currentTrace;
+	private int fIndex = -1;
+	private Trace fCurrentTrace;
 	private int fSeriesCounter = 1;
 
-	public Chart(final Composite parent, int style) {
+	public Chart(final Composite parent, final int style) {
 		super(parent, style);
 		GridLayout layout = new GridLayout();
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -68,82 +67,75 @@ public class Chart extends Composite {
 		Canvas myCanvas = new Canvas(this, style);
 		myCanvas.setLayoutData(gd);
 		LightweightSystem lws = new LightweightSystem(myCanvas);
-		xyGraph = new XYGraph();
-		xyGraph.setTitle("Chart");
-		xyGraph.primaryXAxis.setShowMajorGrid(true);
-		xyGraph.primaryYAxis.setShowMajorGrid(true);
-		xyGraph.setZoomType(ZoomType.DYNAMIC_ZOOM);
-		xyGraph.getPlotArea().addMouseListener(new MouseListener() {
+		fXYGraph = new XYGraph();
+		fXYGraph.setTitle("Chart");
+		fXYGraph.primaryXAxis.setShowMajorGrid(true);
+		fXYGraph.primaryYAxis.setShowMajorGrid(true);
+		fXYGraph.setZoomType(ZoomType.DYNAMIC_ZOOM);
+		fXYGraph.getPlotArea().addMouseListener(new MouseListener() {
 
 			@Override
-			public void mousePressed(MouseEvent me) {
-				// TODO Auto-generated method stub
-
+			public void mousePressed(final MouseEvent me) {
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent me) {
-				// TODO Auto-generated method stub
-
+			public void mouseReleased(final MouseEvent me) {
 			}
 
 			@Override
-			public void mouseDoubleClicked(MouseEvent me) {
-				xyGraph.performAutoScale();
-
+			public void mouseDoubleClicked(final MouseEvent me) {
+				fXYGraph.performAutoScale();
 			}
 		});
-		lws.setContents(xyGraph);
+		lws.setContents(fXYGraph);
 		this.addMouseWheelListener(new MouseWheelListener() {
 
 			@Override
-			public void mouseScrolled(org.eclipse.swt.events.MouseEvent e) {
-				IFigure figureUnderMouse = xyGraph.findFigureAt(e.x, e.y, new TreeSearch() {
+			public void mouseScrolled(final org.eclipse.swt.events.MouseEvent e) {
+				IFigure figureUnderMouse = fXYGraph.findFigureAt(e.x, e.y, new TreeSearch() {
 
 					@Override
-					public boolean prune(IFigure figure) {
+					public boolean prune(final IFigure figure) {
 						return false;
 					}
 
 					@Override
-					public boolean accept(IFigure figure) {
-						return figure instanceof Axis || figure instanceof PlotArea;
+					public boolean accept(final IFigure figure) {
+						return (figure instanceof Axis) || (figure instanceof PlotArea);
 					}
 				});
 				if (figureUnderMouse instanceof Axis) {
 					Axis axis = ((Axis) figureUnderMouse);
 					double valuePosition = axis.getPositionValue(axis.isHorizontal() ? e.x : e.y, false);
-					axis.zoomInOut(valuePosition, e.count * 0.1 / 3);
+					axis.zoomInOut(valuePosition, (e.count * 0.1) / 3);
 				} else if (figureUnderMouse instanceof PlotArea) {
 					PlotArea plotArea = (PlotArea) figureUnderMouse;
-					plotArea.zoomInOut(true, true, e.x, e.y, e.count * 0.1 / 3);
+					plotArea.zoomInOut(true, true, e.x, e.y, (e.count * 0.1) / 3);
 				}
 			}
-
 		});
-
 	}
 
-	private void getTraceIndex(String traceName) {
+	private void getTraceIndex(final String traceName) {
 		boolean findTrace = false;
-		index = 0;
+		fIndex = 0;
 		for (Trace trace : fTraces) {
 			if (trace.getName().equals(traceName)) {
 				findTrace = true;
 				break;
 			}
-			index++;
+			fIndex++;
 		}
 		if (!findTrace) {
 			CircularBufferDataProvider newTraceDataProvider = new CircularBufferDataProvider(false);
 			newTraceDataProvider.setBufferSize(1000);
 			fTraceDataProviders.add(newTraceDataProvider);
-			final Trace currentTrace = new Trace(traceName, xyGraph.primaryXAxis, xyGraph.primaryYAxis, newTraceDataProvider);
+			final Trace currentTrace = new Trace(traceName, fXYGraph.primaryXAxis, fXYGraph.primaryYAxis, newTraceDataProvider);
 			currentTrace.setTraceType(TraceType.SOLID_LINE);
 			currentTrace.setPointStyle(PointStyle.XCROSS);
 			currentTrace.setPointSize(5);
 			fTraces.add(currentTrace);
-			xyGraph.addTrace(currentTrace);
+			fXYGraph.addTrace(currentTrace);
 		}
 	}
 
@@ -151,23 +143,24 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (index == (-1))
+				if (fIndex == (-1))
 					getTraceIndex("Series " + Integer.toString(fSeriesCounter++));
 				plotPoint(x, y);
 			}
 		});
-		return fTraces.get(index);
+		return fTraces.get(fIndex);
 	}
 
-	private void plotPoint(double x, double y) {
-		fTraceDataProviders.get(index).addSample(new Sample(x, y));
+	private void plotPoint(final double x, final double y) {
+		fTraceDataProviders.get(fIndex).addSample(new Sample(x, y));
 		if (fPerformAutoScale)
-			xyGraph.performAutoScale();
+			fXYGraph.performAutoScale();
 	}
 
-	private void setStyle(Trace trace, String format) {
+	private void setStyle(final Trace trace, final String format) {
+		boolean doubleLine = false;
+
 		for (char ch : format.toCharArray()) {
-			boolean doubleLine = false;
 			switch (ch) {
 			case 'r':
 				trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_RED));
@@ -246,30 +239,30 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				xyGraph.setTitle(title);
+				fXYGraph.setTitle(title);
 			}
 		});
-		return xyGraph;
+		return fXYGraph;
 	}
 
 	public Axis setXLabel(final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				xyGraph.primaryXAxis.setTitle(title);
+				fXYGraph.primaryXAxis.setTitle(title);
 			}
 		});
-		return xyGraph.primaryXAxis;
+		return fXYGraph.primaryXAxis;
 	}
 
 	public Axis setYLabel(final String title) {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				xyGraph.primaryYAxis.setTitle(title);
+				fXYGraph.primaryYAxis.setTitle(title);
 			}
 		});
-		return xyGraph.primaryYAxis;
+		return fXYGraph.primaryYAxis;
 	}
 
 	public void setAxisRange(final double[] xrange, final double[] yrange) {
@@ -278,8 +271,8 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				xyGraph.primaryXAxis.setRange(xrange[0], xrange[1]);
-				xyGraph.primaryYAxis.setRange(yrange[0], yrange[1]);
+				fXYGraph.primaryXAxis.setRange(xrange[0], xrange[1]);
+				fXYGraph.primaryYAxis.setRange(yrange[0], yrange[1]);
 			}
 		});
 	}
@@ -288,13 +281,13 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				xyGraph.primaryXAxis.setShowMajorGrid(showGrid);
-				xyGraph.primaryYAxis.setShowMajorGrid(showGrid);
+				fXYGraph.primaryXAxis.setShowMajorGrid(showGrid);
+				fXYGraph.primaryYAxis.setShowMajorGrid(showGrid);
 			}
 		});
 	}
 
-	public void setAutoScale(boolean performAutoScale) {
+	public void setAutoScale(final boolean performAutoScale) {
 		fPerformAutoScale = performAutoScale;
 	}
 
@@ -302,7 +295,7 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				xyGraph.setZoomType(ZoomType.valueOf(zoomType));
+				fXYGraph.setZoomType(ZoomType.valueOf(zoomType));
 			}
 		});
 	}
@@ -312,7 +305,7 @@ public class Chart extends Composite {
 			@Override
 			public void run() {
 				final ImageLoader loader = new ImageLoader();
-				loader.data = new ImageData[] { xyGraph.getImage().getImageData() };
+				loader.data = new ImageData[] { fXYGraph.getImage().getImageData() };
 				boolean done = true;
 				if (object != null) {
 					try {
@@ -389,7 +382,7 @@ public class Chart extends Composite {
 				if (currentTrace == null)
 					return;
 				Annotation annotation = new Annotation(cursorName, currentTrace);
-				xyGraph.addAnnotation(annotation);
+				fXYGraph.addAnnotation(annotation);
 			}
 		});
 	}
@@ -399,7 +392,7 @@ public class Chart extends Composite {
 			@Override
 			public void run() {
 				Annotation currentAnnotation = null;
-				for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList()) {
+				for (Annotation annotation : fXYGraph.getPlotArea().getAnnotationList()) {
 					if (annotation.getName().equals(cursorName)) {
 						currentAnnotation = annotation;
 						break;
@@ -407,7 +400,7 @@ public class Chart extends Composite {
 				}
 				if (currentAnnotation == null)
 					return;
-				xyGraph.removeAnnotation(currentAnnotation);
+				fXYGraph.removeAnnotation(currentAnnotation);
 			}
 		});
 	}
@@ -418,12 +411,11 @@ public class Chart extends Composite {
 			public void run() {
 				for (Trace trace : fTraces) {
 					if (trace.getName().equals(traceName)) {
-						xyGraph.removeTrace(trace);
+						fXYGraph.removeTrace(trace);
 						fTraceDataProviders.remove((trace.getDataProvider()));
 						fTraces.remove(trace);
 					}
 				}
-
 			}
 		});
 	}
@@ -433,13 +425,12 @@ public class Chart extends Composite {
 			@Override
 			public void run() {
 				for (Trace trace : fTraces) {
-					xyGraph.removeTrace(trace);
+					fXYGraph.removeTrace(trace);
 				}
 				fTraceDataProviders.clear();
 				fTraces.clear();
 				fSeriesCounter = 1;
 			}
-
 		});
 	}
 
@@ -447,19 +438,19 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (index == (-1))
+				if (fIndex == (-1))
 					getTraceIndex("Series " + Integer.toString(fSeriesCounter++));
 				plotArray(x, y);
 			}
 		});
-		return fTraces.get(index);
+		return fTraces.get(fIndex);
 	}
 
-	private void plotArray(double[] x, double[] y) {
-		fTraceDataProviders.get(index).setCurrentXDataArray(x);
-		fTraceDataProviders.get(index).setCurrentYDataArray(y);
+	private void plotArray(final double[] x, final double[] y) {
+		fTraceDataProviders.get(fIndex).setCurrentXDataArray(x);
+		fTraceDataProviders.get(fIndex).setCurrentYDataArray(y);
 		if (fPerformAutoScale)
-			xyGraph.performAutoScale();
+			fXYGraph.performAutoScale();
 	}
 
 	public Trace series(final String seriesName, final String format) {
@@ -468,10 +459,10 @@ public class Chart extends Composite {
 			public void run() {
 				String traceName = (seriesName == null) ? "Series " + Integer.toString(fSeriesCounter++) : seriesName;
 				getTraceIndex(traceName);
-				currentTrace = fTraces.get(index);
-				setStyle(currentTrace, format);
+				fCurrentTrace = fTraces.get(fIndex);
+				setStyle(fCurrentTrace, format);
 			}
 		});
-		return currentTrace;
+		return fCurrentTrace;
 	}
 }

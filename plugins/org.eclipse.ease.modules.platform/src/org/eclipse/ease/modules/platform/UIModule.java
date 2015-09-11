@@ -32,10 +32,12 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -288,6 +290,13 @@ public class UIModule extends AbstractScriptModule {
 
 			Display.getDefault().syncExec(runnable);
 			return runnable.getResult();
+		}
+
+		// maybe this view is already open, search for view titles
+
+		for (final IViewReference part : PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].getViewReferences()) {
+			if (part.getTitle().equals(name))
+				return part.getView(false);
 		}
 
 		return null;
@@ -552,12 +561,42 @@ public class UIModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public void clearConsole() {
-		IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
-		for (IConsole console : consoles) {
+		final IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+		for (final IConsole console : consoles) {
 			if (console instanceof ScriptConsole) {
 				if (getScriptEngine().equals(((ScriptConsole) console).getScriptEngine()))
 					((ScriptConsole) console).clearConsole();
 			}
 		}
+	}
+
+	/**
+	 * Maximize a dedicated view. If the view is not opened yet, it will be opened by this call. A second call will restore the original size of the view.
+	 *
+	 * @param name
+	 *            name or id of view to maximize
+	 * @throws PartInitException
+	 *             when view cannot be opened
+	 */
+	@WrapToScript
+	public static void maximizeView(String name) throws PartInitException {
+		final IViewPart view = showView(name);
+		if (view != null)
+			ActionFactory.MAXIMIZE.create(view.getViewSite().getWorkbenchWindow()).run();
+	}
+
+	/**
+	 * Minimize a dedicated view. If the view is not opened yet, it will be opened by this call. A second call will restore view on a floating dock.
+	 *
+	 * @param name
+	 *            name or id of view to minimize
+	 * @throws PartInitException
+	 *             when view cannot be opened
+	 */
+	@WrapToScript
+	public static void minimizeView(String name) throws PartInitException {
+		final IViewPart view = showView(name);
+		if (view != null)
+			ActionFactory.MINIMIZE.create(view.getViewSite().getWorkbenchWindow()).run();
 	}
 }

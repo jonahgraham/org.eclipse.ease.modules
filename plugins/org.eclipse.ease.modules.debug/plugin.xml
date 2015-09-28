@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ease.modules">
+      <module
+            category="org.eclipse.ease.category.system"
+            class="org.eclipse.ease.modules.debug.launch.LaunchModule"
+            id="org.eclipse.ease.modules.debug.launch"
+            name="Launch"
+            visible="true">
+      </module>
+   </extension>
+   <extension
+         point="org.eclipse.ease.ui.codeCompletionProvider">
+      <codeCompletionProvider
+            class="org.eclipse.ease.modules.debug.launch.LaunchModuleCompletionProvider">
+      </codeCompletionProvider>
+   </extension>
+
+</plugin>

@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ease.Logger;
+import org.eclipse.ease.modules.unittest.ui.Activator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 public class FileFilterContentProvider extends WorkbenchContentProvider {
@@ -47,7 +48,7 @@ public class FileFilterContentProvider extends WorkbenchContentProvider {
 			}
 		} catch (CoreException e) {
 			// traversal problem, better return too many folders instead of too few
-			Logger.logError("Could not traverse " + container, e);
+			Logger.error(Activator.PLUGIN_ID, "Could not traverse " + container, e);
 			return true;
 		}
 

@@ -21,6 +21,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ease.Logger;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
+import org.eclipse.ease.modules.unittest.ui.Activator;
 import org.eclipse.ease.modules.unittest.ui.dialogs.CreateReportDialog;
 import org.eclipse.ease.modules.unittest.ui.views.UnitTestView;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -79,7 +80,7 @@ public class CreateReport extends AbstractHandler implements IHandler {
 				} catch (final IOException e) {
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "Create Report failed",
 							"Could not open file for writing. Report could not be saved");
-					Logger.logError("Could not create report file \"" + dialog.getFileName() + "\"", e);
+					Logger.error(Activator.PLUGIN_ID, "Could not create report file \"" + dialog.getFileName() + "\"", e);
 				}
 			}
 		}

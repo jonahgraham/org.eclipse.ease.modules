@@ -392,7 +392,7 @@ public class ScriptingModule extends AbstractScriptModule {
 							remove(key, engine);
 						} catch (IllegalAccessException e) {
 							// we already checked that we are the owner, so this should not happen
-							Logger.logError("Error while cleaning up shared objects", e);
+							Logger.error(PluginConstants.PLUGIN_ID, "Error while cleaning up shared objects", e);
 						}
 					}
 				}

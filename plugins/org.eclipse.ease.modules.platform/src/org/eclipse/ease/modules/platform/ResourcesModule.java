@@ -236,8 +236,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Read data from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and use the
-	 * handle for <i>location</i>.
+	 * Read data from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and use the handle for
+	 * <i>location</i>.
 	 *
 	 * @param location
 	 *            file location, file handle or file instance
@@ -338,8 +338,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Read a single line from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and
-	 * use the handle for <i>location</i>.
+	 * Read a single line from a file. To repeatedly read from a file retrieve a {@link IFileHandle} first using {@module #openFile(String, int)} and use the
+	 * handle for <i>location</i>.
 	 *
 	 * @param location
 	 *            file location, file handle or file instance
@@ -438,8 +438,8 @@ public class ResourcesModule extends AbstractScriptModule {
 
 	/**
 	 * Opens a file dialog. Depending on the <i>rootFolder</i> a workspace dialog or a file system dialog will be used. If the folder cannot be located, the
-	 * workspace root folder is used by default. When type is set to {@module #WRITE} or {@module #APPEND} a save dialog will be shown instead
-	 * of the default open dialog.
+	 * workspace root folder is used by default. When type is set to {@module #WRITE} or {@module #APPEND} a save dialog will be shown instead of the default
+	 * open dialog.
 	 *
 	 * @param rootFolder
 	 *            root folder path to use
@@ -549,7 +549,8 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public String showFolderSelectionDialog(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object rootFolder,
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String title, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String title,
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String message) {
 
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
 		if (rootFolder == null)
@@ -691,7 +692,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		final Object resolvedLocation = ResourceTools.resolveFolder(location, getScriptEngine().getExecutedFile(), true);
 
 		if (resolvedLocation instanceof IContainer) {
-			Logger.logWarning("The folder to link is already part of the workspace: " + location);
+			Logger.warning(PluginConstants.PLUGIN_ID, "The folder to link is already part of the workspace: " + location);
 			return false;
 
 		} else if (resolvedLocation instanceof File) {
@@ -704,12 +705,12 @@ public class ResourcesModule extends AbstractScriptModule {
 
 				return true;
 			} catch (final CoreException e) {
-				Logger.logError("Could not link to project", e);
+				Logger.error(PluginConstants.PLUGIN_ID, "Could not link to project", e);
 				return false;
 			}
 
 		} else {
-			Logger.logWarning("Could not resolve location: " + location);
+			Logger.warning(PluginConstants.PLUGIN_ID, "Could not resolve location: " + location);
 			return false;
 		}
 	}

@@ -214,7 +214,7 @@ public class EcoreModule extends AbstractScriptModule {
 			@ScriptParameter(name = "uri", defaultValue = ScriptParameter.NULL) final String uri) {
 		ResourceSet resourceSet = getResourceSet();
 		if (resourceSet == null) {
-			Logger.logWarning("Unable to get the current resourceSet. Creating a new one...");
+			Logger.warning(Activator.PLUGIN_ID, "Unable to get the current resourceSet. Creating a new one...");
 			resourceSet = new ResourceSetImpl();
 		}
 		URI resourceURI = createURI(uri, name);
@@ -436,7 +436,7 @@ public class EcoreModule extends AbstractScriptModule {
 			}
 
 		} else {
-			Logger.logWarning("Unable to retreive editing domain. There is not opened editor");
+			Logger.warning(Activator.PLUGIN_ID, "Unable to retreive editing domain. There is not opened editor");
 		}
 		return null;
 	}

@@ -68,7 +68,7 @@ public class PapyrusModule extends UMLModule {
 	public ModelSet getModelSet() {
 		EditingDomain editingDomain = TransactionUtil.getEditingDomain(getModel());
 		if (editingDomain == null) {
-			Logger.logError("Unable to get the editing domain");
+			Logger.error(Activator.PLUGIN_ID, "Unable to get the editing domain");
 			return null;
 		}
 		ResourceSet resourceSet = editingDomain.getResourceSet();
@@ -76,7 +76,7 @@ public class PapyrusModule extends UMLModule {
 			return (ModelSet) resourceSet;
 
 		}
-		Logger.logError("The resource set is not a model set");
+		Logger.error(Activator.PLUGIN_ID, "The resource set is not a model set");
 		return null;
 	}
 

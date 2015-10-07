@@ -166,8 +166,7 @@ public class SelectorService {
 						selectors.put(priority, selectorWrapper);
 						selectorsMap.put(id, selectorWrapper);
 					} catch (CoreException e1) {
-						e1.printStackTrace();
-						Logger.logError("Unable to create the a selector from " + id);
+						Logger.error(Activator.PLUGIN_ID, "Unable to create the a selector from " + id, e1);
 					}
 				}
 			}

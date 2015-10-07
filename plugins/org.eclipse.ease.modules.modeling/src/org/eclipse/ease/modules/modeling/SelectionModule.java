@@ -20,7 +20,6 @@ import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ease.modules.platform.UIModule;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
 
@@ -28,9 +27,9 @@ import com.google.common.collect.Lists;
 
 /**
  * Module to interact with selection
- * 
+ *
  * @author adaussy
- * 
+ *
  */
 public class SelectionModule extends AbstractScriptModule {
 
@@ -41,13 +40,14 @@ public class SelectionModule extends AbstractScriptModule {
 	/**
 	 * Return the current selection using the selection service. The selection service return transformed selection using some rules define in the platform.
 	 * This method use the selector with the Highest priority
-	 * 
+	 *
 	 * @return
 	 */
 	@WrapToScript
 	public Object getCustomSelection() {
-		ISelection selection = getEnvironment().getModule(UIModule.class).getSelection(null);
-		IEvaluationService esrvc = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
+		getEnvironment().getModule(UIModule.class);
+		ISelection selection = UIModule.getSelection(null);
+		IEvaluationService esrvc = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 
 		Object customSelection = SelectorService.getInstance().getSelectionFromContext(selection, esrvc.getCurrentState());
 		if (customSelection != null) {
@@ -58,31 +58,34 @@ public class SelectionModule extends AbstractScriptModule {
 
 	/**
 	 * Return the current selection using the selection service. The selection service return transformed selection using some rules define in the platform.
-	 * 
+	 *
 	 * @param selectorID
 	 *            The if of the selector to use
 	 * @return
 	 */
 	@WrapToScript
 	public Object getCustomSelectionFromSelector(final String selectorID) {
-		ISelection selection = getEnvironment().getModule(UIModule.class).getSelection(null);
+		getEnvironment().getModule(UIModule.class);
+		ISelection selection = UIModule.getSelection(null);
 		return SelectorService.getInstance().getSelectionFromSelector(selection, selectorID);
 	}
 
 	/**
 	 * Return the selection after being adapter to {@link IIterable}
-	 * 
+	 *
 	 * @return
 	 */
 	@WrapToScript
 	public Iterable<Object> getIterableSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
-		ISelection selection  = getEnvironment().getModule(UIModule.class).getSelection(name);
-		
+		getEnvironment().getModule(UIModule.class);
+		ISelection selection = UIModule.getSelection(name);
+
 		IIterable result = getAdapter(IIterable.class, selection);
 		if (result != null) {
 			return Lists.newArrayList(result.iterator());
 		}
-		getEnvironment().getModule(UIModule.class).showErrorDialog("Error", "The current selection is not an iterable");
+		getEnvironment().getModule(UIModule.class);
+		UIModule.showErrorDialog("Error", "The current selection is not an iterable");
 		return null;
 	}
 
@@ -91,13 +94,13 @@ public class SelectionModule extends AbstractScriptModule {
 			if (cla.isInstance(o)) {
 				return (T) o;
 			} else if (o instanceof IAdaptable) {
-				return (T) ((IAdaptable) o).getAdapter(cla);
+				return ((IAdaptable) o).getAdapter(cla);
 			} else {
 				IAdapterManager manager = Platform.getAdapterManager();
 				if (manager != null) {
-					return (T) manager.getAdapter(o, cla);
+					return manager.getAdapter(o, cla);
 				} else {
-					Logger.logError("Unable to get thr AdapterManger");
+					Logger.error(Activator.PLUGIN_ID, "Unable to get thr AdapterManger");
 					return null;
 				}
 			}

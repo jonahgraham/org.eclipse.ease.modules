@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ PlatformModuleTest.class, ResourcesModuleTest.class })
+@SuiteClasses({ PlatformModuleTest.class, ResourcesModuleTest.class, ScriptingModuleTest.class })
 public class AllTests {
 
 }

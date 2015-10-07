@@ -4,13 +4,19 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ease.AbstractScriptEngine;
+import org.eclipse.ease.IExecutionListener;
 import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.IScriptable;
+import org.eclipse.ease.Logger;
+import org.eclipse.ease.Script;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
@@ -25,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ScriptingModule extends AbstractScriptModule {
 
+	/** Module identifier. */
 	public static final String MODULE_ID = "/System/Scripting";
 
 	/**
@@ -207,7 +214,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 *             when wait gets interrupted
 	 */
 	@WrapToScript
-	public void wait(final Object monitor, @ScriptParameter(defaultValue = "0") final long timeout) throws InterruptedException {
+	public static void wait(final Object monitor, @ScriptParameter(defaultValue = "0") final long timeout) throws InterruptedException {
 		synchronized (monitor) {
 			monitor.wait(timeout);
 		}
@@ -220,7 +227,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 *            monitor to notify
 	 */
 	@WrapToScript
-	public void notify(final Object monitor) {
+	public static void notify(final Object monitor) {
 		synchronized (monitor) {
 			monitor.notify();
 		}
@@ -233,9 +240,169 @@ public class ScriptingModule extends AbstractScriptModule {
 	 *            monitor to notify
 	 */
 	@WrapToScript
-	public void notifyAll(final Object monitor) {
+	public static void notifyAll(final Object monitor) {
 		synchronized (monitor) {
 			monitor.notifyAll();
+		}
+	}
+
+	/**
+	 * Add an object to the shared object store. The shared object store allows to share java instances between several script engines. By default objects are
+	 * stored until the script engine providing it is terminated. This helps to avoid polluting the java heap. When <i>permanent</i> is set to <code>true</code>
+	 * , this object will be stored forever.
+	 *
+	 * @param key
+	 *            key to store the object
+	 * @param object
+	 *            instance to store
+	 * @param permanent
+	 *            flag indicating permanent storage
+	 * @throws IllegalAccessException
+	 *             when scriptEngine is not the owner of the shared object
+	 */
+	@WrapToScript
+	public void setSharedObject(final String key, final Object object, @ScriptParameter(defaultValue = "false") final boolean permanent)
+			throws IllegalAccessException {
+		ScriptStorage.getInstance().put(key, object, getScriptEngine(), permanent);
+	}
+
+	/**
+	 * Get an object from the shared object store.
+	 *
+	 * @param key
+	 *            key to retrieve object for
+	 * @return shared object or <code>null</code>
+	 */
+	@WrapToScript
+	public Object getSharedObject(final String key) {
+		return ScriptStorage.getInstance().get(key);
+	}
+
+	/**
+	 * Storage element for {@link ScriptStorage}.
+	 */
+	private static class StorageElement {
+		public Object fElement;
+		public Object fOwner;
+		public boolean fPermanent;
+
+		public StorageElement(final Object element, final Object owner, final boolean permanent) {
+			fElement = element;
+			fOwner = owner;
+			fPermanent = permanent;
+		}
+	}
+
+	/**
+	 * Storage singleton to share objects. This class is synchronized.
+	 */
+	private static class ScriptStorage implements IExecutionListener {
+		private static ScriptStorage fInstance = null;
+
+		/**
+		 * Get the singleton instance.
+		 *
+		 * @return singleton ScriptStorage
+		 */
+		public synchronized static ScriptStorage getInstance() {
+			if (fInstance == null)
+				fInstance = new ScriptStorage();
+
+			return fInstance;
+		}
+
+		/** Stored elements. */
+		private final Map<String, StorageElement> fElements = new HashMap<String, StorageElement>();
+
+		/**
+		 * Retrieve a shared object.
+		 *
+		 * @param key
+		 *            key to retrieve object for
+		 * @return shared object or <code>null</code>
+		 */
+		public synchronized Object get(final String key) {
+			StorageElement storedElement = fElements.get(key);
+			return (storedElement != null) ? storedElement.fElement : null;
+		}
+
+		/**
+		 * @param key
+		 *            key to store the object
+		 * @param object
+		 *            instance to store
+		 * @param scriptEngine
+		 *            script engine asking for storage
+		 * @param permanent
+		 *            flag indicating permanent storage
+		 * @throws IllegalAccessException
+		 *             when scriptEngine is not the owner of the shared object
+		 */
+		public synchronized void put(final String key, final Object object, final IScriptEngine scriptEngine, final boolean permanent)
+				throws IllegalAccessException {
+			if (fElements.containsKey(key))
+				remove(key, scriptEngine);
+
+			fElements.put(key, new StorageElement(object, getOwner(scriptEngine), permanent));
+
+			if (!permanent)
+				scriptEngine.addExecutionListener(this);
+		}
+
+		/**
+		 * @param key
+		 * @param scriptEngine
+		 * @return
+		 * @throws IllegalAccessException
+		 *             when scriptEngine is not the owner of the shared object
+		 */
+		public synchronized void remove(final String key, final IScriptEngine scriptEngine) throws IllegalAccessException {
+			if (fElements.containsKey(key)) {
+				// verify that current scriptEngine is the owner of this value
+				if (fElements.get(key).fOwner.equals(getOwner(scriptEngine))) {
+
+					// remove element
+					fElements.remove(key);
+				} else
+					throw new IllegalAccessException("Engine is not the owner of shared object \"" + key + "\"");
+			}
+		}
+
+		/**
+		 * Get unique token for object owner.
+		 *
+		 * @param engine
+		 *            script engine owner
+		 * @return owner token
+		 */
+		private static Object getOwner(final IScriptEngine engine) {
+			// we do not want to keep the whole script engine around as owner for permanent objects as script engines are big objects.
+			return engine.hashCode();
+		}
+
+		@Override
+		public synchronized void notify(final IScriptEngine engine, final Script script, final int status) {
+			if (status == IExecutionListener.ENGINE_END) {
+
+				// clean up owned elements
+				for (String key : new HashSet<String>(fElements.keySet())) {
+					StorageElement element = fElements.get(key);
+					if ((element.fOwner.equals(getOwner(engine)) && (!element.fPermanent))) {
+						try {
+							remove(key, engine);
+						} catch (IllegalAccessException e) {
+							// we already checked that we are the owner, so this should not happen
+							Logger.logError("Error while cleaning up shared objects", e);
+						}
+					}
+				}
+
+				if (fElements.isEmpty())
+					// we are empty, clean up singleton
+					fInstance = null;
+
+				engine.removeExecutionListener(this);
+			}
 		}
 	}
 }

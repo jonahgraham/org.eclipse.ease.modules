@@ -251,17 +251,17 @@ public class UIModule extends AbstractScriptModule {
 	 * must allow multiple instances by having specified allowMultiple="true" in its extension.
 	 * </p>
 	 *
-	 * @param viewId
-	 *            the id of the view extension to use
+	 * @param name
+	 *            either the id of the view extension to use or the visible name of the view (tab title)
 	 * @param secondaryId
-	 *            the secondary id to use, or <code>null</code> for no secondary id, Default is <code>null</code>
+	 *            the secondary id to use, or <code>null</code> for no secondary id
 	 * @param mode
 	 *            the activation mode. Must be {@link #VIEW_ACTIVATE}, {@link #VIEW_VISIBLE} or {@link #VIEW_CREATE}, Default is {@link #VIEW_ACTIVATE}
 	 * @return a view
-	 * @exception PartInitException
-	 *                if the view could not be initialized
-	 * @exception IllegalArgumentException
-	 *                if the supplied mode is not valid
+	 * @throws PartInitException
+	 *             when the view could not be initialized
+	 * @throws IllegalArgumentException
+	 *             when the supplied mode is not valid
 	 * @since 3.0
 	 */
 	@WrapToScript(alias = "openView")
@@ -428,8 +428,9 @@ public class UIModule extends AbstractScriptModule {
 		final IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 		for (final IViewDescriptor descriptor : viewRegistry.getViews()) {
 			if (descriptor.getId().equals(name)) {
-				id = descriptor.getId();
-				break;
+				// this is a valid view ID
+				return name;
+
 			} else if (descriptor.getLabel().equals(name)) {
 				id = descriptor.getId();
 				// continue as we might have a match with an ID later
@@ -574,12 +575,12 @@ public class UIModule extends AbstractScriptModule {
 	 * Maximize a dedicated view. If the view is not opened yet, it will be opened by this call. A second call will restore the original size of the view.
 	 *
 	 * @param name
-	 *            name or id of view to maximize
+	 *            visible name or id of view to maximize
 	 * @throws PartInitException
 	 *             when view cannot be opened
 	 */
 	@WrapToScript
-	public static void maximizeView(String name) throws PartInitException {
+	public static void maximizeView(final String name) throws PartInitException {
 		final IViewPart view = showView(name);
 		if (view != null)
 			ActionFactory.MAXIMIZE.create(view.getViewSite().getWorkbenchWindow()).run();
@@ -594,9 +595,42 @@ public class UIModule extends AbstractScriptModule {
 	 *             when view cannot be opened
 	 */
 	@WrapToScript
-	public static void minimizeView(String name) throws PartInitException {
+	public static void minimizeView(final String name) throws PartInitException {
 		final IViewPart view = showView(name);
 		if (view != null)
 			ActionFactory.MINIMIZE.create(view.getViewSite().getWorkbenchWindow()).run();
+	}
+
+	/**
+	 * Close a dedicated view.
+	 *
+	 * @param name
+	 *            visible name or id of view to close
+	 * @param secondaryID
+	 *            secondary ID of view to close
+	 */
+	@WrapToScript
+	public static void closeView(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String secondaryID) {
+		// find view ID
+		final String viewID = getIDForName(name);
+
+		Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+
+				for (final IViewReference part : activePage.getViewReferences()) {
+					if (part.getId().equals(viewID)) {
+						if ((secondaryID == null) || (secondaryID.equals(part.getSecondaryId()))) {
+							activePage.hideView(part);
+							return;
+						}
+					}
+				}
+			}
+		};
+
+		Display.getDefault().syncExec(runnable);
 	}
 }

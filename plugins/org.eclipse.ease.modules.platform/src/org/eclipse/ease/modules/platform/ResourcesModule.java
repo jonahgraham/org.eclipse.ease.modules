@@ -49,6 +49,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Provides file access for workspace and file system resources. Methods accepting location objects can deal with {@link String}, {@link URI}, {@link IFile} and
@@ -521,6 +522,7 @@ public class ResourcesModule extends AbstractScriptModule {
 						dialog.setTitle(title);
 						dialog.setMessage(message);
 						dialog.setInput(dialogRoot);
+						dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
 						if (dialog.open() == Window.OK)
 							setResult("workspace:/" + ((IResource) dialog.getFirstResult()).getFullPath().toPortableString());

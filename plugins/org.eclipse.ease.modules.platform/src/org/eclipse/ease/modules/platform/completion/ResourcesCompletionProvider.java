@@ -11,20 +11,19 @@
 package org.eclipse.ease.modules.platform.completion;
 
 import org.eclipse.ease.ICompletionContext;
-import org.eclipse.ease.ICompletionContext.Type;
 import org.eclipse.ease.modules.ModuleDefinition;
 import org.eclipse.ease.modules.platform.ResourcesModule;
 import org.eclipse.ease.modules.platform.ScriptingModule;
 import org.eclipse.ease.modules.platform.UIModule;
 import org.eclipse.ease.service.IScriptService;
-import org.eclipse.ease.ui.completion.provider.FileLocationCompletionProvider;
+import org.eclipse.ease.ui.completion.provider.AbstractFileLocationCompletionProvider;
 import org.eclipse.ui.PlatformUI;
 
-public class ResourcesCompletionProvider extends FileLocationCompletionProvider {
+public class ResourcesCompletionProvider extends AbstractFileLocationCompletionProvider {
 
 	@Override
 	public boolean isActive(final ICompletionContext context) {
-		if (context.getType() == Type.STRING_LITERAL) {
+		if (super.isActive(context)) {
 
 			// Resources module
 			if (context.getLoadedModules().contains(getModule(ResourcesModule.MODULE_ID))) {

@@ -12,6 +12,7 @@ package org.eclipse.ease.modules.platform;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -748,4 +749,20 @@ public class ResourcesModule extends AbstractScriptModule {
 			}
 		}
 	}
+
+	/**
+	 * Read from an InputStream into a string. Consumes an {@link InputStream} and stores all available data in a string. Usually a stream is only readable
+	 * once.
+	 *
+	 * @param input
+	 *            input stream to read from
+	 * @return string content of stream.
+	 * @throws IOException
+	 *             on read error on the stream
+	 */
+	@WrapToScript
+	public String readStream(final InputStream input) throws IOException {
+		return ResourceTools.toString(input);
+	}
+
 }

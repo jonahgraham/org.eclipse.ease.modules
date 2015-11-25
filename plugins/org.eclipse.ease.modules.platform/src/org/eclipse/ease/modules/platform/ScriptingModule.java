@@ -43,7 +43,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static IScriptEngine createScriptEngine(final String identifier) {
-		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
 
 		// by ID
 		EngineDescription engine = scriptService.getEngineByID(identifier);
@@ -75,7 +75,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	public static String[] listScriptEngines() {
 		final List<String> result = new ArrayList<String>();
 
-		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
 		for (final EngineDescription description : scriptService.getEngines())
 			result.add(description.getID());
 
@@ -97,7 +97,7 @@ public class ScriptingModule extends AbstractScriptModule {
 	public IScriptEngine fork(final Object resource, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String arguments,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) String engineID) {
 
-		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
 
 		if (engineID == null) {
 			// try to find engine for script type
@@ -257,13 +257,15 @@ public class ScriptingModule extends AbstractScriptModule {
 	 *            instance to store
 	 * @param permanent
 	 *            flag indicating permanent storage
+	 * @param writable
+	 *            flag indicating that any engine may write this value
 	 * @throws IllegalAccessException
 	 *             when scriptEngine is not the owner of the shared object
 	 */
 	@WrapToScript
-	public void setSharedObject(final String key, final Object object, @ScriptParameter(defaultValue = "false") final boolean permanent)
-			throws IllegalAccessException {
-		ScriptStorage.getInstance().put(key, object, getScriptEngine(), permanent);
+	public void setSharedObject(final String key, final Object object, @ScriptParameter(defaultValue = "false") final boolean permanent,
+			@ScriptParameter(defaultValue = "false") final boolean writable) throws IllegalAccessException {
+		ScriptStorage.getInstance().put(key, object, getScriptEngine(), permanent, writable);
 	}
 
 	/**
@@ -285,11 +287,13 @@ public class ScriptingModule extends AbstractScriptModule {
 		public Object fElement;
 		public Object fOwner;
 		public boolean fPermanent;
+		private final boolean fWritable;
 
-		public StorageElement(final Object element, final Object owner, final boolean permanent) {
+		public StorageElement(final Object element, final Object owner, final boolean permanent, final boolean writable) {
 			fElement = element;
 			fOwner = owner;
 			fPermanent = permanent;
+			fWritable = writable;
 		}
 	}
 
@@ -335,15 +339,17 @@ public class ScriptingModule extends AbstractScriptModule {
 		 *            script engine asking for storage
 		 * @param permanent
 		 *            flag indicating permanent storage
+		 * @param writable
+		 *            flag indicating that any engine may write this value
 		 * @throws IllegalAccessException
 		 *             when scriptEngine is not the owner of the shared object
 		 */
-		public synchronized void put(final String key, final Object object, final IScriptEngine scriptEngine, final boolean permanent)
+		public synchronized void put(final String key, final Object object, final IScriptEngine scriptEngine, final boolean permanent, final boolean writable)
 				throws IllegalAccessException {
 			if (fElements.containsKey(key))
 				remove(key, scriptEngine);
 
-			fElements.put(key, new StorageElement(object, getOwner(scriptEngine), permanent));
+			fElements.put(key, new StorageElement(object, getOwner(scriptEngine), permanent, writable));
 
 			if (!permanent)
 				scriptEngine.addExecutionListener(this);
@@ -352,14 +358,14 @@ public class ScriptingModule extends AbstractScriptModule {
 		/**
 		 * @param key
 		 * @param scriptEngine
-		 * @return
 		 * @throws IllegalAccessException
 		 *             when scriptEngine is not the owner of the shared object
 		 */
 		public synchronized void remove(final String key, final IScriptEngine scriptEngine) throws IllegalAccessException {
 			if (fElements.containsKey(key)) {
-				// verify that current scriptEngine is the owner of this value
-				if (fElements.get(key).fOwner.equals(getOwner(scriptEngine))) {
+				// verify that current scriptEngine is the owner of this value or the object is writable
+				StorageElement element = fElements.get(key);
+				if ((element.fWritable) || (element.fOwner.equals(getOwner(scriptEngine)))) {
 
 					// remove element
 					fElements.remove(key);

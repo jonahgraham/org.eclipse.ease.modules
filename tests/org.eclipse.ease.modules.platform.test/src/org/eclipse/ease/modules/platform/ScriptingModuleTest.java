@@ -37,7 +37,7 @@ public class ScriptingModuleTest {
 
 		// set the object
 		try {
-			module.setSharedObject("temp", testObject, false);
+			module.setSharedObject("temp", testObject, false, false);
 		} catch (IllegalAccessException e) {
 			fail(e.getMessage());
 		}
@@ -69,10 +69,10 @@ public class ScriptingModuleTest {
 
 		// set the object
 		try {
-			module.setSharedObject("perm", testObject, true);
+			module.setSharedObject("perm", testObject, true, false);
 
 			// set another temp object to make sure the execution listener gets installed
-			module.setSharedObject("anotherTemp", testObject, false);
+			module.setSharedObject("anotherTemp", testObject, false, false);
 		} catch (IllegalAccessException e) {
 			fail(e.getMessage());
 		}
@@ -108,11 +108,33 @@ public class ScriptingModuleTest {
 
 		// set the object
 		try {
-			creatorModule.setSharedObject("foreign", testObject, false);
+			creatorModule.setSharedObject("foreign", testObject, false, false);
 		} catch (IllegalAccessException e) {
 			fail(e.getMessage());
 		}
 
-		modifierModule.setSharedObject("foreign", testObject, false);
+		modifierModule.setSharedObject("foreign", testObject, false, false);
+	}
+
+	@Test
+	public void overwriteForeignUnlockedObject() throws IllegalAccessException {
+		Object testObject = new Object();
+
+		// mocked script engine
+		IScriptEngine creatorEngine = mock(IScriptEngine.class);
+		IScriptEngine modifierEngine = mock(IScriptEngine.class);
+
+		// initialize modules
+		ScriptingModule creatorModule = new ScriptingModule();
+		creatorModule.initialize(creatorEngine, null);
+
+		ScriptingModule modifierModule = new ScriptingModule();
+		modifierModule.initialize(modifierEngine, null);
+
+		// set the object
+		creatorModule.setSharedObject("foreignShared", testObject, false, true);
+
+		// reset the object
+		modifierModule.setSharedObject("foreignShared", testObject, false, false);
 	}
 }

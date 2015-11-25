@@ -11,6 +11,7 @@
 package org.eclipse.ease.modules.unittest.components;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,8 +73,11 @@ public class TestSuite extends TestComposite {
 
 	private int fCurrentTestCount;
 	private List<TestFile> fActiveTestFiles = Collections.emptyList();
+
 	private OutputStream fOutputStream = System.out;
 	private OutputStream fErrorStream = System.err;
+	private InputStream fInputStream = System.in;
+
 	private Map<String, Object> fSetupVariables;
 	private ILaunch fDebugLaunch;
 
@@ -319,6 +323,15 @@ public class TestSuite extends TestComposite {
 
 	public OutputStream getErrorStream() {
 		return fErrorStream;
+	}
+
+	public void setErrorStream(final InputStream inputStream) {
+		if (inputStream != null)
+			fInputStream = inputStream;
+	}
+
+	public InputStream getInputStream() {
+		return fInputStream;
 	}
 
 	public List<TestFile> getActiveTestFiles() {

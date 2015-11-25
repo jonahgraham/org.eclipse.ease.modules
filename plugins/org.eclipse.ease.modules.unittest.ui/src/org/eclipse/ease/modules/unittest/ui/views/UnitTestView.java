@@ -653,6 +653,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					fConsole.activate();
 					((TestSuite) testObject).setOutputStream(fConsole.getOutputStream());
 					((TestSuite) testObject).setErrorStream(fConsole.getErrorStream());
+					((TestSuite) testObject).setErrorStream(fConsole.getInputStream());
 
 					// update estimated runtime
 					lblTimeLeft.setVisible(true);

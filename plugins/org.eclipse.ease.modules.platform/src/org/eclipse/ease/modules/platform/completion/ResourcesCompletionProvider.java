@@ -76,7 +76,7 @@ public class ResourcesCompletionProvider extends AbstractFileLocationCompletionP
 	}
 
 	private static ModuleDefinition getModule(final String identifier) {
-		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
 		return scriptService.getAvailableModules().get(identifier);
 	}
 }

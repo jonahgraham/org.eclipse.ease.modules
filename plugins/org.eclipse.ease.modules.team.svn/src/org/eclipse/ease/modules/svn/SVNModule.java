@@ -13,8 +13,12 @@ package org.eclipse.ease.modules.svn;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
+import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.SVNDepth;
@@ -22,22 +26,20 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRepositoryLocationOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
-public class SVNModule {
-
-	public SVNModule() {
-	}
+public class SVNModule extends AbstractScriptModule {
 
 	/**
 	 * Creates repository location.
-	 * 
+	 *
 	 * Creates repository location with rooturl, if location already exists: return existing location
-	 * 
+	 *
 	 * @param rootUrl
 	 *            defines the root URL of the repository
 	 * @param username
@@ -91,39 +93,67 @@ public class SVNModule {
 
 	/**
 	 * Imports project from repository location.
-	 * 
+	 *
 	 * Imports project (given with projectLocation) from repository location.
-	 * 
+	 *
 	 * @param rootLocation
 	 *            can be a string (-> generate RepositoryLocation automatically) or already a RepositoryLocation
 	 * @param projectLocations
 	 *            array from relative paths to project locations
 	 */
 	@WrapToScript
-	public void importProjectFromSVN(Object rootLocation, String[] projectLocations) throws Exception {
-			if (rootLocation instanceof IRepositoryResource) {
-			} else {
-				rootLocation = createRepositoryLocation(rootLocation.toString(), null, null);
+	public void importProjectFromSVN(Object rootLocation, final String[] projectLocations) throws Exception {
+		if (rootLocation instanceof IRepositoryResource) {
+		} else {
+			rootLocation = createRepositoryLocation(rootLocation.toString(), null, null);
+		}
+
+		List<IRepositoryResource> doCeckout_tmp = new ArrayList<IRepositoryResource>();
+		for (String location : projectLocations) {
+			IRepositoryResource projectResource = SVNRemoteStorage.instance().asRepositoryResource((IRepositoryLocation) rootLocation,
+					((IRepositoryLocation) rootLocation).getUrl() + "/" + location, false);
+			doCeckout_tmp.add(projectResource);
+		}
+
+		final IRepositoryResource[] doCeckout = doCeckout_tmp.toArray(new IRepositoryResource[] {});
+
+		Display.getDefault().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				Shell sh = Display.getDefault().getActiveShell();
+				IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(sh, doCeckout, null, true, null,
+						SVNDepth.INFINITY, false);
+				UIMonitorUtility.doTaskNowDefault(op, true);
 			}
+		});
+	}
 
-			List<IRepositoryResource> doCeckout_tmp = new ArrayList<IRepositoryResource>();
-			for (String location : projectLocations) {
-				IRepositoryResource projectResource = SVNRemoteStorage.instance().asRepositoryResource((IRepositoryLocation) rootLocation,
-						((IRepositoryLocation) rootLocation).getUrl() + "/" + location, false);
-				doCeckout_tmp.add(projectResource);
-			}
+	/**
+	 * Get the revision for a given resource.
+	 *
+	 * @param resource
+	 *            resource to get revision for
+	 * @return revision number
+	 */
+	@WrapToScript
+	public long getRevision(final Object resource) {
+		IResource lookup = null;
+		Object file = ResourceTools.resolveFile(resource, getScriptEngine().getExecutedFile(), true);
+		if (file instanceof IResource)
+			lookup = (IResource) file;
 
-			final IRepositoryResource[] doCeckout = doCeckout_tmp.toArray(new IRepositoryResource[] {});
+		else {
+			Object folder = ResourceTools.resolveFolder(resource, getScriptEngine().getExecutedFile(), true);
+			if (folder instanceof IContainer)
+				lookup = (IResource) folder;
+		}
 
-			Display.getDefault().syncExec(new Runnable() {
+		if (lookup != null) {
+			ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(lookup);
+			return localResource.getRevision();
+		}
 
-				@Override
-				public void run() {
-					Shell sh = Display.getDefault().getActiveShell();
-					IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory()
-							.getCheckoutOperation(sh, doCeckout, null, true, null, SVNDepth.INFINITY, false);
-					UIMonitorUtility.doTaskNowDefault(op, true);
-				}
-			});
+		return -1;
 	}
 }

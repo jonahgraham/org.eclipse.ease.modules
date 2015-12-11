@@ -121,7 +121,7 @@ public class UIModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Displays an input dialog. Contains yes/no buttons. Needs UI to be available.
+	 * Displays an input dialog. Needs UI to be available.
 	 *
 	 * @param message
 	 *            dialog message

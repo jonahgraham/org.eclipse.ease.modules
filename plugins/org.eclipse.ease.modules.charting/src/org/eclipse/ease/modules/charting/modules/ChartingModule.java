@@ -30,15 +30,14 @@ public class ChartingModule extends AbstractScriptModule {
 	private static int fFigureIterator = 1;
 
 	/**
-	 * Shows a View in this page with the Empty Chart where figureId will be the name of the View and the Chart. Figure is actually View. If the Name is not
-	 * given the name "Figure id" will be given where id is the current number of the Figure Iterator. Figure Iterator start at 1 and with every new Figure is
-	 * incremented by one. If Figure with figureId already exist then that Figure will be show and set as active Figure.
-	 * 
+	 * Opens a new view with an empty figure. <i>figureId</i> is used as a view and chart title. If a view with the same <i>figureId</i> already exists, it will
+	 * be activated. The last activated figure will be used for all further commands of this modules.
+	 *
 	 * @param figureId
-	 *            Name of this Figure, Default is <code>null</code> if no figureId is given, in that case the name "figure id" will be set as explained above
-	 * @return Chart as composite part of this view to set different properties of this view
+	 *            name of the figure to be created
+	 * @return new or activated chart
 	 * @throws PartInitException
-	 *             if the view could not be initialized
+	 *             when the view could not be initialized
 	 */
 	@WrapToScript
 	public Chart figure(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String figureId) throws PartInitException {
@@ -64,12 +63,12 @@ public class ChartingModule extends AbstractScriptModule {
 	 *            example 2 colors will be written like "rg" then the last one will be taken, in this case g or green, so please set line style, point size,
 	 *            color and Marker Type only once. Used matlab syntax to define plot format:
 	 *            <table cellspacing="0" class="body" cellpadding="4" border="2">
-	 * 
+	 *
 	 *            <tr valign="top">
 	 *            <th valign="top">Specifier</th>
 	 *            <th valign="top">LineStyle</th>
 	 *            </tr>
-	 * 
+	 *
 	 *            <tr valign="top">
 	 *            <td>'<tt>-</tt>'</td>
 	 *            <td>
@@ -110,10 +109,10 @@ public class ChartingModule extends AbstractScriptModule {
 	 *            </p>
 	 *            </td>
 	 *            </tr>
-	 * 
+	 *
 	 *            </table>
 	 *            <table cellspacing="0" class="body" cellpadding="4" border="2">
-	 * 
+	 *
 	 *            <tr valign="top">
 	 *            <th>
 	 *            <p>
@@ -190,7 +189,7 @@ public class ChartingModule extends AbstractScriptModule {
 	 *            </p>
 	 *            </td>
 	 *            </tr>
-	 * 
+	 *
 	 *            </table>
 	 *            <table cellspacing="0" class="body" cellpadding="4" border="2">
 	 *            <tr valign="top">
@@ -270,28 +269,29 @@ public class ChartingModule extends AbstractScriptModule {
 	 *            </td>
 	 *            </tr>
 	 *            </table>
-	 * 
+	 *
 	 * @return series as Trace type to set different properties for this series
 	 * @throws PartInitException
 	 *             if the series could not be initialized
 	 */
 	@WrapToScript
-	public Trace series(@ScriptParameter(defaultValue = ScriptParameter.NULL) String seriesName, @ScriptParameter(defaultValue = "") String format)
+	public Trace series(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String seriesName, @ScriptParameter(defaultValue = "") final String format)
 			throws PartInitException {
 		return getChart().series(seriesName, format);
 	}
 
 	/**
-	 * Create new chart if possible and return it, if workbench is not working exception will be thrown
+	 * Create new chart if possible and return it, if workbench is not working exception will be thrown.
 	 */
 	private Chart getChart() throws PartInitException {
 		if (fChart == null)
 			figure(null);
+
 		return fChart;
 	}
 
 	/**
-	 * Add (x,y) point to the last Series that is set with method series(seriesName,format). If there is no active Figure and Series then both will be created
+	 * Add (x,y) point to the last Series that is set with method series(seriesName,format). If there is no active figure and series then both will be created
 	 * and activated.
 	 *
 	 * @param x
@@ -301,12 +301,12 @@ public class ChartingModule extends AbstractScriptModule {
 	 * @return series as Trace type to set different properties for this series
 	 */
 	@WrapToScript
-	public Trace plotPoint(double x, double y) throws PartInitException {
+	public Trace plotPoint(final double x, final double y) throws PartInitException {
 		return getChart().plot(x, y);
 	}
 
 	/**
-	 * Plot array of points (x[],y[]) on the last Series that is set with method series(seriesName,format). If there is no active Figure and Series then both
+	 * Plot array of points (x[],y[]) on the last series that is set with method series(seriesName, format). If there is no active Figure and Series then both
 	 * will be created and activated.
 	 *
 	 * @param x
@@ -316,118 +316,132 @@ public class ChartingModule extends AbstractScriptModule {
 	 * @return series as Trace type to set different properties for this series
 	 */
 	@WrapToScript
-	public Trace plot(double[] x, double[] y) throws PartInitException {
+	public Trace plot(final double[] x, final double[] y) throws PartInitException {
 		return getChart().plot(x, y);
 	}
 
 	/**
-	 * Set Graph Title. If there is no active Figure then Figure will be created and activated.
+	 * Sets the title of the active chart.
 	 *
-	 * @param plotTitle
-	 *            Title to be set
-	 * @return Graph as XYGraph type to set different properties for this Graph
+	 * @param chartTitle
+	 *            title to be set
+	 * @return {@link XYGraph} object or <code>null</code> if there is no active graph
 	 */
 	@WrapToScript(alias = "title")
-	public XYGraph setPlotTitle(String plotTitle) throws PartInitException {
-		return getChart().setPlotTitle(plotTitle);
+	public XYGraph setPlotTitle(final String chartTitle) throws PartInitException {
+		if (fChart != null)
+			return fChart.setPlotTitle(chartTitle);
+
+		return null;
 	}
 
 	/**
-	 * Set X Axis Name.If there is no active Figure then Figure will be created and activated.
+	 * Set X axis name.
 	 *
-	 * @param xLabel
-	 *            x Label to be set
-	 * @return x Axis as Axis type to set different properties for this Axis
+	 * @param label
+	 *            label to be used for X axis
+	 * @return {@link Axis} object or <code>null</code> if there is no active graph
 	 */
 	@WrapToScript(alias = "xlabel")
-	public Axis setXLabel(String xLabel) throws PartInitException {
-		return getChart().setXLabel(xLabel);
+	public Axis setXLabel(final String label) throws PartInitException {
+		if (fChart != null)
+			return fChart.setXLabel(label);
+
+		return null;
 	}
 
 	/**
-	 * Set Y Axis Name.If there is no active Figure then Figure will be created and activated.
+	 * Set Y axis name.
 	 *
-	 * @param yLabel
-	 *            y Label to be set
-	 * @return y Axis as Axis type to set different properties for this Axis
+	 * @param label
+	 *            label to be used for Y axis
+	 * @return {@link Axis} object or <code>null</code> if there is no active graph
 	 */
 	@WrapToScript(alias = "ylabel")
-	public Axis setYLabel(String yLabel) throws PartInitException {
-		return getChart().setYLabel(yLabel);
+	public Axis setYLabel(final String label) throws PartInitException {
+		if (fChart != null)
+			return fChart.setYLabel(label);
+
+		return null;
 	}
 
 	/**
-	 * Set lower and upper limit of the X Axis and the Y Axis, right call of this function will be setAxisRange([xmin,xmax],[ymin,ymax]) where all parameters
-	 * are double numbers.If there is no active Figure then Figure will be created and activated.
+	 * Set lower and upper limit of the X axis and the Y axis.
 	 *
-	 * @param xrange
+	 * @param xRange
 	 *            Range from x Axis to be set, format is [xmin, xmax]
-	 * @param yrange
+	 * @param yRange
 	 *            Range from Y Axis to be set, format is [ymin, ymax]
 	 */
 	@WrapToScript(alias = "axis")
-	public void setAxisRange(double[] xrange, double[] yrange) throws Exception {
-		getChart().setAxisRange(xrange, yrange);
+	public void setAxisRange(final double[] xRange, final double[] yRange) throws Exception {
+		if (fChart != null)
+			fChart.setAxisRange(xRange, yRange);
 	}
 
 	/**
-	 * Show Grid if true.If there is no active Figure then Figure will be created and activated.
+	 * Activates or deactivates drawing of a background grid.
 	 *
 	 * @param showGrid
-	 *            true - show Grid, false - disable grid
+	 *            if <code>true</code> a grid will be displayed
 	 */
 	@WrapToScript
-	public void showGrid(boolean showGrid) throws PartInitException {
-		getChart().showGrid(showGrid);
+	public void showGrid(final boolean showGrid) throws PartInitException {
+		if (fChart != null)
+			fChart.showGrid(showGrid);
 	}
 
 	/**
-	 * If this parameter is true after new point is added auto scale will be performed, auto scale is performed also with double click.If there is no active
-	 * Figure then Figure will be created and activated.
-	 * 
+	 * Activates or deactivates auto scaling whenever the cart is updated. An auto scale may also be triggered by double clicking right into the chart area.
+	 *
 	 * @param performAutoScale
-	 *            if true perform scale will be performed
+	 *            if <code>true</code> auto scaling will be enabled
 	 */
 	@WrapToScript
-	public void setAutoScale(boolean performAutoScale) throws PartInitException {
-		getChart().setAutoScale(performAutoScale);
+	public void setAutoScale(final boolean performAutoScale) throws PartInitException {
+		if (fChart != null)
+			fChart.setAutoScale(performAutoScale);
 	}
 
 	/**
-	 * Clear all series from Graph.If there is no active Figure then Figure will be created and activated.
+	 * Clears the active chart.
 	 */
 	@WrapToScript
 	public void clear() throws PartInitException {
-		getChart().clear();
+		if (fChart != null)
+			fChart.clear();
 	}
 
 	/**
-	 * Export this graph as png file.If there is no active Figure then Figure will be created and activated.
-	 * 
+	 * Export the current figure as png file.
+	 *
 	 * @param imageName
-	 *            Name of this image to be saved, if this parameter is not set or is empty ("") File Dialog will be opened
+	 *            name of the file to save the image to. If this parameter is not set or is empty ("") File Dialog will be opened
 	 * @param overwrite
-	 *            Overwrite flag, if true file will be overwritten without question, default is false
+	 *            Overwrite flag, if <code>true</code> file will be overwritten without question
 	 * @throws Exception
 	 */
 	@WrapToScript
-	public void exportGraph(@ScriptParameter(defaultValue = ScriptParameter.NULL) String imageName, @ScriptParameter(defaultValue = "false") boolean overwrite)
-			throws Exception {
-		Object file = null;
-		if (!((imageName == null) || imageName.trim().isEmpty()))
-			file = getEnvironment().getModule(ResourcesModule.class).getFile(imageName, false);
-		getChart().export(file, overwrite);
+	public void exportGraph(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String imageName,
+			@ScriptParameter(defaultValue = "false") final boolean overwrite) throws Exception {
+
+		if (fChart != null) {
+			Object file = null;
+			if (!((imageName == null) || imageName.trim().isEmpty()))
+				file = getEnvironment().getModule(ResourcesModule.class).getFile(imageName, false);
+
+			getChart().export(file, overwrite);
+		}
 	}
 
 	/**
-	 * Remove Series.If there is no active Figure then Figure will be created and activated.
+	 * Deletes a given series. If the series does not exists this method does nothing.
 	 *
 	 * @param seriesName
-	 *            Name of this Series
+	 *            name of series to be deleted
 	 */
 	@WrapToScript
-	public void removeSeries(String seriesName) throws PartInitException {
+	public void removeSeries(final String seriesName) throws PartInitException {
 		getChart().removeSeries(seriesName);
 	}
-
 }

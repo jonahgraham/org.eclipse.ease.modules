@@ -11,13 +11,16 @@
 
 package org.eclipse.ease.modules.charting.modules;
 
+import java.io.File;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ease.modules.charting.charts.Chart;
 import org.eclipse.ease.modules.charting.views.ChartView;
-import org.eclipse.ease.modules.platform.ResourcesModule;
 import org.eclipse.ease.modules.platform.UIModule;
+import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
@@ -413,24 +416,21 @@ public class ChartingModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Export the current figure as png file.
+	 * Export the current figure as png file. When no <i>location</i> is provided, a popup dialog will ask the user for the target location.
 	 *
-	 * @param imageName
-	 *            name of the file to save the image to. If this parameter is not set or is empty ("") File Dialog will be opened
+	 * @param location
+	 *            where to store image to. Accepts strings, {@link IFile} and {@link File} instances
 	 * @param overwrite
 	 *            Overwrite flag, if <code>true</code> file will be overwritten without question
 	 * @throws Exception
 	 */
 	@WrapToScript
-	public void exportGraph(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String imageName,
+	public void exportGraph(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object location,
 			@ScriptParameter(defaultValue = "false") final boolean overwrite) throws Exception {
 
 		if (fChart != null) {
-			Object file = null;
-			if (!((imageName == null) || imageName.trim().isEmpty()))
-				file = getEnvironment().getModule(ResourcesModule.class).getFile(imageName, false);
-
-			getChart().export(file, overwrite);
+			Object resolvedLocation = (location != null) ? ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), false) : null;
+			getChart().export(resolvedLocation, overwrite);
 		}
 	}
 

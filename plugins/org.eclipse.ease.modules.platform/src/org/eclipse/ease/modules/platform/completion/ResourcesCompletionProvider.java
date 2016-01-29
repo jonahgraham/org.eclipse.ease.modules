@@ -64,19 +64,20 @@ public class ResourcesCompletionProvider extends AbstractFileLocationCompletionP
 	}
 
 	@Override
-	protected boolean showCandidate(final ICompletionContext context, final Object candidate) {
-		if ((context.getCaller().endsWith("showEditor")) || (context.getCaller().endsWith("openEditor")))
+	protected boolean showCandidate(final Object candidate) {
+		final String caller = getContext().getCaller();
+
+		if ((caller.endsWith("showEditor")) || (caller.endsWith("openEditor")))
 			return !isFileSystemResource(candidate);
 
-		if ((context.getCaller().endsWith("createFile")) || context.getCaller().endsWith("createFolder") || context.getCaller().endsWith("deleteFolder")
-				|| (context.getCaller().endsWith("findFiles")))
+		if ((caller.endsWith("createFile")) || (caller.endsWith("createFolder")) || (caller.endsWith("deleteFolder")) || (caller.endsWith("findFiles")))
 			return !isFile(candidate);
 
-		return super.showCandidate(context, candidate);
+		return super.showCandidate(candidate);
 	}
 
 	private static ModuleDefinition getModule(final String identifier) {
-		final IScriptService scriptService = (IScriptService) PlatformUI.getWorkbench().getService(IScriptService.class);
+		final IScriptService scriptService = PlatformUI.getWorkbench().getService(IScriptService.class);
 		return scriptService.getAvailableModules().get(identifier);
 	}
 }

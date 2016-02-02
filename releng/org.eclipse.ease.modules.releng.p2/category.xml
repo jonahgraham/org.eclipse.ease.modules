@@ -20,4 +20,5 @@
          Additional functionality to be loaded into script engines at runtime.
       </description>
    </category-def>
+   <repository-reference location="http://download.eclipse.org/technology/nebula/snapshot" enabled="true" />
 </site>

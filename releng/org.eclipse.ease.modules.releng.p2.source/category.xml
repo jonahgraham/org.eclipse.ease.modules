@@ -20,4 +20,5 @@
          Source code bundles of modules of the EASE project.
       </description>
    </category-def>
+   <repository-reference location="http://download.eclipse.org/technology/nebula/snapshot" enabled="true" />
 </site>

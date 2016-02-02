@@ -293,6 +293,9 @@ public class TestSuite extends TestComposite {
 		if (!fActiveTestFiles.isEmpty())
 			// run TestSuite
 			new TestSuiteJob("Testsuite " + toString()).schedule();
+
+		else
+			setStatus(TestStatus.PASS);
 	}
 
 	public synchronized void terminate() {

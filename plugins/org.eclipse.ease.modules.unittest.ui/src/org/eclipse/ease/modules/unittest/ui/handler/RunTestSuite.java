@@ -53,6 +53,9 @@ public class RunTestSuite extends AbstractHandler implements IHandler {
 				} catch (final CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (Throwable e) {
+					// could not open view
+					throw new RuntimeException(e);
 				}
 			}
 		}

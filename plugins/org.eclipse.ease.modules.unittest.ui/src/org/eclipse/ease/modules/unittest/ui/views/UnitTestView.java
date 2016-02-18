@@ -253,7 +253,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					} else if (element instanceof TestSuite)
 						UIModule.showEditor(((TestSuite) element).getModel().getFile());
 
-				} catch (final PartInitException e) {
+				} catch (final Throwable e) {
 					// TODO handle this exception (but for now, at least know it happened)
 					throw new RuntimeException(e);
 
@@ -305,7 +305,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 		getSite().registerContextMenu(menuManager2, fTestTreeViewer);
 
 		// add collapseAll/expandAll handlers
-		final IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		final IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		mCollapseAllHandler = new CollapseAllHandler(fFileTreeViewer);
 		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, mCollapseAllHandler);
 		mExpandAllHandler = new ExpandAllHandler(fFileTreeViewer);
@@ -373,7 +373,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 											// TODO implement
 											throw new RuntimeException(e);
 										}
-									} catch (final PartInitException e) {
+									} catch (final Throwable e) {
 										// TODO handle this exception (but for now, at least know it happened)
 										throw new RuntimeException(e);
 
@@ -394,7 +394,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 								if (file instanceof IFile)
 									UIModule.showEditor((IFile) ((TestFile) input).getFile());
 
-							} catch (final PartInitException e) {
+							} catch (final Throwable e) {
 								// TODO handle this exception (but for now, at least know it happened)
 								throw new RuntimeException(e);
 

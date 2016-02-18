@@ -88,7 +88,7 @@ public class Chart extends Composite {
 			}
 		});
 		lws.setContents(fXYGraph);
-		this.addMouseWheelListener(new MouseWheelListener() {
+		addMouseWheelListener(new MouseWheelListener() {
 
 			@Override
 			public void mouseScrolled(final org.eclipse.swt.events.MouseEvent e) {
@@ -300,72 +300,64 @@ public class Chart extends Composite {
 		});
 	}
 
-	public void export(final Object object, final boolean overwrite) throws Exception {
-		RunnableWithResult<Exception> runnable = new RunnableWithResult<Exception>() {
+	public void export(final Object object, final boolean overwrite) throws Throwable {
+		RunnableWithResult<Object> runnable = new RunnableWithResult<Object>() {
 			@Override
-			public void run() {
+			public void runWithTry() throws Throwable {
 				final ImageLoader loader = new ImageLoader();
 				loader.data = new ImageData[] { fXYGraph.getImage().getImageData() };
 				boolean done = true;
 				if (object != null) {
-					try {
-						// If the file already exists; asks for confirmation
-						MessageBox mb = new MessageBox(Display.getDefault().getShells()[0], SWT.ICON_WARNING | SWT.YES | SWT.NO);
-						// We really should read this string from a
-						// resource bundle
-						mb.setText("Warning");
-						// If they click Yes, we're done and we drop out. If
-						// they click No File will not be saved
-						if (object instanceof IFile) {
-							IFile file = (IFile) object;
-							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-							loader.save(outStream, SWT.IMAGE_PNG);
-							ByteArrayInputStream stream = new ByteArrayInputStream(outStream.toByteArray());
-							if (file.exists()) {
-								if (!overwrite) {
-									mb.setMessage(file.getName() + " already exists. Do you want to replace it?");
-									done = (mb.open() == SWT.YES);
-								}
-								if (done)
-									file.setContents(stream, 0, null);
-							} else
-								file.create(stream, 0, null);
-							file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
-						} else if (object instanceof File) {
-							File file = (File) object;
-							if (file.exists()) {
-								if (!overwrite) {
-									mb.setMessage(file.getName() + " already exists. Do you want to replace it?");
-									done = (mb.open() == SWT.YES);
-								}
+					// If the file already exists; asks for confirmation
+					MessageBox mb = new MessageBox(Display.getDefault().getShells()[0], SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					// We really should read this string from a
+					// resource bundle
+					mb.setText("Warning");
+					// If they click Yes, we're done and we drop out. If
+					// they click No File will not be saved
+					if (object instanceof IFile) {
+						IFile file = (IFile) object;
+						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+						loader.save(outStream, SWT.IMAGE_PNG);
+						ByteArrayInputStream stream = new ByteArrayInputStream(outStream.toByteArray());
+						if (file.exists()) {
+							if (!overwrite) {
+								mb.setMessage(file.getName() + " already exists. Do you want to replace it?");
+								done = (mb.open() == SWT.YES);
 							}
 							if (done)
-								loader.save(file.getAbsolutePath(), SWT.IMAGE_PNG);
+								file.setContents(stream, 0, null);
+						} else
+							file.create(stream, 0, null);
+						file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+					} else if (object instanceof File) {
+						File file = (File) object;
+						if (file.exists()) {
+							if (!overwrite) {
+								mb.setMessage(file.getName() + " already exists. Do you want to replace it?");
+								done = (mb.open() == SWT.YES);
+							}
 						}
-
-					} catch (Exception e) {
-						setResult(e);
+						if (done)
+							loader.save(file.getAbsolutePath(), SWT.IMAGE_PNG);
 					}
+
 				}
 				if ((object == null) || (!done)) {
-					try {
-						final FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0], SWT.SAVE);
-						dialog.setFilterNames(new String[] { "PNG Files", "All Files (*.*)" });
-						dialog.setFilterExtensions(new String[] { "*.png", "*.*" }); // Windows
-						final String path = dialog.open();
-						if ((path != null) && (!path.equals(""))) {
-							loader.save(path, SWT.IMAGE_PNG);
-						}
-					} catch (Exception e) {
-						setResult(e);
+					final FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0], SWT.SAVE);
+					dialog.setFilterNames(new String[] { "PNG Files", "All Files (*.*)" });
+					dialog.setFilterExtensions(new String[] { "*.png", "*.*" }); // Windows
+					final String path = dialog.open();
+					if ((path != null) && (!path.equals(""))) {
+						loader.save(path, SWT.IMAGE_PNG);
 					}
 				}
 			}
 		};
 		Display.getDefault().syncExec(runnable);
 
-		if (runnable.getResult() != null)
-			throw runnable.getResult();
+		// simply fetch result to eventually trigger a thrown exception
+		runnable.getResultFromTry();
 	}
 
 	public void setCursor(final String cursorName, final String traceName) {

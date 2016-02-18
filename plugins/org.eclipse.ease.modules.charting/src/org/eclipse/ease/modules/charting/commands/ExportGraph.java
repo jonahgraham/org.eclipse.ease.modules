@@ -30,7 +30,7 @@ public class ExportGraph extends AbstractHandler implements IHandler {
 		if (activePart instanceof ChartView) {
 			try {
 				((ChartView) activePart).getChart().export(null, false);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				MessageDialog.openError(HandlerUtil.getActiveShell(event), "Export Graph", "Could not export Graph to PNG file");
 				Logger.error(PluginConstants.PLUGIN_ID, "Could not export Graph to PNG file", e);
 			}

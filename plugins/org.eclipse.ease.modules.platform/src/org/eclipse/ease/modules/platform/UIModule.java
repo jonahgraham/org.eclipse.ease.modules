@@ -35,7 +35,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -234,10 +233,10 @@ public class UIModule extends AbstractScriptModule {
 	 * @param name
 	 *            name or id of view to open
 	 * @return view instance or <code>null</code>
-	 * @throws PartInitException
+	 * @throws Throwable
 	 *             when view cannot be created
 	 */
-	public static IViewPart showView(final String name) throws PartInitException {
+	public static IViewPart showView(final String name) throws Throwable {
 		return showView(name, null, IWorkbenchPage.VIEW_ACTIVATE);
 	}
 
@@ -258,15 +257,15 @@ public class UIModule extends AbstractScriptModule {
 	 * @param mode
 	 *            the activation mode. Must be {@link #VIEW_ACTIVATE}, {@link #VIEW_VISIBLE} or {@link #VIEW_CREATE}, Default is {@link #VIEW_ACTIVATE}
 	 * @return a view
-	 * @throws PartInitException
-	 *             when the view could not be initialized
+	 * @throws Throwable
+	 *             when the view cannot be opened
 	 * @throws IllegalArgumentException
 	 *             when the supplied mode is not valid
 	 * @since 3.0
 	 */
 	@WrapToScript(alias = "openView")
 	public static IViewPart showView(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String secondaryId,
-			@ScriptParameter(defaultValue = "" + IWorkbenchPage.VIEW_ACTIVATE) final int mode) throws PartInitException {
+			@ScriptParameter(defaultValue = "" + IWorkbenchPage.VIEW_ACTIVATE) final int mode) throws Throwable {
 
 		// find view ID
 		final String viewID = getIDForName(name);
@@ -275,21 +274,18 @@ public class UIModule extends AbstractScriptModule {
 			final RunnableWithResult<IViewPart> runnable = new RunnableWithResult<IViewPart>() {
 
 				@Override
-				public void run() {
+				public void runWithTry() throws Throwable {
 					try {
-						try {
-							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID, secondaryId, mode));
-						} catch (final NullPointerException e) {
-							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
-								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView(viewID, secondaryId, mode));
-						}
-					} catch (final PartInitException e) {
+						setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID, secondaryId, mode));
+					} catch (final NullPointerException e) {
+						if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
+							setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView(viewID, secondaryId, mode));
 					}
 				}
 			};
 
 			Display.getDefault().syncExec(runnable);
-			return runnable.getResult();
+			return runnable.getResultFromTry();
 		}
 
 		// maybe this view is already open, search for view titles
@@ -308,11 +304,11 @@ public class UIModule extends AbstractScriptModule {
 	 * @param location
 	 *            file location to open, either {@link IFile} or workspace file location
 	 * @return editor instance or <code>null</code>
-	 * @throws PartInitException
-	 *             when editor cannot be created
+	 * @throws Throwable
+	 *             when we cannot open the editor
 	 */
 	@WrapToScript(alias = "openEditor")
-	public IEditorPart showEditor(final Object location) throws PartInitException {
+	public IEditorPart showEditor(final Object location) throws Throwable {
 		final Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
 		if (file instanceof IFile)
 			return showEditor((IFile) file);
@@ -327,10 +323,10 @@ public class UIModule extends AbstractScriptModule {
 	 *            file location to open
 	 *
 	 * @return editor instance or <code>null</code>
-	 * @throws PartInitException
-	 *             when editor cannot be created
+	 * @throws Throwable
+	 *             when we cannot open the editor
 	 */
-	public static IEditorPart showEditor(final IFile file) throws PartInitException {
+	public static IEditorPart showEditor(final IFile file) throws Throwable {
 		IEditorDescriptor descriptor = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
 		if (descriptor == null)
 			descriptor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
@@ -340,26 +336,22 @@ public class UIModule extends AbstractScriptModule {
 			final RunnableWithResult<IEditorPart> runnable = new RunnableWithResult<IEditorPart>() {
 
 				@Override
-				public void run() {
+				public void runWithTry() throws Throwable {
 					try {
-						try {
 
-							setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(file),
+						setResult(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(file),
+								editorDescriptor.getId()));
+					} catch (final NullPointerException e) {
+						if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
+							setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput(file),
 									editorDescriptor.getId()));
-						} catch (final NullPointerException e) {
-							if (PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
-								setResult(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().openEditor(new FileEditorInput(file),
-										editorDescriptor.getId()));
-						}
-					} catch (final PartInitException e) {
-						// cannot handle that one, giving up
 					}
 				}
 			};
 
 			Display.getDefault().syncExec(runnable);
 
-			return runnable.getResult();
+			return runnable.getResultFromTry();
 		}
 
 		return null;
@@ -576,11 +568,11 @@ public class UIModule extends AbstractScriptModule {
 	 *
 	 * @param name
 	 *            visible name or id of view to maximize
-	 * @throws PartInitException
+	 * @throws Throwable
 	 *             when view cannot be opened
 	 */
 	@WrapToScript
-	public static void maximizeView(final String name) throws PartInitException {
+	public static void maximizeView(final String name) throws Throwable {
 		final IViewPart view = showView(name);
 		if (view != null)
 			ActionFactory.MAXIMIZE.create(view.getViewSite().getWorkbenchWindow()).run();
@@ -591,11 +583,11 @@ public class UIModule extends AbstractScriptModule {
 	 *
 	 * @param name
 	 *            name or id of view to minimize
-	 * @throws PartInitException
+	 * @throws Throwable
 	 *             when view cannot be opened
 	 */
 	@WrapToScript
-	public static void minimizeView(final String name) throws PartInitException {
+	public static void minimizeView(final String name) throws Throwable {
 		final IViewPart view = showView(name);
 		if (view != null)
 			ActionFactory.MINIMIZE.create(view.getViewSite().getWorkbenchWindow()).run();

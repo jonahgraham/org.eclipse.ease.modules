@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -137,7 +136,7 @@ public class Components extends AbstractEditorPage {
 					if (element instanceof IFile) {
 						try {
 							UIModule.showEditor((IFile) element);
-						} catch (final PartInitException e) {
+						} catch (final Throwable e) {
 							// TODO handle this exception (but for now, at least know it happened)
 							throw new RuntimeException(e);
 						}

@@ -39,11 +39,11 @@ public class ChartingModule extends AbstractScriptModule {
 	 * @param figureId
 	 *            name of the figure to be created
 	 * @return new or activated chart
-	 * @throws PartInitException
+	 * @throws Throwable
 	 *             when the view could not be initialized
 	 */
 	@WrapToScript
-	public Chart figure(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String figureId) throws PartInitException {
+	public Chart figure(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String figureId) throws Throwable {
 		fChart = null;
 		String secondaryId = (figureId == null) ? "Figure " + Integer.toString(fFigureIterator++) : figureId;
 		ChartView view = (ChartView) UIModule.showView(ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
@@ -274,19 +274,19 @@ public class ChartingModule extends AbstractScriptModule {
 	 *            </table>
 	 *
 	 * @return series as Trace type to set different properties for this series
-	 * @throws PartInitException
+	 * @throws Throwable
 	 *             if the series could not be initialized
 	 */
 	@WrapToScript
 	public Trace series(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String seriesName, @ScriptParameter(defaultValue = "") final String format)
-			throws PartInitException {
+			throws Throwable {
 		return getChart().series(seriesName, format);
 	}
 
 	/**
 	 * Create new chart if possible and return it, if workbench is not working exception will be thrown.
 	 */
-	private Chart getChart() throws PartInitException {
+	private Chart getChart() throws Throwable {
 		if (fChart == null)
 			figure(null);
 
@@ -304,7 +304,7 @@ public class ChartingModule extends AbstractScriptModule {
 	 * @return series as Trace type to set different properties for this series
 	 */
 	@WrapToScript
-	public Trace plotPoint(final double x, final double y) throws PartInitException {
+	public Trace plotPoint(final double x, final double y) throws Throwable {
 		return getChart().plot(x, y);
 	}
 
@@ -319,7 +319,7 @@ public class ChartingModule extends AbstractScriptModule {
 	 * @return series as Trace type to set different properties for this series
 	 */
 	@WrapToScript
-	public Trace plot(final double[] x, final double[] y) throws PartInitException {
+	public Trace plot(final double[] x, final double[] y) throws Throwable {
 		return getChart().plot(x, y);
 	}
 
@@ -426,7 +426,7 @@ public class ChartingModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public void exportGraph(@ScriptParameter(defaultValue = ScriptParameter.NULL) final Object location,
-			@ScriptParameter(defaultValue = "false") final boolean overwrite) throws Exception {
+			@ScriptParameter(defaultValue = "false") final boolean overwrite) throws Throwable {
 
 		if (fChart != null) {
 			Object resolvedLocation = (location != null) ? ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), false) : null;
@@ -441,7 +441,7 @@ public class ChartingModule extends AbstractScriptModule {
 	 *            name of series to be deleted
 	 */
 	@WrapToScript
-	public void removeSeries(final String seriesName) throws PartInitException {
+	public void removeSeries(final String seriesName) throws Throwable {
 		getChart().removeSeries(seriesName);
 	}
 }

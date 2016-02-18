@@ -98,11 +98,34 @@ public class TestSuiteEditor extends FormEditor {
 	@Override
 	public void doSaveAs() {
 		// not allowed
+		if (getActivePage() != fSourceEditorIndex)
+			updateSourceFromModel();
+
+		fSourceEditor.doSaveAs();
+
+		// make sure sourceEditor and forms editor use the same input
+		setInput(fSourceEditor.getEditorInput());
+		editorDirtyStateChanged();
+		fDirty = false;
+
+		// re-initialize by loading the new model
+		try {
+			fModel = new TestSuiteModel(((FileEditorInput) getEditorInput()).getFile());
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// update editor title
+		firePropertyChange(PROP_TITLE);
 	}
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -112,6 +135,7 @@ public class TestSuiteEditor extends FormEditor {
 
 		fSourceEditor.doSave(monitor);
 		fDirty = false;
+		editorDirtyStateChanged();
 	}
 
 	@Override

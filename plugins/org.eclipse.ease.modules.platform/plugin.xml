@@ -9,6 +9,13 @@
       </module>
       <module category="org.eclipse.ease.category.system" class="org.eclipse.ease.modules.platform.PlatformModule" id="org.eclipse.ease.modules.platform.platform" name="Platform" visible="true">
       </module>
+      <module
+            category="org.eclipse.ease.category.system"
+            class="org.eclipse.ease.modules.platform.P2Module"
+            id="org.eclipse.ease.modules.platform.p2"
+            name="P2"
+            visible="true">
+      </module>
    </extension>
    <extension
          point="org.eclipse.ease.ui.shell">

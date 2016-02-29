@@ -17,11 +17,13 @@
 			<name>JBoss Public Repository Group</name>
 			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
 		</pluginRepository>
+		<!-- 
 		<pluginRepository>
 			<id>jboss-snapshots-repository</id>
 			<name>JBoss Snapshots Repository</name>
 			<url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
 		</pluginRepository>
+		 -->
 	</pluginRepositories>
 
 	<build>
@@ -29,6 +31,7 @@
 			<plugin>
 				<groupId>org.jboss.tools.tycho-plugins</groupId>
 				<artifactId>repository-utils</artifactId>
+				<version>0.23.2</version>
 				<executions>
 					<execution>
 						<id>generate-facade</id>

@@ -43,6 +43,7 @@
 							<associateSites>
 								<site>http://download.eclipse.org/technology/nebula/snapshot</site>
 							</associateSites>
+							<skipBuildInfo>true</skipBuildInfo>
 						</configuration>
 					</execution>
 				</executions>

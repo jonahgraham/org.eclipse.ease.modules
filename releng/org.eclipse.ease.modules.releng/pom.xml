@@ -172,20 +172,25 @@
 							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
 							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
 							<docletPath>${doclet.path}</docletPath>
-							<additionalparam>-root ${basedir}
-								-link
-								http://docs.oracle.com/javase/8/docs/api/
-								-linkOffline
-								../../${platform.api}
-								http://help.eclipse.org/mars/topic/org.eclipse.platform.doc.isv/reference/api/package-list
-								-linkOffline
-								../../${ease.api}
-								https://hudson.eclipse.org/ease/job/ease-build-core/javadoc/
-								-linkOffline
-								../../${ease.modules.api}
-								https://hudson.eclipse.org/ease/job/ease-build-modules/javadoc/
-							</additionalparam>
+							<additionalparam>-root ${basedir}</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
+							<links>
+								<link>http://docs.oracle.com/javase/8/docs/api/</link>
+							</links>
+							<offlineLinks>
+								<offlineLink>
+									<url>http://help.eclipse.org/mars/topic/org.eclipse.platform.doc.isv/reference/api/</url>
+									<location>../../${platform.api}</location>
+								</offlineLink>
+								<offlineLink>
+									<url>https://hudson.eclipse.org/ease/job/ease-build-core/javadoc/</url>
+									<location>../../${ease.api}</location>
+								</offlineLink>
+								<offlineLink>
+									<url>https://hudson.eclipse.org/ease/job/ease-build-modules/javadoc/</url>
+									<location>../../${ease.modules.api}</location>
+								</offlineLink>
+							</offlineLinks>
 						</configuration>
 						<executions>
 							<execution>

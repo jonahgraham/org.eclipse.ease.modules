@@ -43,41 +43,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>update-p2</id>
-
-			<build>
-				<plugins>
-
-					<!-- update remote p2 repository -->
-					<plugin>
-						<artifactId>tycho-p2-extras-plugin</artifactId>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>addModules</id>
-								<phase>install</phase>
-								<goals>
-									<goal>mirror</goal>
-								</goals>
-								<configuration>
-									<source>
-										<repository>
-											<url>${project.build.directory}/repository</url>
-										</repository>
-									</source>
-									<append>${p2.append}</append>
-									<latestVersionOnly>${p2.keepLatestOnly}</latestVersionOnly>
-									<destination>${p2.destination}</destination>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

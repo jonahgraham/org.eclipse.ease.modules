@@ -53,18 +53,14 @@
 												http://docs.oracle.com/javase/8/docs/api/
 											</additionalArgument>
 											<additionalArgument>
-												-link
-												https://hudson.eclipse.org/ease/job/ease-core-nightly/javadoc/
-											</additionalArgument>
-											<additionalArgument>
 												-linkoffline
 												../../${platform.api}
-												http://help.eclipse.org/luna/topic/org.eclipse.platform.doc.isv/reference/api/
+												http://help.eclipse.org/mars/topic/org.eclipse.platform.doc.isv/reference/api/
 											</additionalArgument>
 											<additionalArgument>
 												-linkoffline
 												../../${ease.api}
-												https://hudson.eclipse.org/ease/job/ease-core-nightly/javadoc/
+												https://hudson.eclipse.org/ease/job/ease-build-core-from-master/javadoc/
 											</additionalArgument>
 											<additionalArgument>-public</additionalArgument>
 										</additionalArguments>

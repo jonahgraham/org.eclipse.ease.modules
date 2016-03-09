@@ -180,10 +180,10 @@
 								http://help.eclipse.org/mars/topic/org.eclipse.platform.doc.isv/reference/api/
 								-linkOffline
 								../../${ease.api}
-								https://hudson.eclipse.org/ease/job/ease-build-core-from-master/javadoc/
+								https://hudson.eclipse.org/ease/job/ease-build-core/javadoc/
 								-linkOffline
 								../../${ease.modules.api}
-								https://hudson.eclipse.org/ease/job/ease-build-modules-from-master/javadoc/
+								https://hudson.eclipse.org/ease/job/ease-build-modules/javadoc/
 							</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 						</configuration>

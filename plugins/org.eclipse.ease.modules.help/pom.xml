@@ -60,7 +60,7 @@
 											<additionalArgument>
 												-linkoffline
 												../../${ease.api}
-												https://hudson.eclipse.org/ease/job/ease-build-core-from-master/javadoc/
+												https://hudson.eclipse.org/ease/job/ease-build-core/javadoc/
 											</additionalArgument>
 											<additionalArgument>-public</additionalArgument>
 										</additionalArguments>

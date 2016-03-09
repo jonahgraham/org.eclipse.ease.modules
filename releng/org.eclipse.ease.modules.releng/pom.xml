@@ -177,13 +177,13 @@
 								http://docs.oracle.com/javase/8/docs/api/
 								-linkOffline
 								../../${platform.api}
-								http://help.eclipse.org/luna/topic/org.eclipse.platform.doc.isv/reference/api/
+								http://help.eclipse.org/mars/topic/org.eclipse.platform.doc.isv/reference/api/
 								-linkOffline
 								../../${ease.api}
-								https://hudson.eclipse.org/ease/job/ease-core-nightly/javadoc/
+								https://hudson.eclipse.org/ease/job/ease-build-core-from-master/javadoc/
 								-linkOffline
 								../../${ease.modules.api}
-								https://hudson.eclipse.org/ease/job/ease-modules-nightly/javadoc/
+								https://hudson.eclipse.org/ease/job/ease-build-modules-from-master/javadoc/
 							</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 						</configuration>

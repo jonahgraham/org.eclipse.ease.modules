@@ -161,7 +161,10 @@ public class SuiteRuntimeInformation implements ITestListener {
 		if (file instanceof File)
 			return ((File) file).getAbsolutePath();
 
-		return file.toString();
+		if (file != null)
+			return file.toString();
+
+		return "<undefind>";
 	}
 
 	private synchronized void addTiming(final String fileIdentifier, final long timing) {

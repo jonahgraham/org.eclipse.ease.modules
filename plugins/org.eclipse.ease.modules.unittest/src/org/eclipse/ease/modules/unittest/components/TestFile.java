@@ -40,6 +40,14 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
 
+			Object testFile = ResourceTools.resolveFile(fFileLocation, getTestSuite().getModel().getFile(), true);
+			if (testFile == null) {
+				// no test file available
+				setStatus(TestStatus.FAILURE);
+				getTestSuite().addTestResult(TestStatus.FAILURE, "Test file \"" + fFileLocation + "\" not found");
+				return Status.CANCEL_STATUS;
+			}
+
 			// clear old tests
 			reset();
 			setStatus(TestStatus.RUNNING);
@@ -86,8 +94,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 				}
 
 				// execute test code
-				final ScriptResult testFileResult = getScriptEngine().executeSync(
-						ResourceTools.resolveFile(fFileLocation, getTestSuite().getModel().getFile(), true));
+				final ScriptResult testFileResult = getScriptEngine().executeSync(testFile);
 				if (testFileResult.hasException()) {
 					// this is probably an exception due to calling exit()
 					if (!(testFileResult.getException() instanceof ExitException)) {

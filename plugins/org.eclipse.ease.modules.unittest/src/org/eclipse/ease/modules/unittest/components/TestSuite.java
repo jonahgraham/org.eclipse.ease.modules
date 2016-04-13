@@ -328,11 +328,17 @@ public class TestSuite extends TestComposite {
 		return fErrorStream;
 	}
 
+	/**
+	 * @since 0.3
+	 */
 	public void setErrorStream(final InputStream inputStream) {
 		if (inputStream != null)
 			fInputStream = inputStream;
 	}
 
+	/**
+	 * @since 0.3
+	 */
 	public InputStream getInputStream() {
 		return fInputStream;
 	}

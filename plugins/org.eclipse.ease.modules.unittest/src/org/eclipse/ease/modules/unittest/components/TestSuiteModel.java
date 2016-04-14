@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     Bernhard Wedl - added Variable API
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.components;
 
@@ -261,13 +262,91 @@ public class TestSuiteModel implements IResourceChangeListener {
 		return fFile;
 	}
 
+	/**
+	 * Add a variable to the model.
+	 *
+	 * @param identifier
+	 *            unique identifier for the variable
+	 * @param content
+	 *            content for the variable
+	 * @param description
+	 *            description of the variable or <code>null</code>
+	 */
+	public void addVariable(final String identifier, final String content, final String description) {
+		fVariables.add(new Variable(identifier, content, description));
+		fDirty = true;
+	}
+
+	/**
+	 * Get the variable defined by the given <i>identifier</i>. If the model does not contain the variable <code>null</code> is returned.
+	 *
+	 * @param identifier
+	 *            unique identifier for the variable
+	 * @return variable or <code>null</code>
+	 */
+	public Variable getVariable(final String identifier) {
+		for (Variable variable : fVariables) {
+			if (variable.getName().equals(identifier))
+				return variable;
+
+		}
+		return null;
+	}
+
+	/**
+	 * Get all available variables.
+	 *
+	 * @return variables
+	 */
 	public List<Variable> getVariables() {
 		return fVariables;
 	}
 
-	public void addVariable(final String identifier, final String content, final String description) {
-		fVariables.add(new Variable(identifier, content, description));
-		fDirty = true;
+	/**
+	 * Check if a variable with the given <i>identifier</i> exists in the current model.
+	 *
+	 * @param identifier
+	 *            unique identifier of the variable
+	 * @return true when the variable exists
+	 */
+	public boolean hasVariable(final String identifier) {
+		return getVariable(identifier) != null;
+	}
+
+	/**
+	 * Set the content of a variable defined by the given <i>identifier</i>. If the variable with the given <i>identifier</i> already exists the content and
+	 * description is replaced. If the variable does not exist a new one is added.
+	 *
+	 * @param identifier
+	 *            unique identifier for the variable
+	 * @param content
+	 *            content for the variable
+	 * @param description
+	 *            Description of the variable. if the description must not be changed pass <code>null</code> as value.
+	 */
+	public void setVariable(final String identifier, final String content, final String description) {
+
+		Variable variable = getVariable(identifier);
+		if (variable != null) {
+			variable.setContent(content);
+			if (description != null)
+				variable.setDescription(description);
+			fDirty = true;
+			return;
+		}
+		// identifier not found create new variable
+		addVariable(identifier, content, description);
+	}
+
+	/**
+	 * Remove the variable from the model.
+	 *
+	 * @param variable
+	 *            instance of the variable
+	 */
+	public void removeVariable(final Variable variable) {
+		
+		fDirty = fVariables.remove(variable);
 	}
 
 	public String getCodeFragment(final String identifier) {
@@ -290,10 +369,6 @@ public class TestSuiteModel implements IResourceChangeListener {
 
 	public String getDescription() {
 		return (fDescription != null) ? fDescription : "";
-	}
-
-	public void removeVariable(final Variable variable) {
-		fVariables.remove(variable);
 	}
 
 	public void reload() throws IOException, CoreException {

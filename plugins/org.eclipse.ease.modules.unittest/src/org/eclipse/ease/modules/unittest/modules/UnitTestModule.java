@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     Bernhard Wedl - added some Variable functions
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.modules;
 
@@ -31,6 +32,7 @@ import org.eclipse.ease.modules.unittest.components.TestFile;
 import org.eclipse.ease.modules.unittest.components.TestStatus;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
 import org.eclipse.ease.modules.unittest.components.TestSuiteModel;
+import org.eclipse.ease.modules.unittest.components.TestSuiteModel.Variable;
 import org.eclipse.ease.modules.unittest.reporters.IReportGenerator;
 import org.eclipse.ease.modules.unittest.reporters.ReportTools;
 import org.eclipse.ease.tools.ResourceTools;
@@ -534,5 +536,60 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	public void addMetaData(final String key, final String data) {
 		final TestComposite testObject = getTestObject();
 		testObject.getCurrentTest().addMetaData(key, data);
+	}
+
+	/**
+	 * Array of available variables.
+	 *
+	 * @param testSuite
+	 *            opened TestSuite
+	 * @return array of available variables
+	 */
+	@WrapToScript
+	public Variable[] getVariables(final TestSuite testSuite) {
+		return testSuite.getModel().getVariables().toArray(new Variable[0]);
+	}
+
+	/**
+	 * Get the content of the variable by its <i>identifier</i>. If the variable does not exist <code>null</code> is returned.
+	 *
+	 * @param testSuite
+	 *            opened TestSuite
+	 * @param identifier
+	 *            unique identifier
+	 * @return the variable or <code>null</code>
+	 */
+	@WrapToScript
+	public Variable getVariable(final TestSuite testSuite, final String identifier) {
+		return testSuite.getModel().getVariable(identifier);
+	}
+
+	/**
+	 * Set the content of a variable defined by its <i>identifier</i>. If the variable with the given <i>identifier</i> does not exist a new one is created.
+	 *
+	 * @param testSuite
+	 *            opened TestSuite
+	 * @param identifier
+	 *            unique identifier
+	 * @param content
+	 * @param description
+	 */
+	@WrapToScript
+	public void setVariable(final TestSuite testSuite, final String identifier, final String content,
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String description) {
+		testSuite.getModel().setVariable(identifier, content, description);
+	}
+
+	/**
+	 * Remove the variable with the given <i>identifier</i>. After the variable is removed it will not be available during the {@link TestSuite} execution.
+	 *
+	 * @param testSuite
+	 *            opened TestSuite
+	 * @param identifier
+	 *            unique identifier of the variable
+	 */
+	@WrapToScript
+	public void removeVariable(final TestSuite testSuite, final String identifier) {
+		testSuite.getModel().removeVariable(testSuite.getModel().getVariable(identifier));
 	}
 }

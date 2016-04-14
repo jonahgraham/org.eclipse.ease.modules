@@ -25,6 +25,7 @@
 		<platform.api>org.eclipse.platform.doc.isv/reference/api</platform.api>
 		<ease.api>org.eclipse.ease.help/help/api-docs/javadoc</ease.api>
 		<ease.modules.api>org.eclipse.ease.modules.help/help/api-docs/javadoc</ease.modules.api>
+
 	</properties>
 
 
@@ -333,6 +334,7 @@
 			<id>test</id>
 			<modules>
 				<module>../../tests/org.eclipse.ease.modules.platform.test</module>
+				<module>../../tests/org.eclipse.ease.modules.unittest.test</module>
 			</modules>
 			<build>
 				<plugins>

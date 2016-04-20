@@ -409,7 +409,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="*">
+            targetID="org.eclipse.ease.ui.perspectives.ScriptingPerspective">
          <view
                id="org.eclipse.ease.views.unittest"
                minimized="false"

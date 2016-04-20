@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-	<feature id="org.eclipse.ease.modules.feature.source" version="0.3.0.qualifier">
+	<feature id="org.eclipse.ease.modules.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>
-	<feature id="org.eclipse.ease.modules.unittest.feature.source" version="0.3.0.qualifier">
+	<feature id="org.eclipse.ease.modules.unittest.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>
-	<feature id="org.eclipse.ease.modules.team.svn.feature.source" version="0.3.0.qualifier">
+	<feature id="org.eclipse.ease.modules.team.svn.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>
-	<feature id="org.eclipse.ease.modules.charting.feature.source" version="0.3.0.qualifier">
+	<feature id="org.eclipse.ease.modules.charting.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>
-	<feature id="org.eclipse.ease.modules.modeling.feature.source" version="0.3.0.qualifier">
+	<feature id="org.eclipse.ease.modules.modeling.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>
    <category-def name="Developer" label="EASE Module Developer Resources">

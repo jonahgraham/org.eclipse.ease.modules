@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EASE Modeling UI Components (Incubation)
 Bundle-SymbolicName: org.eclipse.ease.modules.modeling.ui;singleton:=true
-Bundle-Version: 0.3.0.qualifier
+Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: org.eclipse.ease.modules.modeling.ui.Activator
 Require-Bundle: org.eclipse.emf.edit.ui,
  org.eclipse.ui.forms,

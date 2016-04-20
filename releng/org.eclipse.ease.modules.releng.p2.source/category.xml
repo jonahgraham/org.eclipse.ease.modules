@@ -9,6 +9,9 @@
 	<feature id="org.eclipse.ease.modules.team.svn.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>
+	<feature id="org.eclipse.ease.modules.team.git.feature.source" version="0.4.0.qualifier">
+		<category name="Developer" />
+	</feature>
 	<feature id="org.eclipse.ease.modules.charting.feature.source" version="0.4.0.qualifier">
 		<category name="Developer" />
 	</feature>

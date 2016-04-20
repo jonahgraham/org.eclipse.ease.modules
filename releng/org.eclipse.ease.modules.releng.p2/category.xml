@@ -9,6 +9,9 @@
    <feature id="org.eclipse.ease.modules.team.svn.feature" version="0.4.0.qualifier">
       <category name="Modules"/>
    </feature>
+   <feature id="org.eclipse.ease.modules.team.git.feature" version="0.4.0.qualifier">
+      <category name="Modules"/>
+   </feature>
    <feature id="org.eclipse.ease.modules.charting.feature" version="0.4.0.qualifier">
       <category name="Modules"/>
    </feature>

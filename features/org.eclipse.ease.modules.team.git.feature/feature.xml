@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.ease.modules.team.git.feature"
+      label="EASE Git Feature (Incubation)"
+      version="0.4.0.qualifier">
+
+   <description url="https://www.eclipse.org/ease">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      Copyright (c) 2016 Christian Pontesegger
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License
+v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+Contributors:
+Christian Pontesegger - initial API and implementation
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.ease.modules.team.git"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

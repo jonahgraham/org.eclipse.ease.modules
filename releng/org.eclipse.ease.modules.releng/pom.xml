@@ -121,6 +121,7 @@
 		<module>../../plugins/org.eclipse.ease.modules.unittest</module>
 		<module>../../plugins/org.eclipse.ease.modules.unittest.ui</module>
 		<module>../../plugins/org.eclipse.ease.modules.help</module>
+		<module>../../plugins/org.eclipse.ease.modules.team.git</module>
 		<module>../../plugins/org.eclipse.ease.modules.team.svn</module>
 		<module>../../plugins/org.eclipse.ease.modules.jvm</module>
 
@@ -128,6 +129,7 @@
 		<module>../../features/org.eclipse.ease.modules.feature</module>
 		<module>../../features/org.eclipse.ease.modules.modeling.feature</module>
 		<module>../../features/org.eclipse.ease.modules.unittest.feature</module>
+		<module>../../features/org.eclipse.ease.modules.team.git.feature</module>
 		<module>../../features/org.eclipse.ease.modules.team.svn.feature</module>
 		<module>../../features/org.eclipse.ease.modules.charting.feature</module>
 

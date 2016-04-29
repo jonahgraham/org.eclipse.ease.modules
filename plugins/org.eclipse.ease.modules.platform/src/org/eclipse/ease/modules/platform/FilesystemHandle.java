@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.platform;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Writer;
 
 public class FilesystemHandle implements IFileHandle {
 
@@ -27,6 +28,7 @@ public class FilesystemHandle implements IFileHandle {
 	private int fMode;
 	protected BufferedReader fReader = null;
 	private PrintWriter fWriter = null;
+	private OutputStream fOutput = null;
 
 	public FilesystemHandle(final File file, final int mode) {
 		fFile = file;
@@ -80,19 +82,36 @@ public class FilesystemHandle implements IFileHandle {
 		return null;
 	}
 
-	protected Writer createWriter() throws Exception {
-		return new FileWriter(fFile, (fMode & APPEND) == APPEND);
-	}
-
 	@Override
 	public boolean write(final String data) {
 		try {
 			// replace file content or append content
-			if (fWriter == null)
-				fWriter = new PrintWriter(new BufferedWriter(createWriter()));
+			if (fWriter == null) {
+				if (fOutput == null)
+					fOutput = new BufferedOutputStream(new FileOutputStream(fFile, (fMode & APPEND) == APPEND));
+
+				fWriter = new PrintWriter(new OutputStreamWriter(fOutput));
+			}
 
 			fWriter.print(data);
 			fWriter.flush();
+			return true;
+
+		} catch (final Exception e) {
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean write(final byte[] data) {
+		try {
+			// replace file content or append content
+			if (fOutput == null)
+				fOutput = new BufferedOutputStream(new FileOutputStream(fFile, (fMode & APPEND) == APPEND));
+
+			fOutput.write(data);
+			fOutput.flush();
 			return true;
 
 		} catch (final Exception e) {
@@ -159,6 +178,12 @@ public class FilesystemHandle implements IFileHandle {
 		try {
 			if (fWriter != null)
 				fWriter.close();
+		} catch (final Exception e) {
+		}
+
+		try {
+			if (fOutput != null)
+				fOutput.close();
 		} catch (final Exception e) {
 		}
 	}

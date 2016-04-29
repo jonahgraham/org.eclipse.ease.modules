@@ -37,15 +37,20 @@ public class ResourceHandle extends FilesystemHandle {
 
 	@Override
 	public boolean write(final String data) {
+		return write(data.getBytes());
+	}
+
+	@Override
+	public boolean write(final byte[] data) {
 		try {
 			// replace file content or append content
 			if ((getMode() & APPEND) == APPEND) {
 				// append data
-				fFile.appendContents(new ByteArrayInputStream(data.getBytes()), false, false, null);
+				fFile.appendContents(new ByteArrayInputStream(data), false, false, null);
 
 			} else {
 				// replace content
-				fFile.setContents(new ByteArrayInputStream(data.getBytes()), false, false, null);
+				fFile.setContents(new ByteArrayInputStream(data), false, false, null);
 				setMode(getMode() | APPEND);
 			}
 

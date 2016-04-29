@@ -50,13 +50,22 @@ public interface IFileHandle {
 	String readLine() throws IOException;
 
 	/**
-	 * Write data to a file
+	 * Write data to a file. Uses platform default encoding to write strings to the file.
 	 *
 	 * @param data
 	 *            data to write
 	 * @return <code>true</code> on success
 	 */
 	boolean write(String data);
+
+	/**
+	 * Write data to a file.
+	 *
+	 * @param data
+	 *            data to write
+	 * @return <code>true</code> on success
+	 */
+	boolean write(byte[] data);
 
 	/**
 	 * Check if a physical file exists.

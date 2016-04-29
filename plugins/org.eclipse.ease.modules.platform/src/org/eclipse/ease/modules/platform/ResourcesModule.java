@@ -379,12 +379,16 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeFile(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
+	public IFileHandle writeFile(final Object location, final Object data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
 		final IFileHandle handle = getFileHandle(location, mode);
 
-		if (handle != null)
-			handle.write(data);
-		else
+		if (handle != null) {
+			if (data instanceof byte[])
+				handle.write((byte[]) data);
+			else if (data != null)
+				handle.write(data.toString());
+
+		} else
 			throw new IOException("Could not access resource: " + location);
 
 		return handle;

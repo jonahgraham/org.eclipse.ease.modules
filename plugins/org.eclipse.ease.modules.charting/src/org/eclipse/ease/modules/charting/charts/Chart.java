@@ -56,7 +56,6 @@ public class Chart extends Composite {
 	private final List<CircularBufferDataProvider> fTraceDataProviders = new ArrayList<CircularBufferDataProvider>();
 	private boolean fPerformAutoScale = true;
 	private int fIndex = -1;
-	private Trace fCurrentTrace;
 	private int fSeriesCounter = 1;
 
 	public Chart(final Composite parent, final int style) {
@@ -422,6 +421,7 @@ public class Chart extends Composite {
 				fTraceDataProviders.clear();
 				fTraces.clear();
 				fSeriesCounter = 1;
+				fIndex = -1;
 			}
 		});
 	}
@@ -446,15 +446,18 @@ public class Chart extends Composite {
 	}
 
 	public Trace series(final String seriesName, final String format) {
-		Display.getDefault().syncExec(new Runnable() {
+		RunnableWithResult<Trace> runnable = new RunnableWithResult<Trace>() {
+
 			@Override
 			public void run() {
 				String traceName = (seriesName == null) ? "Series " + Integer.toString(fSeriesCounter++) : seriesName;
 				getTraceIndex(traceName);
-				fCurrentTrace = fTraces.get(fIndex);
-				setStyle(fCurrentTrace, format);
+				setResult(fTraces.get(fIndex));
+				setStyle(getResult(), format);
 			}
-		});
-		return fCurrentTrace;
+		};
+
+		Display.getDefault().syncExec(runnable);
+		return runnable.getResult();
 	}
 }

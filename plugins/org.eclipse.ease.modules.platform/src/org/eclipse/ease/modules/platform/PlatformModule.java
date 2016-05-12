@@ -12,16 +12,36 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.services.IEvaluationService;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class PlatformModule {
+
+	/**
+	 * Event handler to wait for a given topic.
+	 */
+	private static class WaitingEventHandler implements EventHandler {
+		private Event fEvent = null;
+
+		@Override
+		public synchronized void handleEvent(final Event event) {
+			fEvent = event;
+			notify();
+		}
+	}
 
 	/** Module identifier. */
 	public static final String MODULE_ID = "/System/Platform";
@@ -193,5 +213,70 @@ public class PlatformModule {
 			else
 				root.put(key, (value != null) ? value.toString() : "");
 		}
+	}
+
+	/**
+	 * Post an event on the event broker. If <i>delay</i> is set, the event will be posted after the given amount of time asynchronously. In any case this
+	 * method returns immediately.
+	 *
+	 * @param topic
+	 *            topic to post
+	 * @param data
+	 *            topic data
+	 * @param delay
+	 *            delay to post this even in [ms]
+	 */
+	@WrapToScript
+	public static void postEvent(final String topic, final @ScriptParameter(defaultValue = ScriptParameter.NULL) Object data,
+			@ScriptParameter(defaultValue = "0") final long delay) {
+
+		if (delay > 0) {
+			Job job = new Job("Post event") {
+
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+					postEvent(topic, data, 0);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.schedule(delay);
+
+		} else {
+			IEventBroker service = PlatformUI.getWorkbench().getService(IEventBroker.class);
+			if (service != null)
+				service.post(topic, data);
+			else
+				throw new RuntimeException("Broker service not available");
+		}
+	}
+
+	/**
+	 * Wait for a given event on the event bus.
+	 *
+	 * @param topic
+	 *            topic to subscribe for
+	 * @param timeout
+	 *            maximum time to wait for event in [ms]. Use 0 to wait without timeout.
+	 * @return posted event or <code>null</code> in case of a timeout
+	 * @throws InterruptedException
+	 *             when the script thread gets interrupted
+	 */
+	@WrapToScript
+	public static Event waitForEvent(final String topic, @ScriptParameter(defaultValue = "0") final long timeout) throws InterruptedException {
+		IEventBroker service = PlatformUI.getWorkbench().getService(IEventBroker.class);
+		if (service != null) {
+			WaitingEventHandler handler = new WaitingEventHandler();
+
+			synchronized (handler) {
+				service.subscribe(topic, handler);
+				handler.wait(timeout);
+				service.unsubscribe(handler);
+
+				return handler.fEvent;
+			}
+
+		} else
+			throw new RuntimeException("Broker service not available");
 	}
 }

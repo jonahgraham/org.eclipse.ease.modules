@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -50,6 +52,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
@@ -769,4 +772,46 @@ public class ResourcesModule extends AbstractScriptModule {
 		return ResourceTools.toString(input);
 	}
 
+	/**
+	 * Create a problem marker on a file resource.
+	 *
+	 * @param severity
+	 *            one of <i>error</i>/<i>warning</i>/<i>info</i>
+	 * @param location
+	 *            file resource to create marker for
+	 * @param lineNumber
+	 *            line number to set marker on
+	 * @param message
+	 *            message to be added to the marker
+	 * @param type
+	 *            marker type to create, needs to match an existing type
+	 * @param permanent
+	 *            <code>true</code> for permanent markers, <code>false</code> for temporary markers
+	 * @throws CoreException
+	 *             when marker cannot be created
+	 */
+	@WrapToScript
+	public void createProblemMarker(final String severity, final Object location, final int lineNumber, final String message,
+			@ScriptParameter(defaultValue = "org.eclipse.core.resources.problemmarker") final String type,
+			@ScriptParameter(defaultValue = "true") final boolean permanent) throws CoreException {
+		Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
+
+		if (file instanceof IFile) {
+
+			int intSeverity = IMarker.SEVERITY_INFO;
+			if ("error".equals(severity))
+				intSeverity = IMarker.SEVERITY_ERROR;
+
+			if ("warning".equals(severity))
+				intSeverity = IMarker.SEVERITY_WARNING;
+
+			final HashMap<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put(IMarker.LINE_NUMBER, lineNumber);
+			attributes.put(IMarker.SEVERITY, intSeverity);
+			attributes.put(IMarker.MESSAGE, message);
+			attributes.put(IMarker.TRANSIENT, !permanent);
+
+			MarkerUtilities.createMarker((IFile) file, attributes, type);
+		}
+	}
 }

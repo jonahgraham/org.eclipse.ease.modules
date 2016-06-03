@@ -44,7 +44,8 @@ public class ResourcesCompletionProvider extends AbstractFileLocationCompletionP
 					return true;
 				if ((context.getCaller().endsWith("writeFile")) && (context.getParameterOffset() == 0))
 					return true;
-
+				if ((context.getCaller().endsWith("createProblemMarker")) && (context.getParameterOffset() == 1))
+					return true;
 			}
 
 			// Scripting module

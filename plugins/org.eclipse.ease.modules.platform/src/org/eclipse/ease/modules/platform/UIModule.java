@@ -625,4 +625,14 @@ public class UIModule extends AbstractScriptModule {
 
 		Display.getDefault().syncExec(runnable);
 	}
+
+	@WrapToScript
+	public static void shutdown() {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				PlatformUI.getWorkbench().close();
+			}
+		});
+	}
 }

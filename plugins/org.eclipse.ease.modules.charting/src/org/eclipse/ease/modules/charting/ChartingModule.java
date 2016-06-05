@@ -9,7 +9,7 @@
  *     Domjan Sansovic - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ease.modules.charting.modules;
+package org.eclipse.ease.modules.charting;
 
 import java.io.File;
 
@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
-import org.eclipse.ease.modules.charting.charts.Chart;
+import org.eclipse.ease.modules.charting.views.Chart;
 import org.eclipse.ease.modules.charting.views.ChartView;
 import org.eclipse.ease.modules.platform.UIModule;
 import org.eclipse.ease.tools.ResourceTools;

@@ -50,7 +50,7 @@ location "http://download.eclipse.org/tools/orbit/downloads/drops/R2015051921075
 	org.hamcrest [1.1.0,2.0.0)
 }
 
-location "http://download.eclipse.org/technology/nebula/snapshot" {
+location "http://download.eclipse.org/nebula/releases/1.0.0" {
 	// charting module
 	org.eclipse.nebula.visualization.feature.feature.group lazy
 }

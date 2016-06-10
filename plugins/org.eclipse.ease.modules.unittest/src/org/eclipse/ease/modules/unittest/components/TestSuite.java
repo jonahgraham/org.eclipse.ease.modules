@@ -99,7 +99,6 @@ public class TestSuite extends TestComposite {
 
 			// create master engine, performing testsuite setup & teardown
 			setScriptEngine(createScriptEngine());
-			getScriptEngine().addExecutionListener(TestSuite.this);
 			getScriptEngine().setTerminateOnIdle(false);
 
 			getScriptEngine().setOutputStream(getOutputStream());

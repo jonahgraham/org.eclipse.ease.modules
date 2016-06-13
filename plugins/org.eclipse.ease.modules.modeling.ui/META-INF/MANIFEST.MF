@@ -6,7 +6,6 @@ Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: org.eclipse.ease.modules.modeling.ui.Activator
 Require-Bundle: org.eclipse.emf.edit.ui,
  org.eclipse.ui.forms,
- org.eclipse.emf.emfstore.client.ui,
  com.google.guava,
  org.eclipse.ui.ide;bundle-version="3.10.0",
  org.eclipse.emf.workspace;bundle-version="1.5.1",

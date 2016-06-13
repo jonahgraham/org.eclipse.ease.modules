@@ -1,6 +1,6 @@
-target "Mars" with source requirements
+target "Neon Modules" with source requirements
 
-location "http://download.eclipse.org/releases/mars/" eclipse-mars {
+location "http://download.eclipse.org/releases/neon/" eclipse-neon {
 	org.eclipse.platform.feature.group
 	org.eclipse.rcp.feature.group
 	org.eclipse.jdt.feature.group
@@ -22,14 +22,14 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
 	// unit test modules
 	org.eclipse.wst.xml_core.feature.feature.group
 	org.eclipse.wst.xml_ui.feature.feature.group
-	
+
 	// java module
 	org.eclipse.pde.feature.group
 	org.eclipse.jdt
-	
+
 	// svn module
 	org.eclipse.team.svn.feature.group
-	
+
 	// git module
 	org.eclipse.egit.feature.group
 	org.eclipse.jgit.feature.group
@@ -43,7 +43,7 @@ location "http://download.eclipse.org/ease/update/nightly" {
 	org.eclipse.ease.lang.jvm.feature.feature.group lazy
 }
 
-location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/" eclipse-orbit {
+location "http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/" eclipse-orbit {
 	// for java unit test of modules
 	org.mockito [1.9.5,2.0.0)
 	org.hamcrest [1.1.0,2.0.0)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="Mars" sequenceNumber="1465553815">
+<target name="Mars" sequenceNumber="1467202165">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.platform.feature.group" version="4.5.2.v20160212-1500"/>
@@ -11,7 +11,6 @@
       <unit id="org.eclipse.emf.feature.group" version="2.11.2.v20160208-0841"/>
       <unit id="org.eclipse.papyrus.infra.feature.feature.group" version="1.1.4.201602101200"/>
       <unit id="org.eclipse.papyrus.infra.gmfdiag.feature.feature.group" version="1.1.4.201602101200"/>
-      <unit id="org.eclipse.papyrus.sysml.feature.feature.group" version="1.1.4.201602101200"/>
       <unit id="org.eclipse.papyrus.uml.diagram.feature.feature.group" version="1.1.4.201602101200"/>
       <unit id="org.eclipse.uml2.uml" version="5.1.2.v20160201-0816"/>
       <unit id="org.eclipse.gmf.runtime.diagram.ui" version="1.8.0.201506060219"/>

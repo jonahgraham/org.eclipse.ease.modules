@@ -36,7 +36,6 @@ import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCo
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.papyrus.commands.ICreationCommand;
 import org.eclipse.papyrus.commands.OpenDiagramCommand;
-import org.eclipse.papyrus.infra.core.extension.commands.ICreationCondition;
 import org.eclipse.papyrus.infra.core.resource.ModelSet;
 import org.eclipse.papyrus.infra.gmfdiag.navigation.CreatedNavigableElement;
 import org.eclipse.papyrus.infra.gmfdiag.navigation.ExistingNavigableElement;
@@ -154,7 +153,7 @@ public class PapyrusModule extends UMLModule {
 		getEditingDomain().getCommandStack().execute(new GMFtoEMFCommandWrapper(controlCommand));
 	}
 
-	private void createDiagram(final ModelSet modelSet, final ICreationCommand creationCommand, final ICreationCondition creationCondition,
+	private void createDiagram(final ModelSet modelSet, final ICreationCommand creationCommand, final ClassDiagramCreationCondition creationCondition,
 			final EObject target, final String diagramName, final boolean openDiagram) {
 		NavigableElement navElement = getNavigableElementWhereToCreateDiagram(creationCondition, target);
 		if ((navElement != null) && (modelSet != null)) {
@@ -169,7 +168,7 @@ public class PapyrusModule extends UMLModule {
 		}
 	}
 
-	private NavigableElement getNavigableElementWhereToCreateDiagram(final ICreationCondition creationCondition, final EObject selectedElement) {
+	private NavigableElement getNavigableElementWhereToCreateDiagram(final ClassDiagramCreationCondition creationCondition, final EObject selectedElement) {
 
 		if (selectedElement != null) {
 			// First check if the current element can host the requested diagram

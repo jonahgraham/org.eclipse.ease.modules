@@ -1,0 +1,58 @@
+target "Mars" with source requirements
+
+location "http://download.eclipse.org/releases/mars/" eclipse-mars {
+	org.eclipse.platform.feature.group
+	org.eclipse.rcp.feature.group
+	org.eclipse.jdt.feature.group
+	org.eclipse.equinox.p2.discovery.feature.feature.group
+
+	// for modeling stuff
+	org.eclipse.emf.feature.group
+
+	// modeling modules
+	org.eclipse.papyrus.infra.feature.feature.group
+	org.eclipse.papyrus.infra.gmfdiag.feature.feature.group
+	org.eclipse.papyrus.sysml.feature.feature.group
+	org.eclipse.papyrus.uml.diagram.feature.feature.group
+	org.eclipse.uml2.uml
+	org.eclipse.gmf.runtime.diagram.ui
+	org.eclipse.emf.emfstore.client.ui.feature.feature.group
+	org.eclipse.ocl.examples.classic.feature.group
+	org.eclipse.ocl.examples.feature.group
+
+	// unit test modules
+	org.eclipse.wst.xml_core.feature.feature.group
+	org.eclipse.wst.xml_ui.feature.feature.group
+	
+	// java module
+	org.eclipse.pde.feature.group
+	org.eclipse.jdt
+	
+	// svn module
+	org.eclipse.team.svn.feature.group
+	
+	// git module
+	org.eclipse.egit.feature.group
+	org.eclipse.jgit.feature.group
+	
+	org.eclipse.osgi
+}
+
+location "http://download.eclipse.org/ease/update/nightly" {
+	// EASE core dependencies
+	org.eclipse.ease.feature.feature.group lazy
+	org.eclipse.ease.ui.feature.feature.group lazy
+	org.eclipse.ease.javascript.feature.feature.group lazy
+	org.eclipse.ease.lang.jvm.feature.feature.group lazy
+}
+
+location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/" eclipse-orbit {
+	// for java unit test of modules
+	org.mockito [1.9.5,2.0.0)
+	org.hamcrest [1.1.0,2.0.0)
+}
+
+location "http://download.eclipse.org/nebula/releases/1.0.0" {
+	// charting module
+	org.eclipse.nebula.visualization.feature.feature.group lazy
+}

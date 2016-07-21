@@ -40,7 +40,7 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
 
-			Object testFile = ResourceTools.resolveFile(fFileLocation, getTestSuite().getModel().getFile(), true);
+			final Object testFile = ResourceTools.resolveFile(fFileLocation, getTestSuite().getModel().getFile(), true);
 			if (testFile == null) {
 				// no test file available
 				setStatus(TestStatus.FAILURE);
@@ -60,7 +60,6 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 			getScriptEngine().setErrorStream(getTestSuite().getErrorStream());
 
 			// add variables
-			getScriptEngine().addExecutionListener(TestFile.this);
 			getScriptEngine().setTerminateOnIdle(false);
 			for (final Entry<String, Object> entry : getTestSuite().getVariables().entrySet())
 				if (!entry.getKey().startsWith(EnvironmentModule.MODULE_PREFIX))
@@ -128,10 +127,15 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 
 				// terminate all tests that are still marked as running
 				// used for badly written test cases and when tests fail by throwing an exception
-				for (final Test test : getTests())
-					test.setStatus(TestStatus.PASS);
+				for (final Test test : getTests()) {
+					if (test.getStatus() == TestStatus.RUNNING)
+						test.setStatus(TestStatus.PASS);
+				}
 
-				getScriptEngine().terminate();
+				// clean up havoc engines
+				if (!getScriptEngine().isFinished())
+					getScriptEngine().terminate();
+
 				setScriptEngine(null);
 
 				setStatus(TestStatus.PASS);

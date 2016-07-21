@@ -18,13 +18,11 @@ import java.util.List;
 
 import org.eclipse.ease.AbstractScriptEngine;
 import org.eclipse.ease.IDebugEngine;
-import org.eclipse.ease.IExecutionListener;
 import org.eclipse.ease.IScriptEngine;
-import org.eclipse.ease.Script;
 import org.eclipse.ease.debugging.IScriptDebugFrame;
 import org.eclipse.ease.modules.unittest.ITestListener;
 
-public abstract class TestComposite extends TestEntity implements ITestListener, IExecutionListener {
+public abstract class TestComposite extends TestEntity implements ITestListener {
 
 	public static final String CURRENT_TESTCOMPOSITE = "__internal_testObject";
 
@@ -113,10 +111,10 @@ public abstract class TestComposite extends TestEntity implements ITestListener,
 	}
 
 	public List<Test> getTests() {
-		List<Test> result = new ArrayList<Test>();
+		final List<Test> result = new ArrayList<Test>();
 
 		synchronized (fTests) {
-			for (Test test : fTests) {
+			for (final Test test : fTests) {
 				if ((!test.isTransient()) || (test.getStatus() != TestStatus.PASS) || (!test.getMetaData().isEmpty()))
 					result.add(test);
 			}
@@ -131,16 +129,6 @@ public abstract class TestComposite extends TestEntity implements ITestListener,
 
 	public void addTestResult(final TestStatus status, final String message, final List<IScriptDebugFrame> trace) {
 		getCurrentTest().addMessage(new TestResult(status, message, trace));
-	}
-
-	@Override
-	public void notify(final IScriptEngine engine, final Script script, final int status) {
-		if (status == IExecutionListener.ENGINE_START)
-			setStatus(TestStatus.RUNNING);
-
-		else if (status == IExecutionListener.ENGINE_END) {
-			setStatus(TestStatus.PASS);
-		}
 	}
 
 	protected void setScriptEngine(final IScriptEngine scriptEngine) {

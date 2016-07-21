@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ease.modules.modeling.ui.Activator;
 import org.eclipse.ease.modules.modeling.ui.MatcherRegistry;
 import org.eclipse.ease.modules.modeling.ui.Messages;
 import org.eclipse.ease.modules.modeling.ui.exceptions.MatcherException;
@@ -33,6 +34,7 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -79,13 +81,21 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import com.google.common.collect.Lists;
 
 public class ModelRefactoringView extends ViewPart implements
 		ISelectionListener {
 
+	/**
+	 * 
+	 */
+	private static final String ICONS_START_TASK_1_GIF = "icons/start_task-1.gif";
+	/**
+	 * 
+	 */
+	private static final String ICONS_DELETE_OBJ_GIF = "icons/delete_obj.gif";
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -215,6 +225,15 @@ public class ModelRefactoringView extends ViewPart implements
 
 	}
 
+	private Image getFromRegistry(String key, ImageDescriptor desc){
+		Image i = Activator.getDefault().getImageRegistry().get(key);
+		if (i == null){
+			Activator.getDefault().getImageRegistry().put(key, desc);
+			i = Activator.getDefault().getImageRegistry().get(key);
+		}
+		return i;
+	}
+	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
@@ -294,9 +313,8 @@ public class ModelRefactoringView extends ViewPart implements
 		formToolkit.adapt(comboViewer.getCombo(), true, true);
 
 		Button btnGo = new Button(composite_2, SWT.NONE);
-		btnGo.setImage(ResourceManager
-				.getPluginImage(
-						"org.eclipse.ease.modules.modeling.ui", "icons/start_task-1.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+		btnGo.setImage(getFromRegistry(ICONS_START_TASK_1_GIF, AbstractUIPlugin.imageDescriptorFromPlugin(
+						"org.eclipse.ease.modules.modeling.ui", ICONS_START_TASK_1_GIF)));
 		btnGo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -306,9 +324,8 @@ public class ModelRefactoringView extends ViewPart implements
 		});
 		formToolkit.adapt(btnGo, true, true);
 		Button btnDel = new Button(composite_2, SWT.NONE);
-		btnDel.setImage(ResourceManager
-				.getPluginImage(
-						"org.eclipse.ease.modules.modeling.ui", "icons/delete_obj.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+		btnDel.setImage(getFromRegistry(ICONS_DELETE_OBJ_GIF, AbstractUIPlugin.imageDescriptorFromPlugin(
+				"org.eclipse.ease.modules.modeling.ui", ICONS_DELETE_OBJ_GIF)));
 		btnDel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

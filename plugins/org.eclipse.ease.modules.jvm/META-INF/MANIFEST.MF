@@ -5,9 +5,9 @@ Bundle-SymbolicName: org.eclipse.ease.modules.jvm;singleton:=true
 Bundle-Version: 0.4.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.ease;bundle-version="0.2.0",
+Require-Bundle: org.eclipse.ease,
  org.eclipse.core.resources;bundle-version="[3.7.101,4.0.0)",
- org.eclipse.ease.modules.platform;bundle-version="0.2.0",
- org.eclipse.ease.lang.jvm.compiled;bundle-version="0.3.0",
- org.eclipse.jdt.core;bundle-version="3.9.2"
+ org.eclipse.ease.modules.platform,
+ org.eclipse.ease.lang.jvm.compiled,
+ org.eclipse.jdt.core;bundle-version="[3.9.2,4.0.0)"
 Eclipse-BuddyPolicy: global

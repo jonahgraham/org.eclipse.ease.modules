@@ -4,15 +4,14 @@ Bundle-Name: EASE Modeling UI Components (Incubation)
 Bundle-SymbolicName: org.eclipse.ease.modules.modeling.ui;singleton:=true
 Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: org.eclipse.ease.modules.modeling.ui.Activator
-Require-Bundle: org.eclipse.emf.edit.ui,
- org.eclipse.ui.forms,
- org.eclipse.emf.emfstore.client.ui,
- com.google.guava,
- org.eclipse.ui.ide;bundle-version="3.10.0",
- org.eclipse.emf.workspace;bundle-version="1.5.1",
- org.eclipse.ocl.ecore;bundle-version="3.5.0",
+Require-Bundle: org.eclipse.emf.edit.ui;bundle-version="[2.10.2,3.0.0)",
+ org.eclipse.ui.forms;bundle-version="[3.6.100,4.0.0)",
+ com.google.guava;bundle-version="[15.0.0,16.0.0)",
+ org.eclipse.ui.ide;bundle-version="[3.10.0,4.0.0)",
+ org.eclipse.emf.workspace;bundle-version="[1.5.1,2.0.0)",
+ org.eclipse.ocl.ecore;bundle-version="[3.3.100,4.0.0)",
  org.eclipse.ocl.pivot;bundle-version="1.0.0",
- org.eclipse.ease;bundle-version="0.1.0",
+ org.eclipse.ease,
  org.eclipse.ease.ui.scripts
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

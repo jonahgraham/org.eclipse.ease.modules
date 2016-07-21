@@ -1,6 +1,6 @@
-target "Mars" with source requirements
+target "Luna" with source requirements
 
-location "http://download.eclipse.org/releases/mars/" eclipse-mars {
+location "http://download.eclipse.org/releases/luna/" eclipse-luna {
 	org.eclipse.platform.feature.group
 	org.eclipse.rcp.feature.group
 	org.eclipse.jdt.feature.group
@@ -23,20 +23,22 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
 	// unit test modules
 	org.eclipse.wst.xml_core.feature.feature.group
 	org.eclipse.wst.xml_ui.feature.feature.group
-
+	
 	// java module
 	org.eclipse.pde.feature.group
 	org.eclipse.jdt
-
+	
 	// svn module
 	org.eclipse.team.svn.feature.group
-
+	
 	// git module
 	org.eclipse.egit.feature.group
 	org.eclipse.jgit.feature.group
+	
+	org.eclipse.osgi
 }
 
-location "file:///scratch/ease/org.eclipse.ease.core/releng/org.eclipse.ease.releng.p2/target/repository" {
+location "http://download.eclipse.org/ease/update/nightly" {
 	// EASE core dependencies
 	org.eclipse.ease.feature.feature.group lazy
 	org.eclipse.ease.ui.feature.feature.group lazy

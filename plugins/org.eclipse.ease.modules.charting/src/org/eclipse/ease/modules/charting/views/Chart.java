@@ -8,7 +8,7 @@
  * Contributors:
  *     Domjan Sansovic - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ease.modules.charting.charts;
+package org.eclipse.ease.modules.charting.views;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

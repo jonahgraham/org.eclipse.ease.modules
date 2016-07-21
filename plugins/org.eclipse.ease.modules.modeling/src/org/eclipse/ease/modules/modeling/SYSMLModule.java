@@ -15,7 +15,6 @@ import org.eclipse.ease.modules.IEnvironment;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.papyrus.sysml.blocks.Block;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLFactory;
@@ -30,16 +29,6 @@ public class SYSMLModule extends UMLModule {
 	public void initialize(final IScriptEngine engine, final IEnvironment environment) {
 		super.initialize(engine, environment);
 		initEPackage(UMLPackage.eNS_URI);
-	}
-
-	/**
-	 * Get the UML model from the current active editor
-	 *
-	 * @return
-	 */
-	@WrapToScript
-	public org.eclipse.papyrus.sysml.blocks.Block createBlock() {
-		return (Block) createSysML("SysML::Blocks::Block");
 	}
 
 	/**

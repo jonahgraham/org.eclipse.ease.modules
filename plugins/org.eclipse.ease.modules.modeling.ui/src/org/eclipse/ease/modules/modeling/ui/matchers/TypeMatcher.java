@@ -31,27 +31,23 @@ import com.google.common.collect.Lists;
 public class TypeMatcher implements IMatcher {
 
 	@Override
-	public Collection<EObject> getElements(final String string,
-			IEditingDomainProvider currentEditor) throws MatcherException {
+	public Collection<EObject> getElements(final String string, IEditingDomainProvider currentEditor) throws MatcherException {
 		Iterator<EObject> filter = Iterators.emptyIterator();
-		for (Resource r : currentEditor.getEditingDomain().getResourceSet()
-				.getResources()) {
+		for (Resource r : currentEditor.getEditingDomain().getResourceSet().getResources()) {
 			if (r != null) {
-				filter = Iterators.concat(filter,
-						filter(r.getAllContents(), new Predicate<EObject>() {
-							@Override
-							public boolean apply(EObject input) {
-								List<EClass> allClasses = new LinkedList<EClass>(
-										input.eClass().getEAllSuperTypes());
-								allClasses.add(input.eClass());
-								for (EClass e : allClasses) {
-									if (e.getName().equalsIgnoreCase(string)) {
-										return true;
-									}
-								}
-								return false;
+				filter = Iterators.concat(filter, filter(r.getAllContents(), new Predicate<EObject>() {
+					@Override
+					public boolean apply(EObject input) {
+						List<EClass> allClasses = new LinkedList<EClass>(input.eClass().getEAllSuperTypes());
+						allClasses.add(input.eClass());
+						for (EClass e : allClasses) {
+							if (e.getName().equalsIgnoreCase(string)) {
+								return true;
 							}
-						}));
+						}
+						return false;
+					}
+				}));
 			}
 		}
 		return Lists.newArrayList(filter);

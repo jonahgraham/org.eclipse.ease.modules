@@ -40,8 +40,7 @@ public class ModelExtentMap implements ModelManager {
 	private final Collection<EObject> roots = new HashSet<EObject>();
 
 	/**
-	 * Initializes me with the context element of an OCL expression evaluation.
-	 * I discover the scope of the model from this element.
+	 * Initializes me with the context element of an OCL expression evaluation. I discover the scope of the model from this element.
 	 * 
 	 * @param context
 	 *            my context element
@@ -68,8 +67,7 @@ public class ModelExtentMap implements ModelManager {
 				if (result == null) {
 					result = new HashSet<EObject>();
 					modelManager.put(type, result);
-					for (Iterator<EObject> iter = EcoreUtil
-							.getAllContents(roots); iter.hasNext();) {
+					for (Iterator<EObject> iter = EcoreUtil.getAllContents(roots); iter.hasNext();) {
 						EObject next = iter.next();
 						if ((next != null) && isInstance(type, next)) {
 							result.add(next);
@@ -82,16 +80,14 @@ public class ModelExtentMap implements ModelManager {
 	}
 
 	/**
-	 * Implemented by subclasses to determine whether the specified element is
-	 * an instance of the specified class, according to the metamodel semantics
+	 * Implemented by subclasses to determine whether the specified element is an instance of the specified class, according to the metamodel semantics
 	 * implemented by the environment that created this extent map.
 	 * 
 	 * @param type
 	 *            a class in the model
 	 * @param element
 	 *            a potential run-time (M0) instance of that class
-	 * @return <code>true</code> if this element is an instance of the given
-	 *         class; <code>false</code> otherwise
+	 * @return <code>true</code> if this element is an instance of the given class; <code>false</code> otherwise
 	 */
 	protected boolean isInstance(Class requiredType, EObject eObject) {
 		EClass eClass = eObject.eClass();
@@ -109,14 +105,12 @@ public class ModelExtentMap implements ModelManager {
 				}
 			}
 		}
-		return (objectType != null)
-				&& objectType.conformsTo(metaModelManager.getStandardLibrary(), requiredType);
+		return (objectType != null) && objectType.conformsTo(metaModelManager.getStandardLibrary(), requiredType);
 	}
 
 	@Override
 	public String toString() {
 		return modelManager.toString();
 	}
-
 
 }

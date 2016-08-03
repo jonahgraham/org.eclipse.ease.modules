@@ -24,8 +24,7 @@ import org.eclipse.ui.PlatformUI;
 public class SelectionUtils {
 
 	/**
-	 * Returns the first resource found with the given extension in the resource
-	 * set of the domain provider
+	 * Returns the first resource found with the given extension in the resource set of the domain provider
 	 * 
 	 * @param domainProvider
 	 * @param extension
@@ -33,21 +32,17 @@ public class SelectionUtils {
 	 * @return
 	 * @throws MatcherException
 	 */
-	public static EObject getSelection(IEditingDomainProvider currentEditor)
-			throws MatcherException {
+	public static EObject getSelection(IEditingDomainProvider currentEditor) throws MatcherException {
 		ISelection selection = null;
 		if (currentEditor instanceof ISelectionProvider) {
 			ISelectionProvider sp = (ISelectionProvider) currentEditor;
 			selection = sp.getSelection();
 		} else {
-			selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getActivePage().getActiveEditor().getSite()
-					.getSelectionProvider().getSelection();
+			selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getSite().getSelectionProvider().getSelection();
 		}
 		EObject eobject = null;
 		if (selection instanceof IStructuredSelection) {
-			Object element = ((IStructuredSelection) selection)
-					.getFirstElement();
+			Object element = ((IStructuredSelection) selection).getFirstElement();
 			if (element instanceof EObject) {
 				eobject = (EObject) element;
 			}
@@ -58,13 +53,11 @@ public class SelectionUtils {
 				}
 			}
 			if (eobject == null) {
-				eobject = (EObject) Platform.getAdapterManager().getAdapter(
-						element, EObject.class);
+				eobject = (EObject) Platform.getAdapterManager().getAdapter(element, EObject.class);
 			}
 		}
 		if (eobject == null) {
-			throw new MatcherException(
-					Messages.SelectionUtils_NO_SELECTION_FOUND);
+			throw new MatcherException(Messages.SelectionUtils_NO_SELECTION_FOUND);
 		}
 		return eobject;
 	}

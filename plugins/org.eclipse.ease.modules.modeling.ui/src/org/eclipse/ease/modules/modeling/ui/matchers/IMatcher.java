@@ -17,8 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 
 public interface IMatcher {
-	Collection<EObject> getElements(String string,
-			IEditingDomainProvider currentEditor) throws MatcherException;
+	Collection<EObject> getElements(String string, IEditingDomainProvider currentEditor) throws MatcherException;
 
 	String getText();
 

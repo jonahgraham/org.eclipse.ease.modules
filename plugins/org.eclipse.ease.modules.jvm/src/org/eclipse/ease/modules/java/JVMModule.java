@@ -33,8 +33,8 @@ public class JVMModule extends AbstractScriptModule {
 	 *             when class cannot be instantiated
 	 */
 	@WrapToScript
-	public Object createInstance(final String location) throws ClassNotFoundException, JavaModelException, MalformedURLException, InstantiationException,
-	IllegalAccessException {
+	public Object createInstance(final String location)
+			throws ClassNotFoundException, JavaModelException, MalformedURLException, InstantiationException, IllegalAccessException {
 		Class<?> clazz = compile(location);
 		return (clazz != null) ? clazz.newInstance() : null;
 	}
@@ -70,7 +70,7 @@ public class JVMModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public Object invokeStatic(final String location, final String methodName) throws ClassNotFoundException, JavaModelException, MalformedURLException,
-	NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
 		Class<?> clazz = compile(location);
 

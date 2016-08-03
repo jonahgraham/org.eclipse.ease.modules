@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.modeling;
 
-
 /**
  * Interface use to provide a selector. A selector is an object that is able to return from a selection another object
  * 

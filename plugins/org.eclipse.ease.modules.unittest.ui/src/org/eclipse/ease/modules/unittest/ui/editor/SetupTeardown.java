@@ -129,8 +129,7 @@ public class SetupTeardown extends AbstractEditorPage {
 
 	private static String getDefaultText(final String location) {
 		if (TestSuiteModel.CODE_LOCATION_TESTSUITE_SETUP.equals(location))
-			return "// TestSuite setup is run once before the tests are run.\r\n"
-					+ "// User defined variables are available and can be modified if needed.\r\n"
+			return "// TestSuite setup is run once before the tests are run.\r\n" + "// User defined variables are available and can be modified if needed.\r\n"
 					+ "// All variables set by this code will be available in the tests, however\r\n"
 					+ "// functions defined here will not be available. To raise errors use the\r\n" + "// failure(\"Reason\") function.";
 

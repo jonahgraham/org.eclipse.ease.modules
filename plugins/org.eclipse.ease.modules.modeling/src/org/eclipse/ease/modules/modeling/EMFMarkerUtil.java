@@ -42,29 +42,30 @@ public final class EMFMarkerUtil {
 	 * Adds a marker for a given {@link EObject}. Message and severity level are expected.
 	 * 
 	 * @param toLog
-	 *        An eObject for which an EMF marker must be added
+	 *            An eObject for which an EMF marker must be added
 	 * @param message
-	 *        The content of the marker to log into the Problem View or the Marker View.
+	 *            The content of the marker to log into the Problem View or the Marker View.
 	 * @param severity
-	 *        The level of severity
+	 *            The level of severity
 	 * @throws CoreException
-	 *         If the marker cannot be added because of a null resource.
+	 *             If the marker cannot be added because of a null resource.
 	 */
 	public static void addMarkerFor(EObject toLog, String message, int severity) throws CoreException {
 		// find the concerned element.
 		IResource resource = findResourceFor(toLog);
-		if(resource != null) {
+		if (resource != null) {
 			IMarker marker = resource.createMarker(EValidator.MARKER);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(toLog).toString());
 			marker.setAttribute(IMarker.MESSAGE, message);
 		} else {
 			StringBuffer uriMessage = new StringBuffer();
-			if(toLog.eResource() != null && toLog.eResource().getURI() != null) {
+			if (toLog.eResource() != null && toLog.eResource().getURI() != null) {
 				URI uri = toLog.eResource().getURI();
 				uriMessage.append(" ").append(uri.toString());
-				if(uri.isFile() || uri.isPlatform()) {
-					IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR, "Cannot create marker for resource" + uriMessage.toString(), null); //$NON-NLS-1$
+				if (uri.isFile() || uri.isPlatform()) {
+					IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR, "Cannot create marker for resource" + uriMessage.toString(), //$NON-NLS-1$
+							null);
 					throw new CoreException(status);
 				}
 			}
@@ -75,16 +76,16 @@ public final class EMFMarkerUtil {
 	 * Removes all EMF markers for a specific model object.
 	 * 
 	 * @param toRemove
-	 *        The eObject for which a marker must be removed.
+	 *            The eObject for which a marker must be removed.
 	 * @throws CoreException
-	 *         If the marker cannot be removed because of a null resource.
+	 *             If the marker cannot be removed because of a null resource.
 	 */
 	public static void removeMarkerFor(EObject toRemove) throws CoreException {
 		IResource resource = findResourceFor(toRemove);
-		if(resource != null) {
-			for(IMarker marker : resource.findMarkers(EValidator.MARKER, false, IResource.DEPTH_INFINITE)) {
-				String markerUri = (String)marker.getAttribute(EValidator.URI_ATTRIBUTE);
-				if(markerUri != null && markerUri.equals(EcoreUtil.getURI(toRemove).toString())) {
+		if (resource != null) {
+			for (IMarker marker : resource.findMarkers(EValidator.MARKER, false, IResource.DEPTH_INFINITE)) {
+				String markerUri = (String) marker.getAttribute(EValidator.URI_ATTRIBUTE);
+				if (markerUri != null && markerUri.equals(EcoreUtil.getURI(toRemove).toString())) {
 					marker.delete();
 				}
 			}
@@ -98,14 +99,14 @@ public final class EMFMarkerUtil {
 	 * Removes all EMF markers for the whole of an EMF resource.
 	 * 
 	 * @param resource
-	 *        The {@link Resource} for which all EMF Markers must be removed.
+	 *            The {@link Resource} for which all EMF Markers must be removed.
 	 * @throws CoreException
-	 *         If the marker cannot be removed because of a null resource.
+	 *             If the marker cannot be removed because of a null resource.
 	 */
 	public static void removeAllMarkersFor(Resource resource) throws CoreException {
 		IResource file = findResourceFor(resource);
-		if(file != null) {
-			for(IMarker marker : file.findMarkers(EValidator.MARKER, false, IResource.DEPTH_INFINITE)) {
+		if (file != null) {
+			for (IMarker marker : file.findMarkers(EValidator.MARKER, false, IResource.DEPTH_INFINITE)) {
 				marker.delete();
 			}
 		} else {
@@ -118,7 +119,7 @@ public final class EMFMarkerUtil {
 	 * Finds a IResource for an EObject.
 	 * 
 	 * @param toResolve
-	 *        The {@link EObject} for which the corresponding IResource must be found.
+	 *            The {@link EObject} for which the corresponding IResource must be found.
 	 * @return The IResource that must be often a IFile contained in the workspace
 	 */
 	public static IResource findResourceFor(EObject toResolve) {
@@ -129,13 +130,13 @@ public final class EMFMarkerUtil {
 	 * Finds a IResource for a Resource contained into the workspace.
 	 * 
 	 * @param toResolve
-	 *        The {@link Resource} for which the corresponding IResource must be found.
+	 *            The {@link Resource} for which the corresponding IResource must be found.
 	 * @return The IResource that must be often a IFile contained in the workspace
 	 */
 	private static IResource findResourceFor(Resource toResolve) {
-		if(toResolve != null) {
+		if (toResolve != null) {
 			String relativePath = toResolve.getURI().toPlatformString(true);
-			if(relativePath != null) {
+			if (relativePath != null) {
 				return ResourcesPlugin.getWorkspace().getRoot().findMember(relativePath);
 			}
 		}

@@ -34,7 +34,7 @@ public class GMFtoEMFCommandWrapper extends AbstractCommand {
 	public Collection<?> getResult() {
 
 		Collection<Object> result = new ArrayList<Object>();
-		if(getGMFReturnValue() != null) {
+		if (getGMFReturnValue() != null) {
 			result.add(getGMFReturnValue());
 		} // else return an empty collection
 
@@ -42,7 +42,7 @@ public class GMFtoEMFCommandWrapper extends AbstractCommand {
 	}
 
 	private Object getGMFReturnValue() {
-		if(getGMFCommand().getCommandResult() != null) {
+		if (getGMFCommand().getCommandResult() != null) {
 			return getGMFCommand().getCommandResult().getReturnValue();
 		}
 
@@ -50,8 +50,7 @@ public class GMFtoEMFCommandWrapper extends AbstractCommand {
 	}
 
 	/**
-	 * The wrapped GMF Command. Package-level visibility so that the command stack wrapper can
-	 * access the field.
+	 * The wrapped GMF Command. Package-level visibility so that the command stack wrapper can access the field.
 	 */
 	private final ICommand gmfCommand;
 
@@ -59,7 +58,7 @@ public class GMFtoEMFCommandWrapper extends AbstractCommand {
 	 * Constructor.
 	 * 
 	 * @param gmfCommand
-	 *        the gmf command
+	 *            the gmf command
 	 */
 	public GMFtoEMFCommandWrapper(ICommand gmfCommand) {
 		super(gmfCommand.getLabel());

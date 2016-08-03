@@ -33,38 +33,33 @@ public class MatcherRegistry {
 	}
 
 	private static List<IMatcher> doGetMatchers() {
-		IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(Activator.PLUGIN_ID, EXT_ID);
-		return Lists.newArrayList(Iterables.transform(
-				Arrays.asList(extensions),
-				new Function<IConfigurationElement, IMatcher>() {
+		IConfigurationElement[] extensions = Platform.getExtensionRegistry().getConfigurationElementsFor(Activator.PLUGIN_ID, EXT_ID);
+		return Lists.newArrayList(Iterables.transform(Arrays.asList(extensions), new Function<IConfigurationElement, IMatcher>() {
+			@Override
+			public IMatcher apply(IConfigurationElement arg0) {
+				try {
+					return (IMatcher) arg0.createExecutableExtension("instance");
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				return new IMatcher() {
+
 					@Override
-					public IMatcher apply(IConfigurationElement arg0) {
-						try {
-							return (IMatcher) arg0
-									.createExecutableExtension("instance");
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
-						return new IMatcher() {
-
-							@Override
-							public String getText() {
-								return "error";
-							}
-
-							@Override
-							public String getHelp() {
-								return "";
-							}
-
-							@Override
-							public List<EObject> getElements(String string,
-									IEditingDomainProvider currentEditor) {
-								return Lists.newArrayList();
-							}
-						};
+					public String getText() {
+						return "error";
 					}
-				}));
+
+					@Override
+					public String getHelp() {
+						return "";
+					}
+
+					@Override
+					public List<EObject> getElements(String string, IEditingDomainProvider currentEditor) {
+						return Lists.newArrayList();
+					}
+				};
+			}
+		}));
 	}
 }

@@ -29,8 +29,7 @@ import org.eclipse.ocl.pivot.values.SetValue;
 public class OCLMatcher implements IMatcher {
 
 	@Override
-	public Collection<EObject> getElements(String oclString,
-			IEditingDomainProvider currentEditor) throws MatcherException {
+	public Collection<EObject> getElements(String oclString, IEditingDomainProvider currentEditor) throws MatcherException {
 		EObject root = SelectionUtils.getSelection(currentEditor);
 		OCL ocl = OCL.newInstance(EPackage.Registry.INSTANCE);
 		ocl.setModelManager(new ModelExtentMap(ocl.getMetamodelManager(), root));
@@ -40,8 +39,7 @@ public class OCLMatcher implements IMatcher {
 			ExpressionInOCL query = helper.createQuery(oclString);
 			Object queryResult = ocl.evaluate(root, query);
 			if (queryResult instanceof SetValue) {
-				return (Collection<EObject>) ((SetValue) queryResult)
-						.asCollection();
+				return (Collection<EObject>) ((SetValue) queryResult).asCollection();
 			}
 		} catch (ParserException e) {
 			e.printStackTrace();

@@ -345,7 +345,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 	 *            instance of the variable
 	 */
 	public void removeVariable(final Variable variable) {
-		
+
 		fDirty = fVariables.remove(variable);
 	}
 

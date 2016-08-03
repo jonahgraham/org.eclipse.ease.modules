@@ -501,7 +501,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 */
 	@WrapToScript
 	public void ignoreAssertions(final int count) {
-		assert(count >= 0);
+		assert (count >= 0);
 		fAssertionsToBeIgnored = count;
 	}
 

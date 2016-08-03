@@ -25,12 +25,9 @@ public class EaseScriptHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		for (IViewReference ref : PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
+		for (IViewReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (ref.getId().equals(ModelRefactoringView.ID)) {
-				ScriptSelectionDialog dialogBox = new ScriptSelectionDialog(
-						HandlerUtil.getActiveShell(event), ref.getPart(false)
-								.getSite());
+				ScriptSelectionDialog dialogBox = new ScriptSelectionDialog(HandlerUtil.getActiveShell(event), ref.getPart(false).getSite());
 				if (dialogBox.open() == ScriptSelectionDialog.OK) {
 					IScript result = dialogBox.getMacro();
 					ScriptJob job = new ScriptJob(result);

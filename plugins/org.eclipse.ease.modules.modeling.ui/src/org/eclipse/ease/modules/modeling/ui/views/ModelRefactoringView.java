@@ -85,8 +85,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import com.google.common.collect.Lists;
 
-public class ModelRefactoringView extends ViewPart implements
-		ISelectionListener {
+public class ModelRefactoringView extends ViewPart implements ISelectionListener {
 
 	/**
 	 * 
@@ -100,11 +99,9 @@ public class ModelRefactoringView extends ViewPart implements
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "org.eclipse.ease.modules.modeling.ui.view"; //$NON-NLS-1$
-	private final FormToolkit formToolkit = new FormToolkit(
-			Display.getDefault());
+	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
 	List<StructuredViewer> viewers = new LinkedList<StructuredViewer>();
-	ComposedAdapterFactory factory = new ComposedAdapterFactory(
-			ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+	ComposedAdapterFactory factory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 	private Text text;
 	private Form frmNavigation;
 	private Text selectionId;
@@ -120,22 +117,19 @@ public class ModelRefactoringView extends ViewPart implements
 
 	@Override
 	public void dispose() {
-		ISelectionService service = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getSelectionService();
+		ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 		service.removeSelectionListener(this);
 		super.dispose();
 	}
 
-	protected boolean gotoInEditor(IEditingDomainProvider editor, EObject e)
-			throws MatcherException {
+	protected boolean gotoInEditor(IEditingDomainProvider editor, EObject e) throws MatcherException {
 		if (editor == null) {
 			return false;
 		}
 		if (e != null) {
 			if (editor instanceof IViewerProvider) {
 				IViewerProvider provider = (IViewerProvider) editor;
-				provider.getViewer().setSelection(
-						new TreeSelection(getTreePath(e)), true);
+				provider.getViewer().setSelection(new TreeSelection(getTreePath(e)), true);
 				return true;
 			} else if (editor instanceof IGotoMarker) {
 				IGotoMarker gotoMarker = (IGotoMarker) editor;
@@ -145,8 +139,7 @@ public class ModelRefactoringView extends ViewPart implements
 				IMarker marker = null;
 				try {
 					marker = f.createMarker(EValidator.MARKER);
-					marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil
-							.getURI(e).toString());
+					marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(e).toString());
 					marker.setAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 					gotoMarker.gotoMarker(marker);
@@ -176,14 +169,12 @@ public class ModelRefactoringView extends ViewPart implements
 	}
 
 	protected IEditingDomainProvider getCurrentEditor() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null) {
 				if (activePage.getActiveEditor() instanceof IEditingDomainProvider) {
-					IEditingDomainProvider editor = (IEditingDomainProvider) activePage
-							.getActiveEditor();
+					IEditingDomainProvider editor = (IEditingDomainProvider) activePage.getActiveEditor();
 					return editor;
 				}
 			}
@@ -205,18 +196,13 @@ public class ModelRefactoringView extends ViewPart implements
 					toUse.remove(null);
 					if (toUse.isEmpty()) {
 						if (frmNavigation.getMessage() == null) {
-							frmNavigation.setMessage(
-									Messages.ModelRefactoringView_NO_ELEMENTS,
-									IMessageProvider.WARNING);
+							frmNavigation.setMessage(Messages.ModelRefactoringView_NO_ELEMENTS, IMessageProvider.WARNING);
 						}
 					}
 					tableViewer_Search.setInput(toUse);
-					frmNavigation.setMessage(toUse.size()
-							+ Messages.ModelRefactoringView_NB_ELEMENTS_FOUND,
-							IMessageProvider.INFORMATION);
+					frmNavigation.setMessage(toUse.size() + Messages.ModelRefactoringView_NB_ELEMENTS_FOUND, IMessageProvider.INFORMATION);
 				} catch (MatcherException e) {
-					frmNavigation.setMessage(e.getMessage(),
-							IMessageProvider.ERROR);
+					frmNavigation.setMessage(e.getMessage(), IMessageProvider.ERROR);
 					e.printStackTrace();
 				}
 
@@ -225,23 +211,21 @@ public class ModelRefactoringView extends ViewPart implements
 
 	}
 
-	private Image getFromRegistry(String key, ImageDescriptor desc){
+	private Image getFromRegistry(String key, ImageDescriptor desc) {
 		Image i = Activator.getDefault().getImageRegistry().get(key);
-		if (i == null){
+		if (i == null) {
 			Activator.getDefault().getImageRegistry().put(key, desc);
 			i = Activator.getDefault().getImageRegistry().get(key);
 		}
 		return i;
 	}
-	
+
 	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
+	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		ISelectionService service = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getSelectionService();
+		ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 		service.addSelectionListener(this);
 		frmNavigation = formToolkit.createForm(parent);
 		formToolkit.paintBordersFor(frmNavigation);
@@ -249,32 +233,27 @@ public class ModelRefactoringView extends ViewPart implements
 		frmNavigation.getBody().setLayout(new GridLayout(1, false));
 
 		TabFolder tabFolder = new TabFolder(frmNavigation.getBody(), SWT.NONE);
-		tabFolder.setBackground(Display.getDefault().getSystemColor(
-				SWT.COLOR_WHITE));
-		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-				1));
+		tabFolder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		formToolkit.adapt(tabFolder);
 		formToolkit.paintBordersFor(tabFolder);
 
 		TabItem tbtmSearch = new TabItem(tabFolder, SWT.NONE);
 		tbtmSearch.setText(Messages.ModelRefactoringView_SEARCH);
 
-		Composite composite_2 = formToolkit
-				.createComposite(tabFolder, SWT.NONE);
+		Composite composite_2 = formToolkit.createComposite(tabFolder, SWT.NONE);
 		tbtmSearch.setControl(composite_2);
 		formToolkit.paintBordersFor(composite_2);
 		composite_2.setLayout(new GridLayout(4, false));
 
 		Label lblSelectionId = new Label(composite_2, SWT.NONE);
-		lblSelectionId.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblSelectionId.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		formToolkit.adapt(lblSelectionId, true, true);
 		lblSelectionId.setText(Messages.ModelRefactoringView_SELECTION_ID);
 
 		selectionId = new Text(composite_2, SWT.BORDER);
 		selectionId.setEditable(false);
-		selectionId.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 3, 1));
+		selectionId.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		formToolkit.adapt(selectionId, true, true);
 
 		comboViewer = new ComboViewer(composite_2, SWT.READ_ONLY);
@@ -284,37 +263,33 @@ public class ModelRefactoringView extends ViewPart implements
 				return ((IMatcher) element).getText();
 			}
 		});
-		comboViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
+		comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						if (event.getSelection() instanceof IStructuredSelection) {
-							IStructuredSelection selec = (IStructuredSelection) event
-									.getSelection();
-							if (selec.getFirstElement() instanceof IMatcher) {
-								final IMatcher matcher = (IMatcher) selec
-										.getFirstElement();
-								Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (event.getSelection() instanceof IStructuredSelection) {
+					IStructuredSelection selec = (IStructuredSelection) event.getSelection();
+					if (selec.getFirstElement() instanceof IMatcher) {
+						final IMatcher matcher = (IMatcher) selec.getFirstElement();
+						Display.getDefault().syncExec(new Runnable() {
 
-									@Override
-									public void run() {
-										text.setToolTipText(matcher.getHelp());
-									}
-								});
+							@Override
+							public void run() {
+								text.setToolTipText(matcher.getHelp());
 							}
-						}
+						});
 					}
-				});
+				}
+			}
+		});
 		comboViewer.setContentProvider(ArrayContentProvider.getInstance());
 		comboViewer.setInput(MatcherRegistry.getMatchers());
-		comboViewer.getCombo().setLayoutData(
-				new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		comboViewer.getCombo().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		formToolkit.adapt(comboViewer.getCombo(), true, true);
 
 		Button btnGo = new Button(composite_2, SWT.NONE);
-		btnGo.setImage(getFromRegistry(ICONS_START_TASK_1_GIF, AbstractUIPlugin.imageDescriptorFromPlugin(
-						"org.eclipse.ease.modules.modeling.ui", ICONS_START_TASK_1_GIF)));
+		btnGo.setImage(getFromRegistry(ICONS_START_TASK_1_GIF,
+				AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ease.modules.modeling.ui", ICONS_START_TASK_1_GIF)));
 		btnGo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -324,8 +299,8 @@ public class ModelRefactoringView extends ViewPart implements
 		});
 		formToolkit.adapt(btnGo, true, true);
 		Button btnDel = new Button(composite_2, SWT.NONE);
-		btnDel.setImage(getFromRegistry(ICONS_DELETE_OBJ_GIF, AbstractUIPlugin.imageDescriptorFromPlugin(
-				"org.eclipse.ease.modules.modeling.ui", ICONS_DELETE_OBJ_GIF)));
+		btnDel.setImage(getFromRegistry(ICONS_DELETE_OBJ_GIF,
+				AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ease.modules.modeling.ui", ICONS_DELETE_OBJ_GIF)));
 		btnDel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -353,14 +328,12 @@ public class ModelRefactoringView extends ViewPart implements
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		formToolkit.adapt(text, true, true);
 
-		tableViewer_Search = new TableViewer(composite_2, SWT.BORDER
-				| SWT.MULTI | SWT.VIRTUAL);
+		tableViewer_Search = new TableViewer(composite_2, SWT.BORDER | SWT.MULTI | SWT.VIRTUAL);
 		tableViewer_Search.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
-					IStructuredSelection structured = (IStructuredSelection) event
-							.getSelection();
+					IStructuredSelection structured = (IStructuredSelection) event.getSelection();
 					if (structured.getFirstElement() instanceof EObject) {
 						EObject eo = (EObject) structured.getFirstElement();
 						try {
@@ -376,24 +349,20 @@ public class ModelRefactoringView extends ViewPart implements
 		table_Search = tableViewer_Search.getTable();
 		table_Search.setHeaderVisible(true);
 		table_Search.setLinesVisible(true);
-		table_Search.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				4, 1));
+		table_Search.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
 		formToolkit.paintBordersFor(table_Search);
 
-		TableViewerColumn tableViewerColumn_5 = new TableViewerColumn(
-				tableViewer_Search, SWT.NONE);
+		TableViewerColumn tableViewerColumn_5 = new TableViewerColumn(tableViewer_Search, SWT.NONE);
 		TableColumn tblclmnElement_1 = tableViewerColumn_5.getColumn();
 		tblclmnElement_1.setWidth(100);
 		tblclmnElement_1.setText(Messages.ModelRefactoringView_ELEMENT);
 
-		TableViewerColumn tableViewerColumn_6 = new TableViewerColumn(
-				tableViewer_Search, SWT.NONE);
+		TableViewerColumn tableViewerColumn_6 = new TableViewerColumn(tableViewer_Search, SWT.NONE);
 		TableColumn tblclmnPath = tableViewerColumn_6.getColumn();
 		tblclmnPath.setWidth(229);
 		tblclmnPath.setText(Messages.ModelRefactoringView_PATH);
 
-		tableViewer_Search.setContentProvider(ArrayContentProvider
-				.getInstance());
+		tableViewer_Search.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer_Search.setLabelProvider(new DefaultTableLabelProvider() {
 			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
@@ -414,8 +383,7 @@ public class ModelRefactoringView extends ViewPart implements
 						EObject e = ((EObject) element).eContainer();
 						StringBuilder result = new StringBuilder();
 						while (e != null) {
-							result = new StringBuilder(p.getText(e)).append(
-									"\\").append(result); //$NON-NLS-1$
+							result = new StringBuilder(p.getText(e)).append("\\").append(result); //$NON-NLS-1$
 							e = e.eContainer();
 						}
 						return result.toString();
@@ -432,8 +400,7 @@ public class ModelRefactoringView extends ViewPart implements
 			}
 
 			@Override
-			public void removeSelectionChangedListener(
-					ISelectionChangedListener listener) {
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 				tableViewer_Search.removeSelectionChangedListener(listener);
 			}
 
@@ -443,8 +410,7 @@ public class ModelRefactoringView extends ViewPart implements
 			}
 
 			@Override
-			public void addSelectionChangedListener(
-					ISelectionChangedListener listener) {
+			public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				tableViewer_Search.addSelectionChangedListener(listener);
 			}
 		});
@@ -477,10 +443,8 @@ public class ModelRefactoringView extends ViewPart implements
 					EObject eobject = (EObject) structured.getFirstElement();
 					handleSelectionCHanged(eobject);
 				} else if (structured.getFirstElement() instanceof IAdaptable) {
-					IAdaptable iadaptable = (IAdaptable) structured
-							.getFirstElement();
-					EObject eobject = (EObject) iadaptable
-							.getAdapter(EObject.class);
+					IAdaptable iadaptable = (IAdaptable) structured.getFirstElement();
+					EObject eobject = (EObject) iadaptable.getAdapter(EObject.class);
 					if (eobject != null) {
 						handleSelectionCHanged(eobject);
 					}
@@ -490,8 +454,7 @@ public class ModelRefactoringView extends ViewPart implements
 	}
 
 	private void handleSelectionCHanged(EObject eobject) {
-		selectionId.setText(eobject.eResource().getURIFragment(eobject)
-				.toString());
+		selectionId.setText(eobject.eResource().getURIFragment(eobject).toString());
 		for (StructuredViewer v : viewers) {
 			v.setInput(eobject);
 		}
@@ -515,8 +478,7 @@ public class ModelRefactoringView extends ViewPart implements
 	}
 
 	public class DefaultTableLabelProvider implements ITableLabelProvider {
-		protected AdapterFactoryLabelProvider p = new AdapterFactoryLabelProvider(
-				factory);
+		protected AdapterFactoryLabelProvider p = new AdapterFactoryLabelProvider(factory);
 
 		@Override
 		public void addListener(ILabelProviderListener listener) {

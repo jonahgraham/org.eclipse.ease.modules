@@ -24,8 +24,7 @@ import com.google.common.collect.Lists;
 public class IdMatcher implements IMatcher {
 
 	@Override
-	public Collection<EObject> getElements(String string,
-			IEditingDomainProvider currentEditor) throws MatcherException {
+	public Collection<EObject> getElements(String string, IEditingDomainProvider currentEditor) throws MatcherException {
 		EObject root = SelectionUtils.getSelection(currentEditor);
 
 		Resource r = root.eResource();

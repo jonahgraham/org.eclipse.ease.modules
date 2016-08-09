@@ -16,7 +16,7 @@
 		<eclipse.jarsigner.version>1.0.5</eclipse.jarsigner.version>
 
 		<!-- build parameters -->
-		<compiler.compliance>1.6</compiler.compliance>
+		<compiler.compliance>1.8</compiler.compliance>
 		<jacoco.report.path>../../coverage-report/jacoco.exec</jacoco.report.path>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

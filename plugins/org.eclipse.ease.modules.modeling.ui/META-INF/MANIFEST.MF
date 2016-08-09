@@ -13,6 +13,6 @@ Require-Bundle: org.eclipse.emf.edit.ui;bundle-version="[2.10.2,3.0.0)",
  org.eclipse.ocl.pivot;bundle-version="1.0.0",
  org.eclipse.ease,
  org.eclipse.ease.ui.scripts
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org

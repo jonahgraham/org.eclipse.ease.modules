@@ -16,5 +16,5 @@ Bundle-Version: 0.4.0.qualifier
 Bundle-Name: EASE Script UnitTest
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.ease.modules.unittest;singleton:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 

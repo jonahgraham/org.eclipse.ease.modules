@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.ease.modules.platform.test
 Bundle-Version: 0.4.0.qualifier
 Bundle-Vendor: Eclipse.org
 Fragment-Host: org.eclipse.ease.modules.platform;bundle-version="0.3.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="[4.11.0,5.0.0)",
  org.eclipse.ease.lang.javascript.rhino,
  org.mockito;bundle-version="[1.9.5,2.0.0)"

@@ -23,5 +23,5 @@ Bundle-Version: 0.4.0.qualifier
 Bundle-Name: Platform modules (Incubation)
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.ease.modules.platform;singleton:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 

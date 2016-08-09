@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.106.1,4.0.0)",
  org.eclipse.ease,
  org.eclipse.team.svn.ui;bundle-version="[2.0.3,5.0.0)",
  org.eclipse.core.resources;bundle-version="[3.9.1,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse.org

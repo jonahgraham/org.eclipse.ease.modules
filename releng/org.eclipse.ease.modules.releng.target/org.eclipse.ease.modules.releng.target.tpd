@@ -1,6 +1,6 @@
-target "Mars" with source requirements
+target "Neon" with source requirements
 
-location "http://download.eclipse.org/releases/mars/" eclipse-mars {
+location "http://download.eclipse.org/releases/neon/" eclipse-neon {
 	org.eclipse.platform.feature.group
 	org.eclipse.rcp.feature.group
 	org.eclipse.jdt.feature.group
@@ -12,7 +12,7 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
 	// modeling modules
 	org.eclipse.papyrus.infra.feature.feature.group
 	org.eclipse.papyrus.infra.gmfdiag.feature.feature.group
-	org.eclipse.papyrus.sysml.feature.feature.group
+//	org.eclipse.papyrus.sysml.feature.feature.group
 	org.eclipse.papyrus.uml.diagram.feature.feature.group
 	org.eclipse.uml2.uml
 	org.eclipse.gmf.runtime.diagram.ui
@@ -23,17 +23,19 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
 	// unit test modules
 	org.eclipse.wst.xml_core.feature.feature.group
 	org.eclipse.wst.xml_ui.feature.feature.group
-	
+
 	// java module
 	org.eclipse.pde.feature.group
 	org.eclipse.jdt
-	
+
 	// svn module
 	org.eclipse.team.svn.feature.group
-	
+
 	// git module
 	org.eclipse.egit.feature.group
 	org.eclipse.jgit.feature.group
+
+	org.eclipse.osgi
 }
 
 location "http://download.eclipse.org/ease/update/nightly" {

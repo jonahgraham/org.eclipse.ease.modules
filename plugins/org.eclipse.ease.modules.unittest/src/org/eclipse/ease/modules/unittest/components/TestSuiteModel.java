@@ -30,6 +30,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ease.tools.ResourceTools;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
@@ -61,17 +63,20 @@ public class TestSuiteModel implements IResourceChangeListener {
 	private static final String XML_NODE_DESCRIPTION = "description";
 	private static final String XML_ATTRIBUTE_NAME = "name";
 	private static final String XML_ATTRIBUTE_DESCRIPTION = "description";
+	private static final String XML_ATTRIBUTE_PATH = "path";
 
 	public class Variable {
 
 		private String fDescription;
 		private String fContent;
 		private String fName;
+		private IPath fPath;
 
-		public Variable(final String identifier, final String content, final String description) {
+		public Variable(final String identifier, final String content, final String description, final IPath path) {
 			fName = identifier;
 			fContent = content;
 			fDescription = (description != null) ? description : "";
+			fPath = (path != null) ? (path.makeAbsolute()) : Path.ROOT;
 		}
 
 		public String getContent() {
@@ -86,6 +91,10 @@ public class TestSuiteModel implements IResourceChangeListener {
 			return fName;
 		}
 
+		public IPath getPath() {
+			return fPath;
+		}
+
 		public void setName(final String name) {
 			fName = name;
 		}
@@ -96,6 +105,10 @@ public class TestSuiteModel implements IResourceChangeListener {
 
 		public void setContent(final String content) {
 			fContent = content;
+		}
+
+		public void setPath(final IPath path) {
+			fPath = path.makeAbsolute();
 		}
 	}
 
@@ -185,8 +198,11 @@ public class TestSuiteModel implements IResourceChangeListener {
 			// load variables
 			final IMemento variablesNode = memento.getChild(XML_NODE_VARIABLES);
 			if (variablesNode != null) {
-				for (final IMemento node : variablesNode.getChildren(XML_NODE_VARIABLE))
-					fVariables.add(new Variable(node.getString(XML_ATTRIBUTE_NAME), node.getTextData(), node.getString(XML_ATTRIBUTE_DESCRIPTION)));
+				for (final IMemento node : variablesNode.getChildren(XML_NODE_VARIABLE)) {
+					final String pathVariable = node.getString(XML_ATTRIBUTE_PATH);
+					final IPath path = (pathVariable == null) ? Path.ROOT : new Path(pathVariable);
+					fVariables.add(new Variable(node.getString(XML_ATTRIBUTE_NAME), node.getTextData(), node.getString(XML_ATTRIBUTE_DESCRIPTION), path));
+				}
 			}
 
 			// load code fragments
@@ -228,6 +244,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 			final IMemento node = variablesNode.createChild(XML_NODE_VARIABLE);
 			node.putString(XML_ATTRIBUTE_NAME, variable.getName());
 			node.putString(XML_ATTRIBUTE_DESCRIPTION, variable.getDescription());
+			node.putString(XML_ATTRIBUTE_PATH, variable.getPath().toString());
 			node.putTextData(variable.getContent());
 		}
 
@@ -271,9 +288,11 @@ public class TestSuiteModel implements IResourceChangeListener {
 	 *            content for the variable
 	 * @param description
 	 *            description of the variable or <code>null</code>
+	 * @param path
+	 *            path of the variable
 	 */
-	public void addVariable(final String identifier, final String content, final String description) {
-		fVariables.add(new Variable(identifier, content, description));
+	public void addVariable(final String identifier, final String content, final String description, final IPath path) {
+		fVariables.add(new Variable(identifier, content, description, path));
 		fDirty = true;
 	}
 
@@ -285,7 +304,7 @@ public class TestSuiteModel implements IResourceChangeListener {
 	 * @return variable or <code>null</code>
 	 */
 	public Variable getVariable(final String identifier) {
-		for (Variable variable : fVariables) {
+		for (final Variable variable : fVariables) {
 			if (variable.getName().equals(identifier))
 				return variable;
 
@@ -323,19 +342,23 @@ public class TestSuiteModel implements IResourceChangeListener {
 	 *            content for the variable
 	 * @param description
 	 *            Description of the variable. if the description must not be changed pass <code>null</code> as value.
+	 * @param path
+	 *            path of the variable
 	 */
-	public void setVariable(final String identifier, final String content, final String description) {
+	public void setVariable(final String identifier, final String content, final String description, final IPath path) {
 
-		Variable variable = getVariable(identifier);
+		final Variable variable = getVariable(identifier);
 		if (variable != null) {
 			variable.setContent(content);
 			if (description != null)
 				variable.setDescription(description);
+			if (path != null)
+				variable.setPath(path);
 			fDirty = true;
 			return;
 		}
 		// identifier not found create new variable
-		addVariable(identifier, content, description);
+		addVariable(identifier, content, description, path);
 	}
 
 	/**

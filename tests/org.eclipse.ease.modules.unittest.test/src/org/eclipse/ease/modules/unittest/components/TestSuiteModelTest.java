@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.core.runtime.Path;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +25,7 @@ public class TestSuiteModelTest {
 	String[] fVariableIndentifier;
 	String[] fVariableContent;
 	String[] fVariableDescription;
+	String[] fVariablePath;
 
 	private static final int ELEMENTS = 3;
 
@@ -33,21 +35,23 @@ public class TestSuiteModelTest {
 		fVariableIndentifier = new String[ELEMENTS];
 		fVariableContent = new String[ELEMENTS];
 		fVariableDescription = new String[ELEMENTS];
+		fVariablePath = new String[ELEMENTS];
 
 		for (int i = 0; i < ELEMENTS; i++) {
 			fVariableIndentifier[i] = "variableIndentifier" + i;
 			fVariableContent[i] = "variableContent" + i;
 			fVariableDescription[i] = "variableDescription" + i;
+			fVariablePath[i] = "/" + "variablePath" + i;
 		}
 	}
 
 	@Test
 	public void getVariableCount() {
 
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
 		assertEquals(0, testSuiteModel.getVariables().size());
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index]);
+			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index], new Path(fVariablePath[index]));
 			assertEquals(index + 1, testSuiteModel.getVariables().size());
 		}
 	}
@@ -55,86 +59,92 @@ public class TestSuiteModelTest {
 	@Test
 	public void hasVariable() {
 
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
-		testSuiteModel.setVariable(fVariableIndentifier[0], fVariableContent[0], fVariableDescription[0]);
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
+		testSuiteModel.setVariable(fVariableIndentifier[0], fVariableContent[0], fVariableDescription[0], new Path(fVariablePath[0]));
 		assertTrue(testSuiteModel.hasVariable(fVariableIndentifier[0]));
 	}
 
 	@Test
 	public void addVariable() {
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
 
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.addVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index]);
+			testSuiteModel.addVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index], new Path(fVariablePath[index]));
 			assertEquals(fVariableIndentifier[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getName());
 			assertEquals(fVariableContent[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getContent());
 			assertEquals(fVariableDescription[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getDescription());
+			assertEquals(new Path(fVariablePath[index]), testSuiteModel.getVariable(fVariableIndentifier[index]).getPath());
 		}
 	}
 
 	@Test
 	public void getVariable() {
 
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
 
 		assertNull(testSuiteModel.getVariable("dummyIdentifier"));
 
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index]);
+			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index], new Path(fVariablePath[index]));
 		}
 
 		for (int index = 0; index < ELEMENTS; index++) {
 			assertEquals(fVariableIndentifier[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getName());
 			assertEquals(fVariableContent[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getContent());
 			assertEquals(fVariableDescription[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getDescription());
+			assertEquals(new Path(fVariablePath[index]), testSuiteModel.getVariable(fVariableIndentifier[index]).getPath());
 		}
 	}
 
 	@Test
 	public void setVariable() {
 
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
 
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index]);
+			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index], new Path(fVariablePath[index]));
 			assertEquals(fVariableIndentifier[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getName());
 			assertEquals(fVariableContent[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getContent());
 			assertEquals(fVariableDescription[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getDescription());
+			assertEquals(new Path(fVariablePath[index]), testSuiteModel.getVariable(fVariableIndentifier[index]).getPath());
 		}
 	}
 
 	@Test
 	public void updateVariableContent() {
 
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
-		String postFix = "Changed";
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
+		final String postFix = "Changed";
 
-		for (int index = 0; index < ELEMENTS - 1; index++) {
-			testSuiteModel.addVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index]);
+		for (int index = 0; index < (ELEMENTS - 1); index++) {
+			testSuiteModel.addVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index], new Path(fVariablePath[index]));
 		}
 
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index] + postFix, fVariableDescription[index] + postFix);
+			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index] + postFix, fVariableDescription[index] + postFix,
+					new Path(fVariablePath[index] + postFix));
 			assertEquals(fVariableIndentifier[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getName());
 			assertEquals(fVariableContent[index] + postFix, testSuiteModel.getVariable(fVariableIndentifier[index]).getContent());
 			assertEquals(fVariableDescription[index] + postFix, testSuiteModel.getVariable(fVariableIndentifier[index]).getDescription());
+			assertEquals(new Path(fVariablePath[index] + postFix), testSuiteModel.getVariable(fVariableIndentifier[index]).getPath());
 		}
 
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index] + postFix + postFix, null);
+			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index] + postFix + postFix, null, null);
 			assertEquals(fVariableIndentifier[index], testSuiteModel.getVariable(fVariableIndentifier[index]).getName());
 			assertEquals(fVariableContent[index] + postFix + postFix, testSuiteModel.getVariable(fVariableIndentifier[index]).getContent());
 			assertEquals(fVariableDescription[index] + postFix, testSuiteModel.getVariable(fVariableIndentifier[index]).getDescription());
+			assertEquals(new Path(fVariablePath[index] + postFix), testSuiteModel.getVariable(fVariableIndentifier[index]).getPath());
 		}
 	}
 
 	@Test
 	public void removeVariable() {
 
-		TestSuiteModel testSuiteModel = new TestSuiteModel();
+		final TestSuiteModel testSuiteModel = new TestSuiteModel();
 
 		for (int index = 0; index < ELEMENTS; index++) {
-			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index]);
+			testSuiteModel.setVariable(fVariableIndentifier[index], fVariableContent[index], fVariableDescription[index], new Path(fVariablePath[index]));
 		}
 
 		for (int index = 0; index < ELEMENTS; index++) {

@@ -10,39 +10,65 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.ui.editor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ease.modules.unittest.components.TestSuiteModel.Variable;
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 
+/**
+ * Represents the Variables component in the Test Suite Editor. This class implements the Variables component in Test Suite Editor with a tree structure
+ * allowing to classify variables in groups. New variables are added either in the back-end directly in the XML content of the source file by specifying the
+ * path component for the variable or in the front end by using the context menu allowing the user to make use of the following actions: add new group, add new
+ * sibling group, add variable and remove any entity.
+ */
 public class Variables extends AbstractEditorPage {
+
+	public static final String VARIABLES_EDITOR_ID = "org.eclipse.ease.editor.variables";
+
+	private static final String DEFAULT_VARIABLE_CONTENT = "\"my content\"";
+
+	private static final String NAME_NEW_VARIABLE_GROUP = "myGroup";
+
+	public static final String EMPTY_STRING = "";
+
 	private static final Pattern VARIABLE_NAME_PATTERN = Pattern.compile("([a-zA-Z_$][0-9a-zA-Z_$]*)");
 
-	private Table table_1;
+	private Tree fTree;
 
-	private TableViewer tableViewer;
+	private TreeViewer fTreeViewer;
 
 	/**
 	 * Create the form page.
@@ -73,7 +99,6 @@ public class Variables extends AbstractEditorPage {
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-
 		managedForm.getForm().getBody().setLayout(new GridLayout(2, false));
 
 		final Label lblDefineVariablesThat = new Label(managedForm.getForm().getBody(), SWT.NONE);
@@ -85,48 +110,91 @@ public class Variables extends AbstractEditorPage {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 4));
 		managedForm.getToolkit().adapt(composite);
 		managedForm.getToolkit().paintBordersFor(composite);
-		final TableColumnLayout tcl_composite = new TableColumnLayout();
+
+		final TreeColumnLayout tcl_composite = new TreeColumnLayout();
 		composite.setLayout(tcl_composite);
 
-		final Table table = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION);
-		tableViewer = new TableViewer(table);
-		table_1 = tableViewer.getTable();
-		table_1.setHeaderVisible(true);
-		table_1.setLinesVisible(true);
-		managedForm.getToolkit().paintBordersFor(table_1);
+		final Tree tree = new Tree(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+		fTreeViewer = new TreeViewer(tree);
+		fTree = fTreeViewer.getTree();
+		fTree.setHeaderVisible(true);
+		fTree.setLinesVisible(true);
+		managedForm.getToolkit().paintBordersFor(fTree);
 
-		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		fTreeViewer.setContentProvider(new VariablesTreeContentProvider());
+		getSite().setSelectionProvider(fTreeViewer);
 
-		final TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn tblclmnVariable = tableViewerColumn.getColumn();
+		final TreeViewerColumn treeViewerColumn = new TreeViewerColumn(fTreeViewer, SWT.NONE);
+		final TreeColumn tblclmnVariable = treeViewerColumn.getColumn();
 		tcl_composite.setColumnData(tblclmnVariable, new ColumnWeightData(100, 100, true));
 		tblclmnVariable.setText("Variable");
-		tableViewerColumn.setLabelProvider(new ColumnLabelProvider() {
+		treeViewerColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(final Object element) {
-				return ((Variable) element).getName();
+				if (element instanceof Variable)
+					return ((Variable) element).getName();
+
+				if (element instanceof IPath)
+					return ((IPath) element).lastSegment();
+
+				return super.getText(element);
 			}
-		});
-		tableViewerColumn.setEditingSupport(new EditingSupport(tableViewer) {
 
 			@Override
-			protected void setValue(final Object element, final Object value) {
-				if (checkName(value.toString())) {
-					((Variable) element).setName(value.toString());
-					setDirty();
-
-					tableViewer.update(element, null);
+			public Image getImage(final Object element) {
+				if (element instanceof Variable) {
+					return DebugUITools.getImage(IDebugUIConstants.IMG_VIEW_VARIABLES);
+				} else if (element instanceof IPath) {
+					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 				}
+
+				return super.getImage(element);
+			}
+		});
+
+		treeViewerColumn.setEditingSupport(new EditingSupport(fTreeViewer) {
+
+			@Override
+			protected void setValue(Object element, final Object value) {
+				if (element instanceof Variable) {
+					if (checkName(value.toString())) {
+						final String oldVariableName = ((Variable) element).getName();
+						final String newVariableName = value.toString();
+						if (!oldVariableName.equals(newVariableName)) {
+							((Variable) element).setName(value.toString());
+							fTreeViewer.update(element, null);
+							setDirty();
+						}
+					}
+				} else if (element instanceof IPath) {
+					final VariablesTreeContentProvider treeContentProvider = (VariablesTreeContentProvider) fTreeViewer.getContentProvider();
+					// identified node to rename
+					final IPath node = (IPath) element;
+					if (!node.lastSegment().equals(value.toString())) {
+						final List<Variable> variables = getModel().getVariables();
+						// update the path of all variables that have the old path node to the new value value
+						treeContentProvider.updateVariablesForRenamedNode(variables, node, value.toString());
+						// rename the node to the new value value
+						treeContentProvider.exchangePrefixPaths(node, (String) value);
+						setDirty();
+					}
+				}
+				updateTreeViewerToLevel();
 			}
 
 			@Override
 			protected Object getValue(final Object element) {
-				return ((Variable) element).getName();
+				if (element instanceof Variable) {
+					return ((Variable) element).getName();
+				} else if (element instanceof IPath) {
+					return ((IPath) element).lastSegment();
+				}
+				return EMPTY_STRING;
 			}
 
 			@Override
 			protected CellEditor getCellEditor(final Object element) {
-				return new TextCellEditor(table_1);
+				return new TextCellEditor(fTree);
 			}
 
 			@Override
@@ -135,166 +203,157 @@ public class Variables extends AbstractEditorPage {
 			}
 		});
 
-		final TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn tblclmnContent = tableViewerColumn_1.getColumn();
+		fTreeViewer.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(final Viewer viewer, final Object e1, final Object e2) {
+				if ((e1 instanceof Variable) && (e2 instanceof Variable))
+					return (((Variable) e1).getName()).compareToIgnoreCase(((Variable) e2).getName());
+				else if ((e1 instanceof IPath) && (e2 instanceof IPath))
+					return (e1.toString().compareTo(e2.toString()));
+
+				return super.compare(viewer, e1, e2);
+			}
+
+			@Override
+			public int category(Object element) {
+				return (element instanceof IPath) ? 1 : 2;
+			}
+		});
+
+		final TreeViewerColumn treeViewerColumn_1 = new TreeViewerColumn(fTreeViewer, SWT.NONE);
+		final TreeColumn tblclmnContent = treeViewerColumn_1.getColumn();
 		tcl_composite.setColumnData(tblclmnContent, new ColumnWeightData(100, 100, true));
 		tblclmnContent.setText("Content");
-		tableViewerColumn_1.setLabelProvider(new ColumnLabelProvider() {
+		treeViewerColumn_1.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(final Object element) {
-				return ((Variable) element).getContent();
+				if (element instanceof Variable)
+					return ((Variable) element).getContent();
+
+				if (element instanceof IPath)
+					return EMPTY_STRING;
+
+				return super.getText(element);
 			}
 		});
-		tableViewerColumn_1.setEditingSupport(new EditingSupport(tableViewer) {
 
+		treeViewerColumn_1.setEditingSupport(new EditingSupport(fTreeViewer) {
 			@Override
 			protected void setValue(final Object element, final Object value) {
-				((Variable) element).setContent(value.toString());
-				setDirty();
-
-				tableViewer.update(element, null);
+				if (element instanceof Variable) {
+					final String oldVariableContent = ((Variable) element).getContent();
+					final String newVariableContent = value.toString();
+					if (!oldVariableContent.equals(newVariableContent)) {
+						((Variable) element).setContent(newVariableContent);
+						setDirty();
+						fTreeViewer.update(element, null);
+					}
+				}
 			}
 
 			@Override
 			protected Object getValue(final Object element) {
-				return ((Variable) element).getContent();
+				if (element instanceof Variable)
+					return ((Variable) element).getContent();
+
+				return EMPTY_STRING;
 			}
 
 			@Override
 			protected CellEditor getCellEditor(final Object element) {
-				return new TextCellEditor(table_1);
+				return new TextCellEditor(fTree);
 			}
 
 			@Override
 			protected boolean canEdit(final Object element) {
-				return true;
+				return (element instanceof Variable);
 			}
 		});
 
-		final TableViewerColumn tableViewerColumn_3 = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn tblclmnDescription = tableViewerColumn_3.getColumn();
+		final TreeViewerColumn treeViewerColumn_3 = new TreeViewerColumn(fTreeViewer, SWT.NONE);
+		final TreeColumn tblclmnDescription = treeViewerColumn_3.getColumn();
 		tcl_composite.setColumnData(tblclmnDescription, new ColumnWeightData(100, ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnDescription.setText("Description");
-		tableViewerColumn_3.setLabelProvider(new ColumnLabelProvider() {
+		treeViewerColumn_3.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(final Object element) {
-				return ((Variable) element).getDescription();
+				if (element instanceof Variable)
+					return ((Variable) element).getDescription();
+
+				if (element instanceof IPath)
+					return EMPTY_STRING;
+
+				return super.getText(element);
 			}
 		});
-		tableViewerColumn_3.setEditingSupport(new EditingSupport(tableViewer) {
+		treeViewerColumn_3.setEditingSupport(new EditingSupport(fTreeViewer) {
 
 			@Override
 			protected void setValue(final Object element, final Object value) {
-				((Variable) element).setDescription(value.toString());
-				setDirty();
-
-				tableViewer.update(element, null);
+				if (element instanceof Variable) {
+					((Variable) element).setDescription(value.toString());
+					setDirty();
+					fTreeViewer.update(element, null);
+				}
 			}
 
 			@Override
 			protected Object getValue(final Object element) {
-				return ((Variable) element).getDescription();
+				if (element instanceof Variable)
+					return ((Variable) element).getDescription();
+
+				return EMPTY_STRING;
 			}
 
 			@Override
 			protected CellEditor getCellEditor(final Object element) {
-				return new TextCellEditor(table_1);
+				return new TextCellEditor(fTree);
 			}
 
 			@Override
 			protected boolean canEdit(final Object element) {
-				return true;
+				return (element instanceof Variable);
 			}
 		});
-		final Button btnNewButton = new Button(managedForm.getForm().getBody(), SWT.FLAT);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				getModel().addVariable(createVariable(), "my content", null);
-				setDirty();
 
-				tableViewer.refresh();
-			}
-		});
-		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		managedForm.getToolkit().adapt(btnNewButton, true, true);
-		btnNewButton.setText("Add");
-
-		final Button btnDelete = new Button(managedForm.getForm().getBody(), SWT.FLAT);
-		btnDelete.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-				for (final Object variable : selection.toList())
-					getModel().removeVariable((Variable) variable);
-
-				tableViewer.refresh();
-
-				setDirty();
-			}
-		});
-		btnDelete.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		managedForm.getToolkit().adapt(btnDelete, true, true);
-		btnDelete.setText("Remove");
-
-		final Button btnUp = new Button(managedForm.getForm().getBody(), SWT.FLAT);
-		btnUp.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-				if (!selection.isEmpty()) {
-					final Variable variable = (Variable) selection.getFirstElement();
-					moveUp(variable);
-					tableViewer.refresh();
-					// TODO we need to change variables order in model, too
-
-					setDirty();
-				}
-			}
-		});
-		final GridData gd_btnUp = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnUp.verticalIndent = 30;
-		btnUp.setLayoutData(gd_btnUp);
-		managedForm.getToolkit().adapt(btnUp, true, true);
-		btnUp.setText("Up");
-
-		final Button btnDown = new Button(managedForm.getForm().getBody(), SWT.FLAT);
-		btnDown.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-				if (!selection.isEmpty()) {
-					final Variable variable = (Variable) selection.getFirstElement();
-					moveDown(variable);
-					tableViewer.refresh();
-					// TODO we need to change variables order in model, too
-					setDirty();
-				}
-			}
-		});
-		btnDown.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		managedForm.getToolkit().adapt(btnDown, true, true);
-		btnDown.setText("Down");
+		initializeDnD();
 
 		update();
+
+		final MenuManager contextMenu = new MenuManager("", VARIABLES_EDITOR_ID);
+		final Menu menu = contextMenu.createContextMenu(fTreeViewer.getTree());
+		contextMenu.setRemoveAllWhenShown(true);
+		fTreeViewer.getTree().setMenu(menu);
+		getEditorSite().registerContextMenu(VARIABLES_EDITOR_ID, contextMenu, fTreeViewer, false);
 	}
 
-	private void moveUp(final Variable element) {
-		final List<Variable> input = (List<Variable>) tableViewer.getInput();
-		final int index = input.indexOf(element);
-		if (index > 0) {
-			input.set(index, input.get(index - 1));
-			input.set(index - 1, element);
-		}
+	@Override
+	protected String getPageTitle() {
+		return "Variables";
 	}
 
-	private void moveDown(final Variable element) {
-		final List<Variable> input = (List<Variable>) tableViewer.getInput();
-		final int index = input.indexOf(element);
-		if (index < (input.size() - 1)) {
-			input.set(index, input.get(index + 1));
-			input.set(index + 1, element);
-		}
+	@Override
+	protected void update() {
+		fTreeViewer.setInput(getModel().getVariables());
+		fTreeViewer.refresh();
+	}
+
+	/**
+	 * Provides drag and drop functionality for the tree structure.
+	 */
+	private void initializeDnD() {
+		final int operations = DND.DROP_MOVE;
+		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
+
+		fTreeViewer.addDragSupport(operations, transferTypes, new VariablesDragListener(fTreeViewer));
+		final VariablesDropSupport dropSupport = new VariablesDropSupport(fTreeViewer, getModel());
+		fTreeViewer.addDropSupport(operations, transferTypes, dropSupport);
+	}
+
+	private void updateTreeViewerToLevel() {
+		final Object[] elements = fTreeViewer.getExpandedElements();
+		fTreeViewer.refresh();
+		fTreeViewer.setExpandedElements(elements);
 	}
 
 	private String createVariable() {
@@ -315,21 +374,117 @@ public class Variables extends AbstractEditorPage {
 				if (newName.equals(variable.getName()))
 					return false;
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
-	@Override
-	protected String getPageTitle() {
-		return "Variables";
+	public static String createGroupName(Object[] childrenGroup) {
+		final String baseName = NAME_NEW_VARIABLE_GROUP;
+		String name = baseName;
+		int index = 1;
+		while (!checkNameSubgroup(name, childrenGroup))
+			name = baseName + " " + Integer.toString(index++);
+
+		return name + Path.ROOT.toString();
 	}
 
-	@Override
-	protected void update() {
-		tableViewer.setInput(getModel().getVariables());
-		tableViewer.refresh();
+	public static boolean checkNameSubgroup(String name, Object[] childrenGroup) {
+		for (final Object child : childrenGroup) {
+			if (child instanceof IPath) {
+				final String childName = ((IPath) child).lastSegment();
+				if (childName.equals(name))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	private void createGroup(IPath parentGroupPath) {
+		final VariablesTreeContentProvider contentProvider = (VariablesTreeContentProvider) fTreeViewer.getContentProvider();
+		final String name = createGroupName(contentProvider.getChildren(parentGroupPath));
+		final IPath newPath = parentGroupPath.append(name);
+		contentProvider.addPath(newPath);
+		updateTreeViewerToLevel();
+	}
+
+	private void addVariableToGroup() {
+		final IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		if (selection.size() == 1) {
+			final Object selectedNode = selection.getFirstElement();
+			if (selectedNode instanceof IPath) {
+				final IPath currentGroup = (IPath) selectedNode;
+				getModel().addVariable(createVariable(), DEFAULT_VARIABLE_CONTENT, null, currentGroup);
+			} else if (selectedNode instanceof Variable) {
+				final Variable currentVariable = (Variable) selectedNode;
+				getModel().addVariable(createVariable(), DEFAULT_VARIABLE_CONTENT, null, currentVariable.getPath());
+			}
+		} else {
+			getModel().addVariable(createVariable(), DEFAULT_VARIABLE_CONTENT, null, Path.ROOT);
+		}
+	}
+
+	/**
+	 * Removes the selected object (i.e. group of variables or variable) in the tree.
+	 */
+	private void remove() {
+		final IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		for (final Object node : selection.toList()) {
+			if (node instanceof Variable) {
+				getModel().removeVariable((Variable) node);
+			} else if (node instanceof IPath) {
+				removeVariableGroup((IPath) node);
+			}
+		}
+		setDirty();
+		updateTreeViewerToLevel();
+	}
+
+	private void removeVariableGroup(IPath node) {
+		final List<Variable> variables = getModel().getVariables();
+		final List<Variable> variablesSelected = new ArrayList<Variable>();
+		for (final Variable variable : variables) {
+			// remove all groups referred by node and all subgroups having the parent node
+			if (variable.getPath().uptoSegment(node.segmentCount()).equals(node.makeAbsolute()))
+				variablesSelected.add(variable);
+		}
+
+		for (final Variable variableSelected : variablesSelected)
+			getModel().removeVariable(variableSelected);
+
+		final VariablesTreeContentProvider treeContentProvider = (VariablesTreeContentProvider) fTreeViewer.getContentProvider();
+		treeContentProvider.removeMatchingPaths(node);
+	}
+
+	public TreeViewer getTreeViewer() {
+		return fTreeViewer;
+	}
+
+	/**
+	 * Adds a new group in the tree viewer in the test suite variables component.
+	 *
+	 * @param node
+	 */
+	public void addGroup(IPath node) {
+		createGroup(node);
+		updateTreeViewerToLevel();
+	}
+
+	/**
+	 * Adds a new variable in the tree viewer in the test suite variables component.
+	 */
+	public void addVariable() {
+		addVariableToGroup();
+		setDirty();
+		updateTreeViewerToLevel();
+	}
+
+	/**
+	 * Removes any selected element from the tree viewer in the test suite variables component.
+	 */
+	public void removeSelectedNodes() {
+		remove();
+		setDirty();
+		updateTreeViewerToLevel();
 	}
 }

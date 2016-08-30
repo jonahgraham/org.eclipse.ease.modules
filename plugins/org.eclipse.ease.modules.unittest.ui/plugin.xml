@@ -199,6 +199,34 @@
             id="org.eclipse.ease.unittest.commands.addMetadata"
             name="Add Metadata">
       </command>
+      <command
+            categoryId="org.eclipse.ease.commands.category.unittest"
+            defaultHandler="org.eclipse.ease.modules.unittest.ui.handler.AddSiblingGroupHandler"
+            description="Add new sibling group"
+            id="org.eclipse.ease.unittest.commands.addSiblingGroup"
+            name="Add Sibling Group">
+      </command>
+      <command
+            categoryId="org.eclipse.ease.commands.category.unittest"
+            defaultHandler="org.eclipse.ease.modules.unittest.ui.handler.AddChildGroupHandler"
+            description="Add new child group"
+            id="org.eclipse.ease.unittest.commands.addChildGroup"
+            name="Add Group">
+      </command>
+      <command
+            categoryId="org.eclipse.ease.commands.category.unittest"
+            defaultHandler="org.eclipse.ease.modules.unittest.ui.handler.AddVariableHandler"
+            description="Add new variable"
+            id="org.eclipse.ease.unittest.commands.addVariable"
+            name="Add Variable">
+      </command>
+      <command
+            categoryId="org.eclipse.ease.commands.category.unittest"
+            defaultHandler="org.eclipse.ease.modules.unittest.ui.handler.RemoveHandler"
+            description="Removes the selected element"
+            id="org.eclipse.ease.unittest.commands.remove"
+            name="Remove">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -390,6 +418,92 @@
                class="org.eclipse.ease.modules.unittest.ui.handler.RecentSuiteFilesContributionFactory"
                id="org.eclipse.ease.modules.unittest.ui.testsuites">
          </dynamic>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ease.editor.variables">
+         <command
+               commandId="org.eclipse.ease.unittest.commands.addChildGroup"
+               label="Add Group"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="activeMenuSelection">
+                  <or>
+                     <count
+                           value="!">
+                     </count>
+                     <and>
+                        <count
+                              value="1">
+                        </count>
+                        <iterate>
+                           <instanceof
+                                 value="org.eclipse.core.runtime.IPath">
+                           </instanceof>
+                        </iterate></and></or>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ease.unittest.commands.addSiblingGroup"
+               label="Add Sibling Group"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="activeMenuSelection">
+                  <and>
+                     <count
+                           value="1">
+                     </count>
+                     <iterate
+                           ifEmpty="true"
+                           operator="and">
+                        <or>
+                           <instanceof
+                                 value="org.eclipse.core.runtime.IPath">
+                           </instanceof>
+                           <instanceof
+                                 value="org.eclipse.ease.modules.unittest.components.TestSuiteModel$Variable">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </and>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ease.unittest.commands.addVariable"
+               label="Add Variable"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ease.unittest.commands.remove"
+               label="Remove"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="activeMenuSelection">
+                  <and>
+                     <count
+                           value="+">
+                     </count>
+                     <iterate>
+                        <or>
+                           <instanceof
+                                 value="org.eclipse.ease.modules.unittest.components.TestSuiteModel$Variable">
+                           </instanceof>
+                           <instanceof
+                                 value="org.eclipse.core.runtime.IPath">
+                           </instanceof>
+                        </or>
+                     </iterate></and>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension

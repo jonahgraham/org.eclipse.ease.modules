@@ -16,6 +16,8 @@ import java.lang.reflect.Method;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ease.AbstractScriptEngine;
 import org.eclipse.ease.IDebugEngine;
 import org.eclipse.ease.IScriptEngine;
@@ -573,11 +575,15 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 *            unique identifier
 	 * @param content
 	 * @param description
+	 * @param path
+	 *            path of the variable
 	 */
 	@WrapToScript
 	public void setVariable(final TestSuite testSuite, final String identifier, final String content,
-			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String description) {
-		testSuite.getModel().setVariable(identifier, content, description);
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String description,
+			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String path) {
+		final IPath validPath = (path == null) ? Path.ROOT : new Path(path);
+		testSuite.getModel().setVariable(identifier, content, description, validPath);
 	}
 
 	/**

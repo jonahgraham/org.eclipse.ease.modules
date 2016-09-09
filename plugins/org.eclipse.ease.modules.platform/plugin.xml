@@ -16,6 +16,13 @@
             name="P2"
             visible="true">
       </module>
+      <module
+            category="org.eclipse.ease.category.system"
+            class="org.eclipse.ease.modules.platform.OsgiModule"
+            id="org.eclipse.ease.modules.platform.osgi"
+            name="OSGI"
+            visible="true">
+      </module>
    </extension>
    <extension
          point="org.eclipse.ease.ui.shell">

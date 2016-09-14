@@ -13,4 +13,5 @@ Require-Bundle: org.eclipse.swt;bundle-version="[3.103.2,4.0.0)",
  org.eclipse.ease.modules.platform,
  org.eclipse.core.resources;bundle-version="[3.9.1,4.0.0)"
 Bundle-Vendor: Eclipse.org
-Export-Package: org.eclipse.ease.modules.charting
+Export-Package: org.eclipse.ease.modules.charting,
+ org.eclipse.ease.modules.charting.views

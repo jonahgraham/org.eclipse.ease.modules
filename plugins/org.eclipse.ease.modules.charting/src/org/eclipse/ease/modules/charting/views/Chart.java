@@ -60,12 +60,12 @@ public class Chart extends Composite {
 
 	public Chart(final Composite parent, final int style) {
 		super(parent, style);
-		GridLayout layout = new GridLayout();
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final GridLayout layout = new GridLayout();
+		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		setLayout(layout);
-		Canvas myCanvas = new Canvas(this, style);
+		final Canvas myCanvas = new Canvas(this, style);
 		myCanvas.setLayoutData(gd);
-		LightweightSystem lws = new LightweightSystem(myCanvas);
+		final LightweightSystem lws = new LightweightSystem(myCanvas);
 		fXYGraph = new XYGraph();
 		fXYGraph.setTitle("Chart");
 		fXYGraph.primaryXAxis.setShowMajorGrid(true);
@@ -91,7 +91,7 @@ public class Chart extends Composite {
 
 			@Override
 			public void mouseScrolled(final org.eclipse.swt.events.MouseEvent e) {
-				IFigure figureUnderMouse = fXYGraph.findFigureAt(e.x, e.y, new TreeSearch() {
+				final IFigure figureUnderMouse = fXYGraph.findFigureAt(e.x, e.y, new TreeSearch() {
 
 					@Override
 					public boolean prune(final IFigure figure) {
@@ -104,11 +104,11 @@ public class Chart extends Composite {
 					}
 				});
 				if (figureUnderMouse instanceof Axis) {
-					Axis axis = ((Axis) figureUnderMouse);
-					double valuePosition = axis.getPositionValue(axis.isHorizontal() ? e.x : e.y, false);
+					final Axis axis = ((Axis) figureUnderMouse);
+					final double valuePosition = axis.getPositionValue(axis.isHorizontal() ? e.x : e.y, false);
 					axis.zoomInOut(valuePosition, (e.count * 0.1) / 3);
 				} else if (figureUnderMouse instanceof PlotArea) {
-					PlotArea plotArea = (PlotArea) figureUnderMouse;
+					final PlotArea plotArea = (PlotArea) figureUnderMouse;
 					plotArea.zoomInOut(true, true, e.x, e.y, (e.count * 0.1) / 3);
 				}
 			}
@@ -118,7 +118,7 @@ public class Chart extends Composite {
 	private void getTraceIndex(final String traceName) {
 		boolean findTrace = false;
 		fIndex = 0;
-		for (Trace trace : fTraces) {
+		for (final Trace trace : fTraces) {
 			if (trace.getName().equals(traceName)) {
 				findTrace = true;
 				break;
@@ -126,7 +126,7 @@ public class Chart extends Composite {
 			fIndex++;
 		}
 		if (!findTrace) {
-			CircularBufferDataProvider newTraceDataProvider = new CircularBufferDataProvider(false);
+			final CircularBufferDataProvider newTraceDataProvider = new CircularBufferDataProvider(false);
 			newTraceDataProvider.setBufferSize(1000);
 			fTraceDataProviders.add(newTraceDataProvider);
 			final Trace currentTrace = new Trace(traceName, fXYGraph.primaryXAxis, fXYGraph.primaryYAxis, newTraceDataProvider);
@@ -159,7 +159,7 @@ public class Chart extends Composite {
 	private void setStyle(final Trace trace, final String format) {
 		boolean doubleLine = false;
 
-		for (char ch : format.toCharArray()) {
+		for (final char ch : format.toCharArray()) {
 			switch (ch) {
 			case 'r':
 				trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_RED));
@@ -226,8 +226,8 @@ public class Chart extends Composite {
 				trace.setTraceType(TraceType.POINT);
 				break;
 			}
-			Pattern regex = Pattern.compile("(\\d+)");
-			Matcher regexMatcher = regex.matcher(format);
+			final Pattern regex = Pattern.compile("(\\d+)");
+			final Matcher regexMatcher = regex.matcher(format);
 			if (regexMatcher.find()) {
 				trace.setPointSize(Integer.parseInt(regexMatcher.group(1)));
 			}
@@ -300,7 +300,7 @@ public class Chart extends Composite {
 	}
 
 	public void export(final Object object, final boolean overwrite) throws Throwable {
-		RunnableWithResult<Object> runnable = new RunnableWithResult<Object>() {
+		final RunnableWithResult<Object> runnable = new RunnableWithResult<Object>() {
 			@Override
 			public void runWithTry() throws Throwable {
 				final ImageLoader loader = new ImageLoader();
@@ -308,17 +308,17 @@ public class Chart extends Composite {
 				boolean done = true;
 				if (object != null) {
 					// If the file already exists; asks for confirmation
-					MessageBox mb = new MessageBox(Display.getDefault().getShells()[0], SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					final MessageBox mb = new MessageBox(Display.getDefault().getShells()[0], SWT.ICON_WARNING | SWT.YES | SWT.NO);
 					// We really should read this string from a
 					// resource bundle
 					mb.setText("Warning");
 					// If they click Yes, we're done and we drop out. If
 					// they click No File will not be saved
 					if (object instanceof IFile) {
-						IFile file = (IFile) object;
-						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+						final IFile file = (IFile) object;
+						final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						loader.save(outStream, SWT.IMAGE_PNG);
-						ByteArrayInputStream stream = new ByteArrayInputStream(outStream.toByteArray());
+						final ByteArrayInputStream stream = new ByteArrayInputStream(outStream.toByteArray());
 						if (file.exists()) {
 							if (!overwrite) {
 								mb.setMessage(file.getName() + " already exists. Do you want to replace it?");
@@ -330,7 +330,7 @@ public class Chart extends Composite {
 							file.create(stream, 0, null);
 						file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 					} else if (object instanceof File) {
-						File file = (File) object;
+						final File file = (File) object;
 						if (file.exists()) {
 							if (!overwrite) {
 								mb.setMessage(file.getName() + " already exists. Do you want to replace it?");
@@ -364,7 +364,7 @@ public class Chart extends Composite {
 			@Override
 			public void run() {
 				Trace currentTrace = null;
-				for (Trace trace : fTraces) {
+				for (final Trace trace : fTraces) {
 					if (trace.getName().equals(traceName)) {
 						currentTrace = trace;
 						break;
@@ -372,7 +372,7 @@ public class Chart extends Composite {
 				}
 				if (currentTrace == null)
 					return;
-				Annotation annotation = new Annotation(cursorName, currentTrace);
+				final Annotation annotation = new Annotation(cursorName, currentTrace);
 				fXYGraph.addAnnotation(annotation);
 			}
 		});
@@ -383,7 +383,7 @@ public class Chart extends Composite {
 			@Override
 			public void run() {
 				Annotation currentAnnotation = null;
-				for (Annotation annotation : fXYGraph.getPlotArea().getAnnotationList()) {
+				for (final Annotation annotation : fXYGraph.getPlotArea().getAnnotationList()) {
 					if (annotation.getName().equals(cursorName)) {
 						currentAnnotation = annotation;
 						break;
@@ -400,11 +400,12 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (Trace trace : fTraces) {
+				for (final Trace trace : fTraces) {
 					if (trace.getName().equals(traceName)) {
 						fXYGraph.removeTrace(trace);
 						fTraceDataProviders.remove((trace.getDataProvider()));
 						fTraces.remove(trace);
+						return;
 					}
 				}
 			}
@@ -415,7 +416,7 @@ public class Chart extends Composite {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (Trace trace : fTraces) {
+				for (final Trace trace : fTraces) {
 					fXYGraph.removeTrace(trace);
 				}
 				fTraceDataProviders.clear();
@@ -446,11 +447,11 @@ public class Chart extends Composite {
 	}
 
 	public Trace series(final String seriesName, final String format) {
-		RunnableWithResult<Trace> runnable = new RunnableWithResult<Trace>() {
+		final RunnableWithResult<Trace> runnable = new RunnableWithResult<Trace>() {
 
 			@Override
 			public void run() {
-				String traceName = (seriesName == null) ? "Series " + Integer.toString(fSeriesCounter++) : seriesName;
+				final String traceName = (seriesName == null) ? "Series " + Integer.toString(fSeriesCounter++) : seriesName;
 				getTraceIndex(traceName);
 				setResult(fTraces.get(fIndex));
 				setStyle(getResult(), format);

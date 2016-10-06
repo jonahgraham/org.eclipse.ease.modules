@@ -324,7 +324,7 @@
          </command>
          <command
                commandId="org.eclipse.ease.unittest.commands.stopTestSuite"
-               icon="platform:/plugin/org.eclipse.ui/icons/full/elcl16/stop.gif"
+               icon="icons/elcl16/terminate.png"
                style="push"
                tooltip="Stops the running testbench.">
          </command>

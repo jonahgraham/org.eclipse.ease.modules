@@ -30,18 +30,18 @@ public class OCLMatcher implements IMatcher {
 
 	@Override
 	public Collection<EObject> getElements(String oclString, IEditingDomainProvider currentEditor) throws MatcherException {
-		EObject root = SelectionUtils.getSelection(currentEditor);
-		OCL ocl = OCL.newInstance(EPackage.Registry.INSTANCE);
+		final EObject root = SelectionUtils.getSelection(currentEditor);
+		final OCL ocl = OCL.newInstance(EPackage.Registry.INSTANCE);
 		ocl.setModelManager(new ModelExtentMap(ocl.getMetamodelManager(), root));
-		OCLHelper helper = ocl.createOCLHelper(root.eClass());
 
 		try {
-			ExpressionInOCL query = helper.createQuery(oclString);
-			Object queryResult = ocl.evaluate(root, query);
+			final OCLHelper helper = ocl.createOCLHelper(root.eClass());
+			final ExpressionInOCL query = helper.createQuery(oclString);
+			final Object queryResult = ocl.evaluate(root, query);
 			if (queryResult instanceof SetValue) {
 				return (Collection<EObject>) ((SetValue) queryResult).asCollection();
 			}
-		} catch (ParserException e) {
+		} catch (final ParserException e) {
 			e.printStackTrace();
 			throw new MatcherException(Messages.OCLMatcher_CONSTRAINT_INVALID);
 		}

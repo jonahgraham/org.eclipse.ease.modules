@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="Neon" sequenceNumber="1467662103">
+<target name="Neon" sequenceNumber="1476262688">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.platform.feature.group" version="4.6.0.v20160606-1342"/>
-      <unit id="org.eclipse.rcp.feature.group" version="4.6.0.v20160606-1342"/>
-      <unit id="org.eclipse.jdt.feature.group" version="3.12.0.v20160606-1100"/>
-      <unit id="org.eclipse.equinox.p2.discovery.feature.feature.group" version="1.0.400.v20160504-1450"/>
+      <unit id="org.eclipse.platform.feature.group" version="4.6.1.v20160907-1200"/>
+      <unit id="org.eclipse.rcp.feature.group" version="4.6.1.v20160907-1200"/>
+      <unit id="org.eclipse.jdt.feature.group" version="3.12.1.v20160907-1200"/>
+      <unit id="org.eclipse.equinox.p2.discovery.feature.feature.group" version="1.0.401.v20160901-1335"/>
       <unit id="org.eclipse.emf.feature.group" version="2.12.0.v20160526-0356"/>
-      <unit id="org.eclipse.papyrus.infra.feature.feature.group" version="2.0.0.201606080854"/>
-      <unit id="org.eclipse.papyrus.infra.gmfdiag.feature.feature.group" version="2.0.0.201606080854"/>
-      <unit id="org.eclipse.papyrus.uml.diagram.feature.feature.group" version="2.0.0.201606080854"/>
-      <unit id="org.eclipse.uml2.uml" version="5.2.0.v20160516-0939"/>
+      <unit id="org.eclipse.papyrus.infra.feature.feature.group" version="2.0.0.201609141603"/>
+      <unit id="org.eclipse.papyrus.infra.gmfdiag.feature.feature.group" version="2.0.1.201609141603"/>
+      <unit id="org.eclipse.papyrus.uml.diagram.feature.feature.group" version="2.0.1.201609141603"/>
+      <unit id="org.eclipse.uml2.uml" version="5.2.1.v20160822-0739"/>
       <unit id="org.eclipse.gmf.runtime.diagram.ui" version="1.8.0.201606071959"/>
       <unit id="org.eclipse.emf.emfstore.client.ui.feature.feature.group" version="1.8.0.v20160606-1028"/>
-      <unit id="org.eclipse.ocl.examples.classic.feature.group" version="5.2.0.v20160523-1914"/>
-      <unit id="org.eclipse.ocl.examples.feature.group" version="6.1.0.v20160526-1513"/>
-      <unit id="org.eclipse.wst.xml_core.feature.feature.group" version="3.8.0.v201605120036"/>
-      <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="3.8.0.v201605120129"/>
-      <unit id="org.eclipse.pde.feature.group" version="3.12.0.v20160606-1100"/>
-      <unit id="org.eclipse.jdt" version="3.12.0.v20160606-1100"/>
-      <unit id="org.eclipse.team.svn.feature.group" version="4.0.0.I20160604-1700"/>
-      <unit id="org.eclipse.egit.feature.group" version="4.4.0.201606070830-r"/>
-      <unit id="org.eclipse.jgit.feature.group" version="4.4.0.201606070830-r"/>
-      <unit id="org.eclipse.osgi" version="3.11.0.v20160603-1336"/>
+      <unit id="org.eclipse.ocl.examples.classic.feature.group" version="5.2.1.v20160808-1416"/>
+      <unit id="org.eclipse.ocl.examples.feature.group" version="6.1.1.v20160808-1615"/>
+      <unit id="org.eclipse.wst.xml_core.feature.feature.group" version="3.8.0.v201608061842"/>
+      <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="3.8.0.v201608061842"/>
+      <unit id="org.eclipse.pde.feature.group" version="3.12.1.v20160907-1200"/>
+      <unit id="org.eclipse.jdt" version="3.12.1.v20160907-1200"/>
+      <unit id="org.eclipse.team.svn.feature.group" version="4.0.2.I20160902-1700"/>
+      <unit id="org.eclipse.egit.feature.group" version="4.4.1.201607150455-r"/>
+      <unit id="org.eclipse.jgit.feature.group" version="4.4.1.201607150455-r"/>
+      <unit id="org.eclipse.osgi" version="3.11.1.v20160708-1632"/>
       <repository id="eclipse-neon" location="http://download.eclipse.org/releases/neon/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.ease.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.ease.ui.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.ease.javascript.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.ease.lang.javascript.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.ease.lang.jvm.feature.feature.group" version="0.0.0"/>
       <repository location="http://download.eclipse.org/ease/update/nightly"/>
     </location>

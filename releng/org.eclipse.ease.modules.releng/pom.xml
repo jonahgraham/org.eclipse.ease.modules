@@ -337,6 +337,7 @@
 			<modules>
 				<module>../../tests/org.eclipse.ease.modules.platform.test</module>
 				<module>../../tests/org.eclipse.ease.modules.unittest.test</module>
+				<module>../../tests/org.eclipse.ease.modules.unittest.ui.test</module>
 			</modules>
 			<build>
 				<plugins>

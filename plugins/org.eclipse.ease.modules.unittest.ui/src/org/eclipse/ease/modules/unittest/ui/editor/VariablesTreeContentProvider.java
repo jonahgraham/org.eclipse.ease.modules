@@ -87,11 +87,11 @@ public class VariablesTreeContentProvider extends AbstractVirtualTreeProvider {
 	public void exchangePrefixPaths(IPath pathPrefix, String newValue) {
 		for (final IPath currentPath : new HashSet<IPath>(fAdditionalPaths))
 			if (pathPrefix.isPrefixOf(currentPath)) {
-				fAdditionalPaths.remove(currentPath);
+				removePath(currentPath);
 				IPath newPath = pathPrefix.removeLastSegments(1);
 				newPath = newPath.append(newValue);
 				final int count = pathPrefix.segmentCount();
-				fAdditionalPaths.add(buildPath(currentPath, newPath, count));
+				addPath(buildPath(currentPath, newPath, count));
 			}
 	}
 
@@ -109,7 +109,7 @@ public class VariablesTreeContentProvider extends AbstractVirtualTreeProvider {
 			if (currentPath.uptoSegment(segmentsPath).equals(selection)) {
 				final IPath oldPath = currentPath;
 				final int count = selection.segmentCount();
-				fAdditionalPaths.add(buildPath(oldPath, parentTargetDrop, count));
+				addPath(buildPath(oldPath, parentTargetDrop, count));
 			}
 		removeMatchingPaths(selection);
 	}

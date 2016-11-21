@@ -56,7 +56,7 @@ public class TestSuiteSource extends AbstractSourceProvider implements ITestList
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Map getCurrentState() {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 
 		result.put(VARIABLE_TESTSUITE, fCurrentSuite);
 
@@ -64,7 +64,7 @@ public class TestSuiteSource extends AbstractSourceProvider implements ITestList
 	}
 
 	public void setActiveSuite(final TestSuite suite) {
-		if ((suite != null) && (suite.equals(fCurrentSuite)))
+		if (fCurrentSuite.equals(suite))
 			// nothing changed
 			return;
 
@@ -75,7 +75,7 @@ public class TestSuiteSource extends AbstractSourceProvider implements ITestList
 		if (fCurrentSuite instanceof TestSuite)
 			((TestSuite) fCurrentSuite).addTestListener(this);
 
-		fireSourceChanged(ISources.ACTIVE_PART, VARIABLE_TESTSUITE, suite);
+		fireSourceChanged(ISources.ACTIVE_PART, VARIABLE_TESTSUITE, fCurrentSuite);
 
 		final IEvaluationService evaluationService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
 		evaluationService.requestEvaluation(VARIABLE_TESTSUITE);
@@ -95,5 +95,4 @@ public class TestSuiteSource extends AbstractSourceProvider implements ITestList
 			evaluationService.requestEvaluation(VARIABLE_TESTSUITE);
 		}
 	}
-
 }

@@ -90,7 +90,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 	public static final String TEST_STATUS_PROPERTY = "test status";
 
 	private static class Statistics {
-		private final Map<Object, Integer> mCounters = new HashMap<Object, Integer>();
+		private final Map<Object, Integer> mCounters = new HashMap<>();
 
 		public synchronized void updateCounter(final Object identifier, final int value) {
 			if (mCounters.containsKey(identifier))
@@ -508,7 +508,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 
 	private class UpdateUI extends UIJob {
 
-		private final List<Object> fElements = new ArrayList<Object>();
+		private final List<Object> fElements = new ArrayList<>();
 
 		public UpdateUI() {
 			super("Update Script Unit View");
@@ -530,7 +530,7 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 			// create a local copy of elements so we can continue tests without waiting for the UI updater
 			ArrayList<Object> localElements;
 			synchronized (fElements) {
-				localElements = new ArrayList<Object>(fElements);
+				localElements = new ArrayList<>(fElements);
 				fElements.clear();
 			}
 
@@ -754,6 +754,9 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 				// save timing information
 				if (fRuntimeInformation != null)
 					fRuntimeInformation.save();
+
+				// clear data to minimize memory footprint in eclipse caches
+				currentSuite.reset();
 			}
 
 			fFileTreeViewer.setInput(new Object[] { suite });
@@ -794,6 +797,18 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 		// save timing information
 		if (fRuntimeInformation != null)
 			fRuntimeInformation.save();
+
+		// allow for garbage collection as eclipse does not clean up views correctly on clode
+		fRuntimeInformation = null;
+		final TestSuiteSource instance = TestSuiteSource.getActiveInstance();
+		if (instance != null)
+			instance.setActiveSuite(null);
+
+		fFileTreeViewer.setInput(new Object[0]);
+
+		// clear data to minimize memory footprint in eclipse caches
+		if (currentSuite != null)
+			currentSuite.reset();
 
 		super.dispose();
 	}

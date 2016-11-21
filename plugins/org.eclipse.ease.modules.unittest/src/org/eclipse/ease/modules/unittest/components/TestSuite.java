@@ -69,7 +69,7 @@ public class TestSuite extends TestComposite {
 
 	private final TestSuiteModel fTestModel;
 	private boolean fTerminated = false;
-	private final Map<String, TestFile> fTestFiles = new HashMap<String, TestFile>();
+	private final Map<String, TestFile> fTestFiles = new HashMap<>();
 
 	private int fCurrentTestCount;
 	private List<TestFile> fActiveTestFiles = Collections.emptyList();
@@ -129,10 +129,10 @@ public class TestSuite extends TestComposite {
 
 				// setup done; extract variables
 				fSetupVariables = getScriptEngine().getVariables();
-				final ArrayList<TestFile> launchedTestFiles = new ArrayList<TestFile>();
+				final ArrayList<TestFile> launchedTestFiles = new ArrayList<>();
 
 				// main test execution loop
-				final List<TestFile> filesUnderTest = new ArrayList<TestFile>(fActiveTestFiles);
+				final List<TestFile> filesUnderTest = new ArrayList<>(fActiveTestFiles);
 				synchronized (TestSuite.this) {
 					while ((!fTerminated) && ((fCurrentTestCount > 0) || (!filesUnderTest.isEmpty()))) {
 
@@ -189,6 +189,7 @@ public class TestSuite extends TestComposite {
 
 				getScriptEngine().terminate();
 				setScriptEngine(null);
+				fSetupVariables = null;
 
 				setStatus(TestStatus.PASS);
 			}
@@ -208,7 +209,7 @@ public class TestSuite extends TestComposite {
 
 				if (result.hasException()) {
 					// testFile setup failed
-					final ArrayList<IScriptDebugFrame> trace = new ArrayList<IScriptDebugFrame>();
+					final ArrayList<IScriptDebugFrame> trace = new ArrayList<>();
 					// TODO eventually get the trace from the engine. Needs engine to keep traces on failures
 					trace.add(new ScriptDebugFrame(new Script("[" + identifier + "]", ""), 0, IScriptDebugFrame.TYPE_FILE));
 
@@ -280,7 +281,7 @@ public class TestSuite extends TestComposite {
 	public void run(final ITestSetFilter filter) {
 
 		// filter tests
-		fActiveTestFiles = new LinkedList<TestFile>();
+		fActiveTestFiles = new LinkedList<>();
 		for (final TestFile testFile : fTestFiles.values()) {
 			if (filter.matches(testFile))
 				fActiveTestFiles.add(testFile);
@@ -337,7 +338,7 @@ public class TestSuite extends TestComposite {
 	}
 
 	public List<TestFile> getActiveTestFiles() {
-		return new ArrayList<TestFile>(fActiveTestFiles);
+		return new ArrayList<>(fActiveTestFiles);
 	}
 
 	public void setErrorStream(final OutputStream errorStream) {

@@ -19,15 +19,17 @@ public class TestSuiteContentProvider extends AbstractVirtualTreeProvider {
 
 	@Override
 	protected void populateElements(final Object inputElement) {
-		final TestSuite suite = (TestSuite) ((Object[]) inputElement)[0];
+		if (inputElement != null) {
+			final TestSuite suite = (TestSuite) ((Object[]) inputElement)[0];
 
-		for (final TestFile testfile : suite.getChildren()) {
-			final Object file = testfile.getFile();
-			if (file instanceof IFile)
-				registerElement(((IFile) file).getParent().getProjectRelativePath(), testfile);
+			for (final TestFile testfile : suite.getChildren()) {
+				final Object file = testfile.getFile();
+				if (file instanceof IFile)
+					registerElement(((IFile) file).getParent().getProjectRelativePath(), testfile);
+			}
+
+			registerNodeReplacement(ROOT, suite);
+			setShowRoot(true);
 		}
-
-		registerNodeReplacement(ROOT, suite);
-		setShowRoot(true);
 	}
 }

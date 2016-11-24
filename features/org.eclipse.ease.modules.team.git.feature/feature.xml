@@ -2,10 +2,11 @@
 <feature
       id="org.eclipse.ease.modules.team.git.feature"
       label="EASE Git Feature (Incubation)"
-      version="0.4.0.qualifier">
+      version="0.4.0.qualifier"
+      provider-name="Eclipse.org">
 
    <description url="https://www.eclipse.org/ease">
-      [Enter Feature Description here.]
+      EASE modules to access Git repositories.
    </description>
 
    <copyright url="http://www.example.com/copyright">

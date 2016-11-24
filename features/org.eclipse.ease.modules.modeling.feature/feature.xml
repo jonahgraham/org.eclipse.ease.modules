@@ -5,7 +5,7 @@
       version="0.4.0.qualifier"
       provider-name="Eclipse.org">
 
-   <description url="http://www.example.com/description">
+   <description url="https://www.eclipse.org/ease/">
       EASE modeling module to interact with EMF models and a refactoring view for EMF models
    </description>
 

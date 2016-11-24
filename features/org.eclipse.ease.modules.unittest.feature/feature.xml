@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.ease.modules.unittest.feature"
-      label="EASE UnitTest"
+      label="EASE UnitTest (Incubation)"
       version="0.4.0.qualifier"
       provider-name="Eclipse.org">
 
-   <description url="http://www.example.com/description">
+   <description url="https://www.eclipse.org/ease/">
       EASE modules to write scriptable unit tests.
    </description>
 

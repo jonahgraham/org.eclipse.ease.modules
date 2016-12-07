@@ -457,7 +457,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 * @return assertion depending on <code>actual</code> value
 	 */
 	@WrapToScript
-	public static IAssertion assertTrue(final boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
+	public static IAssertion assertTrue(final Boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		return new DefaultAssertion(actual, (errorDescription == null) ? "Value is false" : errorDescription.toString());
 	}
 
@@ -471,7 +471,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 * @return assertion depending on <code>actual</code> value
 	 */
 	@WrapToScript
-	public static IAssertion assertFalse(final boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
+	public static IAssertion assertFalse(final Boolean actual, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Object errorDescription) {
 		return new DefaultAssertion(!actual, (errorDescription == null) ? "Value is true" : errorDescription.toString());
 	}
 

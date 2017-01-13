@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: UnitTest Modules UnitTest
 Bundle-SymbolicName: org.eclipse.ease.modules.unittest.ui.test
-Bundle-Version: 0.4.0.qualifier
-Fragment-Host: org.eclipse.ease.modules.unittest.ui;bundle-version="0.4.0"
+Bundle-Version: 0.5.0.qualifier
+Fragment-Host: org.eclipse.ease.modules.unittest.ui;bundle-version="0.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.junit;bundle-version="[4.11.0,5.0.0)", 

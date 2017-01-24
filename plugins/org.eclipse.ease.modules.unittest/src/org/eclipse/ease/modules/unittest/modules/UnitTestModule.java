@@ -13,6 +13,7 @@ package org.eclipse.ease.modules.unittest.modules;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -397,6 +398,25 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 					(errorDescription == null) ? "Objects do not match: expected<" + expected + ">, actual <" + actual + ">" : errorDescription.toString());
 
 		return assertNull(actual, errorDescription);
+	}
+
+	/**
+	 * Asserts when provided value does not match to a given regular expression pattern.
+	 *
+	 * @param pattern
+	 *            pattern to match
+	 * @param candidate
+	 *            text to be matched
+	 * @param errorMessage
+	 *            error message in case of a mismatch
+	 * @return assertion depending on <code>actual</code> value
+	 */
+	@WrapToScript
+	public static IAssertion assertMatch(String pattern, String candidate, @ScriptParameter(defaultValue = ScriptParameter.NULL) String errorMessage) {
+		if (Pattern.matches(pattern, candidate))
+			return IAssertion.VALID;
+
+		return new DefaultAssertion((errorMessage != null) ? errorMessage : "\"" + candidate + "\" does not match pattern \"" + pattern + "\"");
 	}
 
 	/**

@@ -125,12 +125,10 @@ public class TestFile extends TestComposite implements Comparable<TestFile> {
 					}
 				}
 
-				// terminate all tests that are still marked as running
+				// make sure all tests are marked as terminated
 				// used for badly written test cases and when tests fail by throwing an exception
-				for (final Test test : getTests()) {
-					if (test.getStatus() == TestStatus.RUNNING)
-						test.setStatus(TestStatus.PASS);
-				}
+				for (final Test test : getTests())
+					test.setStatus(TestStatus.PASS);
 
 				// clean up havoc engines
 				if (!getScriptEngine().isFinished())

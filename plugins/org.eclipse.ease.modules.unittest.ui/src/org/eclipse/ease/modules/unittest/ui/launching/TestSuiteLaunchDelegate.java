@@ -27,13 +27,13 @@ import org.eclipse.ease.modules.unittest.ITestListener;
 import org.eclipse.ease.modules.unittest.components.TestSuite;
 import org.eclipse.ease.modules.unittest.ui.views.UnitTestView;
 import org.eclipse.ease.tools.ResourceTools;
+import org.eclipse.ease.ui.launching.EaseLaunchDelegate;
 import org.eclipse.ease.ui.launching.LaunchConstants;
-import org.eclipse.ease.ui.tools.AbstractLaunchDelegate;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
-public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
+public class TestSuiteLaunchDelegate extends EaseLaunchDelegate {
 
 	private static final String LAUNCH_CONFIGURATION_ID = "org.eclipse.ease.unittest.launchConfigurationType";
 
@@ -72,13 +72,13 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 			} catch (final CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (Throwable e) {
+			} catch (final Throwable e) {
 				// could not open view
 				throw new RuntimeException(e);
 			}
 		}
 
-		// TODO allow to run from external resources too (FIle / InputStream)
+		// TODO allow to run from external resources too (File / InputStream)
 	}
 
 	@Override
@@ -93,11 +93,6 @@ public class TestSuiteLaunchDelegate extends AbstractLaunchDelegate {
 		configuration.doSave();
 
 		return configuration;
-	}
-
-	@Override
-	protected String getFileLocation(final ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(LaunchConstants.FILE_LOCATION, "");
 	}
 
 	@Override

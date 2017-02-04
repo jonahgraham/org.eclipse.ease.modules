@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Christian Pontesegger and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Christian Pontesegger - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ease.modules.git;
 
 import java.io.File;
@@ -48,9 +58,9 @@ public class GitModule extends AbstractScriptModule {
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String pass, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String branch)
 			throws InvalidRemoteException, TransportException, GitAPIException {
 
-		File folder = resolveFolder(localLocation);
+		final File folder = resolveFolder(localLocation);
 		if (folder != null) {
-			CloneCommand cloneCommand = Git.cloneRepository();
+			final CloneCommand cloneCommand = Git.cloneRepository();
 			cloneCommand.setURI(remoteLocation);
 			cloneCommand.setDirectory(folder);
 
@@ -60,7 +70,7 @@ public class GitModule extends AbstractScriptModule {
 			if (branch != null)
 				cloneCommand.setBranchesToClone(Arrays.asList(branch));
 
-			Git result = cloneCommand.call();
+			final Git result = cloneCommand.call();
 			addToEGit(result.getRepository().getDirectory());
 			return result;
 
@@ -81,7 +91,7 @@ public class GitModule extends AbstractScriptModule {
 		if (location instanceof Git)
 			return (Git) location;
 
-		File folder = resolveFolder(location);
+		final File folder = resolveFolder(location);
 		if (folder != null)
 			return Git.open(folder);
 
@@ -103,12 +113,12 @@ public class GitModule extends AbstractScriptModule {
 	@WrapToScript
 	public Git initRepository(final Object location, @ScriptParameter(defaultValue = "false") final boolean bare)
 			throws IllegalStateException, GitAPIException {
-		File folder = resolveFolder(location);
+		final File folder = resolveFolder(location);
 		if (folder != null) {
 			if (!folder.exists())
 				folder.mkdirs();
 
-			Git result = Git.init().setDirectory(folder).setBare(bare).call();
+			final Git result = Git.init().setDirectory(folder).setBare(bare).call();
 			addToEGit(result.getRepository().getDirectory());
 			return result;
 
@@ -143,14 +153,14 @@ public class GitModule extends AbstractScriptModule {
 	@WrapToScript
 	public RevCommit commit(final Object repository, final String message, final String author, @ScriptParameter(defaultValue = "false") final boolean amend)
 			throws IOException, GitAPIException {
-		Git repo = openRepository(repository);
+		final Git repo = openRepository(repository);
 		if (repo != null) {
 
 			// parse author
 			String authorName = "";
 			String authorEmail = "";
 			if (author != null) {
-				String[] authorTokens = author.split("|");
+				final String[] authorTokens = author.split("|");
 				if (authorTokens.length > 0)
 					authorName = authorTokens[0].trim();
 
@@ -175,7 +185,7 @@ public class GitModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public DirCache add(final Object repository, final String filepattern) throws IOException, GitAPIException {
-		Git repo = openRepository(repository);
+		final Git repo = openRepository(repository);
 		if (repo != null) {
 			return repo.add().addFilepattern(filepattern).call();
 
@@ -194,7 +204,7 @@ public class GitModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public Status getStatus(final Object repository) throws IOException, GitAPIException {
-		Git repo = openRepository(repository);
+		final Git repo = openRepository(repository);
 		if (repo != null) {
 			return repo.status().call();
 
@@ -213,7 +223,7 @@ public class GitModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public Iterable<PushResult> push(final Object repository) throws IOException, GitAPIException {
-		Git repo = openRepository(repository);
+		final Git repo = openRepository(repository);
 		if (repo != null) {
 			return repo.push().call();
 
@@ -232,7 +242,7 @@ public class GitModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public PullResult pull(final Object repository) throws IOException, GitAPIException {
-		Git repo = openRepository(repository);
+		final Git repo = openRepository(repository);
 		if (repo != null) {
 			return repo.pull().call();
 

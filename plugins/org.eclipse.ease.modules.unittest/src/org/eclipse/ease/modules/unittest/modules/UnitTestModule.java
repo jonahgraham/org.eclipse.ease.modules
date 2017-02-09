@@ -211,8 +211,6 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 		fAssertionsToBeIgnored = 0;
 		fAssertionEnablement = true;
 
-		executeUserCode(TestSuiteModel.CODE_LOCATION_TEST_SETUP);
-
 		final TestComposite testObject = getTestObject();
 		if (testObject != null) {
 			final Test test = new Test(testObject, title, description);
@@ -224,6 +222,8 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 
 			testObject.addTest(test);
 		}
+
+		executeUserCode(TestSuiteModel.CODE_LOCATION_TEST_SETUP);
 	}
 
 	/**
@@ -231,11 +231,11 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 */
 	@WrapToScript
 	public final void endTest() {
+		executeUserCode(TestSuiteModel.CODE_LOCATION_TEST_TEARDOWN);
+
 		final TestComposite testObject = getTestObject();
 		if (testObject != null)
 			testObject.endTest();
-
-		executeUserCode(TestSuiteModel.CODE_LOCATION_TEST_TEARDOWN);
 	}
 
 	/**
@@ -327,10 +327,11 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 */
 	@WrapToScript
 	public Test getTest(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
+		final TestComposite owner = (getTestFile() != null) ? getTestFile() : getTestSuite();
 		if (name == null)
-			return getTestFile().getCurrentTest();
+			return owner.getCurrentTest();
 
-		for (final TestEntity test : getTestFile().getChildren()) {
+		for (final TestEntity test : owner.getChildren()) {
 			if ((test instanceof Test) && (name.equals(((Test) test).getTitle())))
 				return (Test) test;
 		}

@@ -31,9 +31,9 @@ public class Test extends TestEntity {
 	private String fDescription;
 	private List<IScriptDebugFrame> fTestLocation = null;
 
-	private final List<TestResult> fResults = new ArrayList<TestResult>();
+	private final List<TestResult> fResults = new ArrayList<>();
 
-	private final Map<String, String> fMetaData = new HashMap<String, String>();
+	private final Map<String, String> fMetaData = new HashMap<>();
 	private boolean fTransient = false;
 
 	public Test(final TestComposite parent, final String title, final String description) {
@@ -81,7 +81,7 @@ public class Test extends TestEntity {
 
 	public void setTestLocation(final List<IScriptDebugFrame> stackTrace) {
 		// we need to create a carbon copy of the stack as it gets modified when the script continues
-		fTestLocation = new ArrayList<IScriptDebugFrame>();
+		fTestLocation = new ArrayList<>();
 		for (final IScriptDebugFrame frame : stackTrace)
 			fTestLocation.add(new ScriptDebugFrame(frame));
 	}
@@ -131,7 +131,7 @@ public class Test extends TestEntity {
 	 * @return messages with given <i>status</i>
 	 */
 	public Collection<TestResult> getMessages(final TestStatus status) {
-		final ArrayList<TestResult> result = new ArrayList<TestResult>();
+		final ArrayList<TestResult> result = new ArrayList<>();
 
 		for (final TestResult message : getMessages())
 			if (message.getStatus().equals(status))
@@ -150,7 +150,7 @@ public class Test extends TestEntity {
 					final Object file = element.getScript().getFile();
 					if ((file instanceof IFile) && (((IFile) file).exists())) {
 						try {
-							final HashMap<String, Object> attributes = new HashMap<String, Object>();
+							final HashMap<String, Object> attributes = new HashMap<>();
 							attributes.put(IMarker.LINE_NUMBER, element.getLineNumber());
 							attributes.put(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 							attributes.put(IMarker.MESSAGE, result.getDescription());
@@ -176,5 +176,10 @@ public class Test extends TestEntity {
 
 	public Map<String, String> getMetaData() {
 		return Collections.unmodifiableMap(fMetaData);
+	}
+
+	@Override
+	public String toString() {
+		return getTitle();
 	}
 }

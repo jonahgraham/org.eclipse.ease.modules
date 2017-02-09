@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.unittest.components;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -435,5 +436,17 @@ public class TestSuite extends TestComposite {
 	@Override
 	public Object getFile() {
 		return getModel().getFile();
+	}
+
+	@Override
+	public String toString() {
+		final Object file = getFile();
+		if (file instanceof IFile)
+			return ((IFile) file).getName();
+
+		if (file instanceof File)
+			return ((File) file).getName();
+
+		return super.toString();
 	}
 }

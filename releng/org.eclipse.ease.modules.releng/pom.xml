@@ -8,12 +8,13 @@
 
 	<properties>
 		<!-- used plugin versions -->
-		<tycho.version>0.22.0</tycho.version>
+		<tycho.version>1.0.0</tycho.version>
 		<tycho.extras.version>${tycho.version}</tycho.extras.version>
-		<maven.compiler.version>2.5.1</maven.compiler.version>
-		<maven.javadoc.version>2.9.1</maven.javadoc.version>
-		<jacoco.version>0.7.1.201405082137</jacoco.version>
-		<eclipse.jarsigner.version>1.0.5</eclipse.jarsigner.version>
+		<maven.compiler.version>3.6.1</maven.compiler.version>
+		<maven.javadoc.version>2.10.4</maven.javadoc.version>
+		<jacoco.version>0.7.9</jacoco.version>
+		<eclipse.jarsigner.version>1.1.3</eclipse.jarsigner.version>
+		<maven.buildhelper.version>3.0.0</maven.buildhelper.version>
 
 		<!-- build parameters -->
 		<compiler.compliance>1.8</compiler.compliance>
@@ -207,7 +208,7 @@
 					<plugin>
 						<artifactId>build-helper-maven-plugin</artifactId>
 						<groupId>org.codehaus.mojo</groupId>
-						<version>1.9.1</version>
+						<version>${maven.buildhelper.version}</version>
 						<executions>
 							<execution>
 								<id>add_help</id>

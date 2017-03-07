@@ -25,7 +25,6 @@
 		<platform.api>org.eclipse.platform.doc.isv/reference/api</platform.api>
 		<ease.api>org.eclipse.ease.help/help/api-docs/javadoc</ease.api>
 		<ease.modules.api>org.eclipse.ease.modules.help/help/api-docs/javadoc</ease.modules.api>
-
 	</properties>
 
 
@@ -160,8 +159,6 @@
 		</profile>
 
 		<profile>
-			<!-- build help pages for modules using javadoc. Needs variable doclet.path 
-				to be set to the location of the ModuleDoclet bin folder -->
 			<id>module-docs</id>
 
 			<build>
@@ -175,7 +172,7 @@
 						<configuration>
 							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
 							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
-							<docletPath>${doclet.path}</docletPath>
+							<docletPath>${user.dir}/ease.module.doclet.jar</docletPath>
 							<additionalparam>-root ${basedir}</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 							<links>

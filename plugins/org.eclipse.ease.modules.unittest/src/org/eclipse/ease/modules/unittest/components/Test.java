@@ -65,7 +65,7 @@ public class Test extends TestEntity {
 			status = TestStatus.PASS;
 
 		// merge status of own messages
-		for (final TestResult message : getMessages())
+		for (final TestResult message : new ArrayList<>(getMessages()))
 			status = status.merge(message.getStatus());
 
 		return status;

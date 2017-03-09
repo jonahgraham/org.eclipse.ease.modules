@@ -30,7 +30,7 @@ public abstract class TestComposite extends TestEntity implements ITestListener 
 
 	private IScriptEngine fEngine = null;
 
-	private final List<Test> fTests = new LinkedList<Test>();
+	private final List<Test> fTests = new LinkedList<>();
 
 	private Test fCurrentTest = null;
 
@@ -45,11 +45,11 @@ public abstract class TestComposite extends TestEntity implements ITestListener 
 		TestStatus status = super.getStatus();
 
 		// merge status of tests
-		for (final Test test : getTests())
+		for (final Test test : new ArrayList<>(getTests()))
 			status = status.merge(test.getStatus());
 
 		// merge status of child elements
-		for (final TestEntity child : getChildren())
+		for (final TestEntity child : new ArrayList<>(getChildren()))
 			status = status.merge(child.getStatus());
 
 		return status;
@@ -111,7 +111,7 @@ public abstract class TestComposite extends TestEntity implements ITestListener 
 	}
 
 	public List<Test> getTests() {
-		final List<Test> result = new ArrayList<Test>();
+		final List<Test> result = new ArrayList<>();
 
 		synchronized (fTests) {
 			for (final Test test : fTests) {

@@ -551,14 +551,16 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 	 * Add metadata to the current test object. Metadata is stored as a Map, so setting with an already existing keyword will override the previous setting.
 	 *
 	 * @param key
-	 *            metadata keyword
+	 *            metadata keyword, needs to be non <code>null</code>, null values are ignored
 	 * @param data
-	 *            metadata
+	 *            metadata to be set
 	 */
 	@WrapToScript
 	public void addMetaData(final String key, final String data) {
-		final TestComposite testObject = getTestObject();
-		testObject.getCurrentTest().addMetaData(key, data);
+		if (key != null) {
+			final TestComposite testObject = getTestObject();
+			testObject.getCurrentTest().addMetaData(key, data);
+		}
 	}
 
 	/**

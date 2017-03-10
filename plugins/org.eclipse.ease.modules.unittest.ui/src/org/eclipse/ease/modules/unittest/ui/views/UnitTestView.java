@@ -484,9 +484,11 @@ public class UnitTestView extends ViewPart implements ITestListener, IConsoleLis
 					return ((Test) element).getDescription();
 				}
 
-				if (element instanceof Entry<?, ?>)
+				if (element instanceof Entry<?, ?>) {
 					// metadata
-					return ((Entry<?, ?>) element).getValue().toString();
+					final Object value = ((Entry<?, ?>) element).getValue();
+					return (value != null) ? value.toString() : "";
+				}
 
 				return super.getText(element);
 			}

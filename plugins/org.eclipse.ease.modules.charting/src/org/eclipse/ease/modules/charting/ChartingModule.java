@@ -27,9 +27,14 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
+/**
+ * Provide functions to display and populate line charts.
+ */
 public class ChartingModule extends AbstractScriptModule {
 	public static final String MODULE_NAME = "Charting";
+
 	private Chart fChart = null;
+
 	private static int fFigureIterator = 1;
 
 	/**
@@ -45,8 +50,8 @@ public class ChartingModule extends AbstractScriptModule {
 	@WrapToScript
 	public Chart figure(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String figureId) throws Throwable {
 		fChart = null;
-		String secondaryId = (figureId == null) ? "Figure " + Integer.toString(fFigureIterator++) : figureId;
-		ChartView view = (ChartView) UIModule.showView(ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+		final String secondaryId = (figureId == null) ? "Figure " + Integer.toString(fFigureIterator++) : figureId;
+		final ChartView view = (ChartView) UIModule.showView(ChartView.VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 		view.setViewName(secondaryId);
 		fChart = view.getChart();
 		fChart.setPlotTitle(secondaryId);
@@ -429,7 +434,7 @@ public class ChartingModule extends AbstractScriptModule {
 			@ScriptParameter(defaultValue = "false") final boolean overwrite) throws Throwable {
 
 		if (fChart != null) {
-			Object resolvedLocation = (location != null) ? ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), false) : null;
+			final Object resolvedLocation = (location != null) ? ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), false) : null;
 			getChart().export(resolvedLocation, overwrite);
 		}
 	}

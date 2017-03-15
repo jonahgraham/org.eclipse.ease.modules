@@ -82,7 +82,7 @@ import com.google.common.collect.Collections2;
  */
 public class EcoreModule extends AbstractScriptModule {
 
-	private String uri;
+	private String fUri;
 
 	/**
 	 * Returns the currently selected model element, either in the editor or the outline view. If several elements are selected, only the first is returned.
@@ -128,7 +128,7 @@ public class EcoreModule extends AbstractScriptModule {
 	}
 
 	protected String getUri() {
-		return uri;
+		return fUri;
 	}
 
 	/**
@@ -180,12 +180,12 @@ public class EcoreModule extends AbstractScriptModule {
 		if (nsURI == null)
 			initEPackageFromDialog();
 		else
-			uri = nsURI;
+			fUri = nsURI;
 
 		EPackage ePack = getEPackage();
 		if (ePack == null) {
 			getEnvironment().getModule(UIModule.class);
-			UIModule.showErrorDialog("Error", "Unable to find metamodel with URI : " + uri);
+			UIModule.showErrorDialog("Error", "Unable to find metamodel with URI : " + fUri);
 			return;
 		}
 
@@ -196,7 +196,7 @@ public class EcoreModule extends AbstractScriptModule {
 
 		} else {
 			getEnvironment().getModule(UIModule.class);
-			UIModule.showErrorDialog("Error", "Unable to find metamodel with URI : " + uri);
+			UIModule.showErrorDialog("Error", "Unable to find metamodel with URI : " + fUri);
 		}
 	}
 
@@ -273,12 +273,12 @@ public class EcoreModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public EFactory getFactory() {
-		if (uri == null) {
+		if (fUri == null) {
 			initEPackageFromDialog();
 		}
 		EPackage ePackage = getEPackage();
 		if (ePackage == null) {
-			throw new RuntimeException("Unable to retreive EPackage with URI " + uri);
+			throw new RuntimeException("Unable to retreive EPackage with URI " + fUri);
 		}
 		return ePackage.getEFactoryInstance();
 	}
@@ -290,10 +290,10 @@ public class EcoreModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public EPackage getEPackage() {
-		if (uri == null) {
+		if (fUri == null) {
 			initEPackageFromDialog();
 		}
-		EPackage ePack = EPackage.Registry.INSTANCE.getEPackage(uri);
+		EPackage ePack = EPackage.Registry.INSTANCE.getEPackage(fUri);
 		return ePack;
 	}
 
@@ -304,7 +304,7 @@ public class EcoreModule extends AbstractScriptModule {
 		if (returnCode == Window.OK) {
 			Object[] result = dialog.getResult();
 			if ((result != null) && (result.length == 1)) {
-				uri = (String) result[0];
+				fUri = (String) result[0];
 			}
 		}
 	}

@@ -48,9 +48,10 @@ import org.eclipse.ease.tools.ResourceTools;
 public class UnitTestModule extends AbstractScriptModule implements IScriptFunctionModifier {
 
 	public static final String MODULE_NAME = "Unittest";
-	private static final String ASSERTION_FUNCION_NAME = "assertion";
 	public static final String INJECTED_MAIN = "injected_code_";
 	public static final String FAIL_ON_ERROR_VARIABLE = "__FAIL_ON_ERROR";
+
+	private static final String ASSERTION_FUNCION_NAME = "assertion";
 
 	private boolean fAssertionEnablement = true;
 	private int fAssertionsToBeIgnored = 0;

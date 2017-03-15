@@ -33,6 +33,9 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
+/**
+ * Provides functions to access and operate on SVN repositories through.
+ */
 public class SVNModule extends AbstractScriptModule {
 
 	/**
@@ -52,15 +55,15 @@ public class SVNModule extends AbstractScriptModule {
 	public IRepositoryLocation createRepositoryLocation(final String rootUrl, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String username,
 			@ScriptParameter(defaultValue = ScriptParameter.NULL) final String password) {
 
-		IRepositoryLocation[] locations = SVNRemoteStorage.instance().getRepositoryLocations();
+		final IRepositoryLocation[] locations = SVNRemoteStorage.instance().getRepositoryLocations();
 
-		for (IRepositoryLocation location : locations) {
+		for (final IRepositoryLocation location : locations) {
 			if ((location.getUrlAsIs().equals(rootUrl)) || (location.getUrl().equals(rootUrl))) {
 				return location;
 			}
 		}
 
-		IRepositoryLocation location = SVNRemoteStorage.instance().newRepositoryLocation();
+		final IRepositoryLocation location = SVNRemoteStorage.instance().newRepositoryLocation();
 
 		location.setUrl(rootUrl);
 		location.setTrunkLocation("trunk");
@@ -75,7 +78,7 @@ public class SVNModule extends AbstractScriptModule {
 
 		location.setPasswordSaved(true);
 
-		AddRepositoryLocationOperation operation = new AddRepositoryLocationOperation(location);
+		final AddRepositoryLocationOperation operation = new AddRepositoryLocationOperation(location);
 		final CompositeOperation op = new CompositeOperation(operation.getId(), operation.getMessagesClass());
 		op.add(operation);
 		op.add(new SaveRepositoryLocationsOperation());
@@ -108,9 +111,9 @@ public class SVNModule extends AbstractScriptModule {
 			rootLocation = createRepositoryLocation(rootLocation.toString(), null, null);
 		}
 
-		List<IRepositoryResource> doCeckout_tmp = new ArrayList<IRepositoryResource>();
-		for (String location : projectLocations) {
-			IRepositoryResource projectResource = SVNRemoteStorage.instance().asRepositoryResource((IRepositoryLocation) rootLocation,
+		final List<IRepositoryResource> doCeckout_tmp = new ArrayList<>();
+		for (final String location : projectLocations) {
+			final IRepositoryResource projectResource = SVNRemoteStorage.instance().asRepositoryResource((IRepositoryLocation) rootLocation,
 					((IRepositoryLocation) rootLocation).getUrl() + "/" + location, false);
 			doCeckout_tmp.add(projectResource);
 		}
@@ -121,8 +124,8 @@ public class SVNModule extends AbstractScriptModule {
 
 			@Override
 			public void run() {
-				Shell sh = Display.getDefault().getActiveShell();
-				IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(sh, doCeckout, null, true, null,
+				final Shell sh = Display.getDefault().getActiveShell();
+				final IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(sh, doCeckout, null, true, null,
 						SVNDepth.INFINITY, false);
 				UIMonitorUtility.doTaskNowDefault(op, true);
 			}
@@ -139,18 +142,18 @@ public class SVNModule extends AbstractScriptModule {
 	@WrapToScript
 	public long getRevision(final Object resource) {
 		IResource lookup = null;
-		Object file = ResourceTools.resolveFile(resource, getScriptEngine().getExecutedFile(), true);
+		final Object file = ResourceTools.resolveFile(resource, getScriptEngine().getExecutedFile(), true);
 		if (file instanceof IResource)
 			lookup = (IResource) file;
 
 		else {
-			Object folder = ResourceTools.resolveFolder(resource, getScriptEngine().getExecutedFile(), true);
+			final Object folder = ResourceTools.resolveFolder(resource, getScriptEngine().getExecutedFile(), true);
 			if (folder instanceof IContainer)
 				lookup = (IResource) folder;
 		}
 
 		if (lookup != null) {
-			ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(lookup);
+			final ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(lookup);
 			return localResource.getRevision();
 		}
 

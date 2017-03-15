@@ -28,6 +28,9 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+/**
+ * Provides global platform functions like preferences, event bus or the command framework.
+ */
 public class PlatformModule {
 
 	/**
@@ -88,7 +91,7 @@ public class PlatformModule {
 	@WrapToScript
 	public static void executeCommand(final String commandId, @ScriptParameter(defaultValue = ScriptParameter.NULL) final Map<String, String> parameters)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		final Map<String, String> commandParameters = (parameters != null) ? parameters : new HashMap<String, String>();
+		final Map<String, String> commandParameters = (parameters != null) ? parameters : new HashMap<>();
 		final ICommandService commandService = (ICommandService) getService(ICommandService.class);
 		final IEvaluationService evaluationService = (IEvaluationService) getService(IEvaluationService.class);
 
@@ -120,7 +123,7 @@ public class PlatformModule {
 	 */
 	@WrapToScript
 	public static Future runProcess(final String name, @ScriptParameter(defaultValue = ScriptParameter.NULL) final String[] args) {
-		final List<String> arguments = new ArrayList<String>();
+		final List<String> arguments = new ArrayList<>();
 		arguments.add(name);
 		if (args != null) {
 			for (final String arg : args)
@@ -150,7 +153,7 @@ public class PlatformModule {
 	@WrapToScript
 	public static Object readPreferences(final String node, final String key, @ScriptParameter(defaultValue = "") final Object defaultValue) {
 
-		IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
+		final IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
 		if (root != null) {
 			if (defaultValue instanceof Boolean)
 				return root.getBoolean(key, (Boolean) defaultValue);
@@ -190,7 +193,7 @@ public class PlatformModule {
 	@WrapToScript
 	public static void writePreferences(final String node, final String key, final Object value) {
 
-		IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
+		final IEclipsePreferences root = InstanceScope.INSTANCE.getNode(node);
 		if (root != null) {
 			if (value instanceof Boolean)
 				root.putBoolean(key, (Boolean) value);
@@ -231,7 +234,7 @@ public class PlatformModule {
 			@ScriptParameter(defaultValue = "0") final long delay) {
 
 		if (delay > 0) {
-			Job job = new Job("Post event") {
+			final Job job = new Job("Post event") {
 
 				@Override
 				protected IStatus run(final IProgressMonitor monitor) {
@@ -243,7 +246,7 @@ public class PlatformModule {
 			job.schedule(delay);
 
 		} else {
-			IEventBroker service = PlatformUI.getWorkbench().getService(IEventBroker.class);
+			final IEventBroker service = PlatformUI.getWorkbench().getService(IEventBroker.class);
 			if (service != null)
 				service.post(topic, data);
 			else
@@ -264,9 +267,9 @@ public class PlatformModule {
 	 */
 	@WrapToScript
 	public static Event waitForEvent(final String topic, @ScriptParameter(defaultValue = "0") final long timeout) throws InterruptedException {
-		IEventBroker service = PlatformUI.getWorkbench().getService(IEventBroker.class);
+		final IEventBroker service = PlatformUI.getWorkbench().getService(IEventBroker.class);
 		if (service != null) {
-			WaitingEventHandler handler = new WaitingEventHandler();
+			final WaitingEventHandler handler = new WaitingEventHandler();
 
 			synchronized (handler) {
 				service.subscribe(topic, handler);

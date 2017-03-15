@@ -31,6 +31,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
+/**
+ * Provides functions to access and operate on git repositories through JGIT.
+ */
 public class GitModule extends AbstractScriptModule {
 
 	/**

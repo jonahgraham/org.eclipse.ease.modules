@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Christian Pontesegger and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Christian Pontesegger - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.ease.modules.java;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,7 +46,7 @@ public class JVMModule extends AbstractScriptModule {
 	@WrapToScript
 	public Object createInstance(final String location)
 			throws ClassNotFoundException, JavaModelException, MalformedURLException, InstantiationException, IllegalAccessException {
-		Class<?> clazz = compile(location);
+		final Class<?> clazz = compile(location);
 		return (clazz != null) ? clazz.newInstance() : null;
 	}
 
@@ -72,9 +83,9 @@ public class JVMModule extends AbstractScriptModule {
 	public Object invokeStatic(final String location, final String methodName) throws ClassNotFoundException, JavaModelException, MalformedURLException,
 			NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
-		Class<?> clazz = compile(location);
+		final Class<?> clazz = compile(location);
 
-		Method method = clazz.getMethod(methodName);
+		final Method method = clazz.getMethod(methodName);
 		return method.invoke(null);
 	}
 

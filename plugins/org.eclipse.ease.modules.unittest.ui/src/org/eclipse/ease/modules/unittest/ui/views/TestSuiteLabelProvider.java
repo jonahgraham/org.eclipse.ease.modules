@@ -48,8 +48,14 @@ public class TestSuiteLabelProvider extends LabelProvider {
 		if (element instanceof IPath)
 			return fResourceManager.createImage(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
 
-		if (element instanceof TestFile)
-			return fResourceManager.createImage(PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(((TestFile) element).getFile().toString()));
+		if (element instanceof TestFile) {
+			final Object workspaceFile = ((TestFile) element).getFile();
+			if (workspaceFile != null)
+				return fResourceManager.createImage(PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(workspaceFile.toString()));
+			else
+				// file got deleted/removed in the meantime
+				return fResourceManager.createImage(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
+		}
 
 		return super.getImage(element);
 	}

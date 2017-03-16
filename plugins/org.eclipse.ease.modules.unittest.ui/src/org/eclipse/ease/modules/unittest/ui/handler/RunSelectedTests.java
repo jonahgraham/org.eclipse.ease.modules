@@ -38,55 +38,56 @@ public class RunSelectedTests extends RunAllTests implements IHandler {
 		final ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
 			// save dirty editors
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
+			if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true)) {
 
-			// collect test files to run
-			final Collection<TestFile> testFiles = new HashSet<TestFile>();
-			for (final Object element : ((IStructuredSelection) selection).toArray()) {
-				if (element instanceof TestFile)
-					testFiles.add((TestFile) element);
+				// collect test files to run
+				final Collection<TestFile> testFiles = new HashSet<>();
+				for (final Object element : ((IStructuredSelection) selection).toArray()) {
+					if (element instanceof TestFile)
+						testFiles.add((TestFile) element);
 
-				else if (element instanceof TestSuite)
-					testFiles.addAll(((TestSuite) element).getChildren());
+					else if (element instanceof TestSuite)
+						testFiles.addAll(((TestSuite) element).getChildren());
 
-				else if (element instanceof IPath) {
-					// we need to contact the context provider and extract all child nodes
-					final IWorkbenchPart part = HandlerUtil.getActivePart(event);
-					if (part instanceof UnitTestView) {
-						final IContentProvider contentProvider = ((UnitTestView) part).getFileTreeViewer().getContentProvider();
+					else if (element instanceof IPath) {
+						// we need to contact the context provider and extract all child nodes
+						final IWorkbenchPart part = HandlerUtil.getActivePart(event);
+						if (part instanceof UnitTestView) {
+							final IContentProvider contentProvider = ((UnitTestView) part).getFileTreeViewer().getContentProvider();
 
-						final LinkedList<Object> parentElements = new LinkedList<Object>();
-						parentElements.add(element);
+							final LinkedList<Object> parentElements = new LinkedList<>();
+							parentElements.add(element);
 
-						// iterate over tree nodes looking for leaves
-						while (!parentElements.isEmpty()) {
-							final Object parent = parentElements.removeFirst();
-							for (final Object child : ((ITreeContentProvider) contentProvider).getChildren(parent)) {
-								if (child instanceof TestFile)
-									testFiles.add((TestFile) child);
-								else
-									parentElements.add(child);
+							// iterate over tree nodes looking for leaves
+							while (!parentElements.isEmpty()) {
+								final Object parent = parentElements.removeFirst();
+								for (final Object child : ((ITreeContentProvider) contentProvider).getChildren(parent)) {
+									if (child instanceof TestFile)
+										testFiles.add((TestFile) child);
+									else
+										parentElements.add(child);
+								}
 							}
 						}
 					}
 				}
-			}
 
-			// run test sets
-			final TestSuiteSource instance = TestSuiteSource.getActiveInstance();
-			if (instance != null) {
-				final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
-				if (suite instanceof TestSuite) {
+				// run test sets
+				final TestSuiteSource instance = TestSuiteSource.getActiveInstance();
+				if (instance != null) {
+					final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
+					if (suite instanceof TestSuite) {
 
-					updateSources((TestSuite) suite);
+						updateSources((TestSuite) suite);
 
-					((TestSuite) suite).run(new ITestSetFilter() {
+						((TestSuite) suite).run(new ITestSetFilter() {
 
-						@Override
-						public boolean matches(final TestFile set) {
-							return testFiles.contains(set);
-						}
-					});
+							@Override
+							public boolean matches(final TestFile set) {
+								return testFiles.contains(set);
+							}
+						});
+					}
 				}
 			}
 		}

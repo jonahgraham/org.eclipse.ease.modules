@@ -29,23 +29,26 @@ public class RunAllTests extends AbstractHandler implements IHandler {
 		if (instance != null) {
 			final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
 			if (suite instanceof TestSuite) {
-				updateSources((TestSuite) suite);
-
-				((TestSuite) suite).run();
+				if (updateSources((TestSuite) suite))
+					((TestSuite) suite).run();
 			}
 		}
 
 		return null;
 	}
 
-	protected void updateSources(final TestSuite suite) {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true);
+	protected boolean updateSources(final TestSuite suite) {
+		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(true)) {
+			if (suite.getModel().isDirty()) {
+				final boolean reloadSuite = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Test Suite change detected",
+						"Your test suite has changed.\nDo you want to reload suite data before test execution?");
+				if (reloadSuite)
+					suite.reset();
+			}
 
-		if (suite.getModel().isDirty()) {
-			final boolean reloadSuite = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Test Suite change detected",
-					"Your test suite has changed.\nDo you want to reload suite data before test execution?");
-			if (reloadSuite)
-				suite.reset();
-		}
+			return true;
+
+		} else
+			return false;
 	}
 }

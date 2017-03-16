@@ -28,16 +28,15 @@ public class RunFailedTests extends RunAllTests implements IHandler {
 		if (instance != null) {
 			final Object suite = instance.getCurrentState().get(TestSuiteSource.VARIABLE_TESTSUITE);
 			if (suite instanceof TestSuite) {
+				if (updateSources((TestSuite) suite)) {
+					((TestSuite) suite).run(new ITestSetFilter() {
 
-				updateSources((TestSuite) suite);
-
-				((TestSuite) suite).run(new ITestSetFilter() {
-
-					@Override
-					public boolean matches(final TestFile set) {
-						return (set.getStatus() != TestStatus.PASS);
-					}
-				});
+						@Override
+						public boolean matches(final TestFile set) {
+							return (set.getStatus() != TestStatus.PASS);
+						}
+					});
+				}
 			}
 		}
 

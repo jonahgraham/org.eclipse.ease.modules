@@ -118,7 +118,9 @@
 		<module>../../plugins/org.eclipse.ease.modules.unittest.ui</module>
 		<module>../../plugins/org.eclipse.ease.modules.help</module>
 		<module>../../plugins/org.eclipse.ease.modules.team.git</module>
+		<!-- temporary disabled due to API breakage in egit dependencies
 		<module>../../plugins/org.eclipse.ease.modules.team.git.ui</module>
+		-->
 		<module>../../plugins/org.eclipse.ease.modules.team.svn</module>
 		<module>../../plugins/org.eclipse.ease.modules.jvm</module>
 

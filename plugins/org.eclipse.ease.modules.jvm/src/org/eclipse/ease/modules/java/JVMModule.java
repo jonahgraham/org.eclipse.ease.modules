@@ -68,7 +68,7 @@ public class JVMModule extends AbstractScriptModule {
 	 *             If a security manager, s, is present and the caller's class loader is not the same as or an ancestor of the class loader for the current
 	 *             class and invocation of s.checkPackageAccess() denies access to the package of this class.
 	 * @throws NoSuchMethodException
-	 *             if a matching method is not found or if the name is "<init>"or "<clinit>".
+	 *             if a matching method is not found or if the name is "&lt;init&gt;"or "&lt;clinit&gt;".
 	 * @throws InvocationTargetException
 	 *             if the underlying method throws an exception.
 	 * @throws IllegalArgumentException

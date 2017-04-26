@@ -33,8 +33,10 @@ import org.eclipse.swt.widgets.Display;
  * </pre>
  *
  * where "Client" is the name of a launch configuration in the workbench and "debug" is the launch mode to use.
+ * </p>
  * <p>
  * More examples of using the launch method are available in JavaScript Snippets.
+ * </p>
  */
 public class LaunchModule extends AbstractScriptModule {
 	public static final String MODULE_NAME = "/System/Launch";
@@ -59,8 +61,8 @@ public class LaunchModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static String[] getLaunchConfigurationNames() throws CoreException {
-		ILaunchConfiguration[] configurations = getLaunchConfigurations();
-		String[] names = new String[configurations.length];
+		final ILaunchConfiguration[] configurations = getLaunchConfigurations();
+		final String[] names = new String[configurations.length];
 		for (int i = 0; i < names.length; i++) {
 			names[i] = configurations[i].getName();
 		}
@@ -92,8 +94,8 @@ public class LaunchModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static ILaunchConfiguration getLaunchConfiguration(String name) throws CoreException, IllegalArgumentException {
-		ILaunchConfiguration[] configurations = getLaunchConfigurations();
-		for (ILaunchConfiguration configuration : configurations) {
+		final ILaunchConfiguration[] configurations = getLaunchConfigurations();
+		for (final ILaunchConfiguration configuration : configurations) {
 			if (configuration.getName().equals(name)) {
 				return configuration;
 			}
@@ -134,6 +136,7 @@ public class LaunchModule extends AbstractScriptModule {
 	 * <p>
 	 * This method, unlike {@module #launch(String, String)}, does not return the ILaunch because it is delegated to run via the UI thread and perform UI tasks
 	 * before the launch (such as prompting the user).
+	 * </p>
 	 *
 	 * @param launchConfiguration
 	 *            the {@link ILaunchConfiguration}, or the name of the launch configuration to be resolved with {@module #getLaunchConfiguration(String)}
@@ -149,12 +152,6 @@ public class LaunchModule extends AbstractScriptModule {
 		} else {
 			config = getLaunchConfiguration(launchConfiguration.toString());
 		}
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				DebugUITools.launch(config, mode);
-			}
-		});
+		Display.getDefault().syncExec(() -> DebugUITools.launch(config, mode));
 	}
 }

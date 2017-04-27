@@ -109,6 +109,7 @@ public class LaunchModule extends AbstractScriptModule {
 	 * <p>
 	 * This is the way to launch a configuration within a script which is itself launched. Consider using {@module #launchUI(String, String)} if a full UI style
 	 * launch is required, for example when invoked from the interactive console.
+	 * </p>
 	 *
 	 * @param launchConfiguration
 	 *            the {@link ILaunchConfiguration}, or the name of the launch configuration to be resolved with {@module #getLaunchConfiguration(String)}

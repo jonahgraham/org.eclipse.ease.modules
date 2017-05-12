@@ -46,10 +46,10 @@ public class SelectionModule extends AbstractScriptModule {
 	@WrapToScript
 	public Object getCustomSelection() {
 		getEnvironment().getModule(UIModule.class);
-		ISelection selection = UIModule.getSelection(null);
-		IEvaluationService esrvc = PlatformUI.getWorkbench().getService(IEvaluationService.class);
+		final ISelection selection = UIModule.getSelection(null);
+		final IEvaluationService esrvc = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 
-		Object customSelection = SelectorService.getInstance().getSelectionFromContext(selection, esrvc.getCurrentState());
+		final Object customSelection = SelectorService.getInstance().getSelectionFromContext(selection, esrvc.getCurrentState());
 		if (customSelection != null) {
 			return customSelection;
 		}
@@ -66,7 +66,7 @@ public class SelectionModule extends AbstractScriptModule {
 	@WrapToScript
 	public Object getCustomSelectionFromSelector(final String selectorID) {
 		getEnvironment().getModule(UIModule.class);
-		ISelection selection = UIModule.getSelection(null);
+		final ISelection selection = UIModule.getSelection(null);
 		return SelectorService.getInstance().getSelectionFromSelector(selection, selectorID);
 	}
 
@@ -77,15 +77,13 @@ public class SelectionModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public Iterable<Object> getIterableSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL) final String name) {
-		getEnvironment().getModule(UIModule.class);
-		ISelection selection = UIModule.getSelection(name);
+		final ISelection selection = UIModule.getSelection(name);
 
-		IIterable result = getAdapter(IIterable.class, selection);
+		final IIterable result = getAdapter(IIterable.class, selection);
 		if (result != null) {
 			return Lists.newArrayList(result.iterator());
 		}
-		getEnvironment().getModule(UIModule.class);
-		UIModule.showErrorDialog("Error", "The current selection is not an iterable");
+		getEnvironment().getModule(UIModule.class).showErrorDialog("Error", "The current selection is not an iterable");
 		return null;
 	}
 
@@ -96,7 +94,7 @@ public class SelectionModule extends AbstractScriptModule {
 			} else if (o instanceof IAdaptable) {
 				return ((IAdaptable) o).getAdapter(cla);
 			} else {
-				IAdapterManager manager = Platform.getAdapterManager();
+				final IAdapterManager manager = Platform.getAdapterManager();
 				if (manager != null) {
 					return manager.getAdapter(o, cla);
 				} else {

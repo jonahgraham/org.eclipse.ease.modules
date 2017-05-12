@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ease.modules.platform;
 
+import java.io.IOException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
@@ -26,6 +28,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
@@ -45,7 +48,7 @@ import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
 /**
- * Methods invoking code interfering with the UI thread.
+ * Methods providing access to UI components. Allows to show dialogs, execute code in the UI thread, access views and editors.
  */
 public class UIModule extends AbstractScriptModule {
 
@@ -76,7 +79,7 @@ public class UIModule extends AbstractScriptModule {
 	}
 
 	/**
-	 * Displays an info dialog. Needs UI to be available.
+	 * Displays an info dialog. Uses the engine output stream in headless mode.
 	 *
 	 * @param message
 	 *            dialog message
@@ -84,18 +87,15 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript(alias = "showMessageDialog")
-	public static void showInfoDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				MessageDialog.openInformation(Display.getDefault().getActiveShell(), title, message);
-			}
-		});
+	public void showInfoDialog(final String message, @ScriptParameter(defaultValue = "Info") final String title) {
+		if (isHeadless())
+			getEnvironment().print("INFO: " + message, true);
+		else
+			Display.getDefault().syncExec(() -> MessageDialog.openInformation(Display.getDefault().getActiveShell(), title, message));
 	}
 
 	/**
-	 * Displays a question dialog. Contains yes/no buttons. Needs UI to be available.
+	 * Displays a question dialog. Contains yes/no buttons. Uses the engine I/O streams in headless mode.
 	 *
 	 * @param message
 	 *            dialog message
@@ -104,23 +104,36 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
 	 */
 	@WrapToScript
-	public static boolean showQuestionDialog(final String message, @ScriptParameter(defaultValue = "Question") final String title) {
+	public boolean showQuestionDialog(final String message, @ScriptParameter(defaultValue = "Question") final String title) {
+		if (isHeadless()) {
+			try {
+				getEnvironment().print(message + " [Y/n])", false);
+				final int character = getScriptEngine().getInputStream().read();
+				if (Character.toLowerCase(character) == 'n')
+					return false;
 
-		final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
-
-			@Override
-			public void run() {
-				setResult(MessageDialog.openQuestion(Display.getDefault().getActiveShell(), title, message));
+				return true;
+			} catch (final IOException e) {
+				// could not read from input
+				return false;
 			}
-		};
 
-		Display.getDefault().syncExec(runnable);
+		} else {
+			final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
 
-		return runnable.getResult();
+				@Override
+				public void run() {
+					setResult(MessageDialog.openQuestion(Display.getDefault().getActiveShell(), title, message));
+				}
+			};
+
+			Display.getDefault().syncExec(runnable);
+			return runnable.getResult();
+		}
 	}
 
 	/**
-	 * Displays an input dialog. Needs UI to be available.
+	 * Displays an input dialog. Uses the engine I/O streams in headless mode.
 	 *
 	 * @param message
 	 *            dialog message
@@ -128,29 +141,54 @@ public class UIModule extends AbstractScriptModule {
 	 *            default value used to populate input box
 	 * @param title
 	 *            dialog title
-	 * @return <code>true</code> when 'yes' was pressed, <code>false</code> otherwise
+	 * @return user input or <code>null</code> in case the user aborted/closed the dialog
 	 */
 	@WrapToScript
-	public static String showInputDialog(final String message, @ScriptParameter(defaultValue = "") final String initialValue,
+	public String showInputDialog(final String message, @ScriptParameter(defaultValue = "") final String initialValue,
 			@ScriptParameter(defaultValue = "Information request") final String title) {
+		if (isHeadless()) {
+			try {
+				getEnvironment().print(message, (initialValue == null));
+				if (initialValue != null)
+					getEnvironment().print("[" + initialValue + "]", true);
 
-		final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
+				final StringBuilder result = new StringBuilder();
+				while (true) {
+					final int character = getScriptEngine().getInputStream().read();
+					if (character == -1)
+						// EOF reached
+						return null;
 
-			@Override
-			public void run() {
-				final InputDialog dialog = new InputDialog(Display.getDefault().getActiveShell(), title, message, initialValue, null);
-				if (dialog.open() == Window.OK)
-					setResult(dialog.getValue());
+					if (Character.toLowerCase(character) == '\n')
+						return result.toString();
+
+					result.append((char) character);
+				}
+
+			} catch (final IOException e) {
+				// could not read from input
+				return null;
 			}
-		};
 
-		Display.getDefault().syncExec(runnable);
+		} else {
+			final RunnableWithResult<String> runnable = new RunnableWithResult<String>() {
 
-		return runnable.getResult();
+				@Override
+				public void run() {
+					final InputDialog dialog = new InputDialog(Display.getDefault().getActiveShell(), title, message, initialValue, null);
+					if (dialog.open() == Window.OK)
+						setResult(dialog.getValue());
+				}
+			};
+
+			Display.getDefault().syncExec(runnable);
+
+			return runnable.getResult();
+		}
 	}
 
 	/**
-	 * Displays a confirmation dialog.
+	 * Displays a confirmation dialog. Uses the engine I/O streams in headless mode.
 	 *
 	 * @param message
 	 *            dialog message
@@ -159,21 +197,27 @@ public class UIModule extends AbstractScriptModule {
 	 * @return <code>true</code> when accepted
 	 */
 	@WrapToScript
-	public static boolean showConfirmDialog(final String message, @ScriptParameter(defaultValue = "Confirmation") final String title) {
-		final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
+	public boolean showConfirmDialog(final String message, @ScriptParameter(defaultValue = "Confirmation") final String title) {
 
-			@Override
-			public void run() {
-				setResult(MessageDialog.openConfirm(Display.getDefault().getActiveShell(), title, message));
-			}
-		};
-		Display.getDefault().syncExec(runnable);
+		if (isHeadless())
+			return showQuestionDialog(message, title);
 
-		return runnable.getResult();
+		else {
+			final RunnableWithResult<Boolean> runnable = new RunnableWithResult<Boolean>() {
+
+				@Override
+				public void run() {
+					setResult(MessageDialog.openConfirm(Display.getDefault().getActiveShell(), title, message));
+				}
+			};
+			Display.getDefault().syncExec(runnable);
+
+			return runnable.getResult();
+		}
 	}
 
 	/**
-	 * Displays a warning dialog.
+	 * Displays a warning dialog. Uses the engine output stream in headless mode.
 	 *
 	 * @param message
 	 *            dialog message
@@ -181,18 +225,15 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript
-	public static void showWarningDialog(final String message, @ScriptParameter(defaultValue = "Warning") final String title) {
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				MessageDialog.openWarning(Display.getDefault().getActiveShell(), title, message);
-			}
-		});
+	public void showWarningDialog(final String message, @ScriptParameter(defaultValue = "Warning") final String title) {
+		if (isHeadless())
+			getEnvironment().print("WARNING: " + message, true);
+		else
+			Display.getDefault().syncExec(() -> MessageDialog.openWarning(Display.getDefault().getActiveShell(), title, message));
 	}
 
 	/**
-	 * Displays an error dialog.
+	 * Displays an error dialog. Uses the engine output stream in headless mode.
 	 *
 	 * @param message
 	 *            dialog message
@@ -200,14 +241,11 @@ public class UIModule extends AbstractScriptModule {
 	 *            dialog title
 	 */
 	@WrapToScript
-	public static void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Error") final String title) {
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				MessageDialog.openError(Display.getDefault().getActiveShell(), title, message);
-			}
-		});
+	public void showErrorDialog(final String message, @ScriptParameter(defaultValue = "Error") final String title) {
+		if (isHeadless())
+			getEnvironment().print("ERROR: " + message, true);
+		else
+			Display.getDefault().syncExec(() -> MessageDialog.openError(Display.getDefault().getActiveShell(), title, message));
 	}
 
 	/**
@@ -215,15 +253,7 @@ public class UIModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static void exitApplication() {
-		Display.getDefault().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-
-				PlatformUI.getWorkbench().close();
-			}
-		});
+		Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().close());
 	}
 
 	/**
@@ -518,12 +548,9 @@ public class UIModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public static void setClipboard(final String data) {
-		final Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				final Clipboard clipboard = new Clipboard(Display.getDefault());
-				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
-			}
+		final Runnable runnable = () -> {
+			final Clipboard clipboard = new Clipboard(Display.getDefault());
+			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 		};
 
 		Display.getDefault().syncExec(runnable);
@@ -554,13 +581,27 @@ public class UIModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public void clearConsole() {
+		final ScriptConsole console = getConsole();
+		if (console != null)
+			console.clearConsole();
+	}
+
+	/**
+	 * Get the script console for the current engine.
+	 *
+	 * @return script console or <code>null</code>
+	 */
+	@WrapToScript
+	public ScriptConsole getConsole() {
 		final IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
 		for (final IConsole console : consoles) {
 			if (console instanceof ScriptConsole) {
 				if (getScriptEngine().equals(((ScriptConsole) console).getScriptEngine()))
-					((ScriptConsole) console).clearConsole();
+					return (ScriptConsole) console;
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -606,18 +647,14 @@ public class UIModule extends AbstractScriptModule {
 		// find view ID
 		final String viewID = getIDForName(name);
 
-		Runnable runnable = new Runnable() {
+		final Runnable runnable = () -> {
+			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-			@Override
-			public void run() {
-				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-
-				for (final IViewReference part : activePage.getViewReferences()) {
-					if (part.getId().equals(viewID)) {
-						if ((secondaryID == null) || (secondaryID.equals(part.getSecondaryId()))) {
-							activePage.hideView(part);
-							return;
-						}
+			for (final IViewReference part : activePage.getViewReferences()) {
+				if (part.getId().equals(viewID)) {
+					if ((secondaryID == null) || (secondaryID.equals(part.getSecondaryId()))) {
+						activePage.hideView(part);
+						return;
 					}
 				}
 			}
@@ -626,13 +663,47 @@ public class UIModule extends AbstractScriptModule {
 		Display.getDefault().syncExec(runnable);
 	}
 
+	/**
+	 * Shut down the application.
+	 */
 	@WrapToScript
 	public static void shutdown() {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				PlatformUI.getWorkbench().close();
-			}
-		});
+		Display.getDefault().asyncExec(() -> PlatformUI.getWorkbench().close());
+	}
+
+	/**
+	 * Verify if we are running in headless mode.
+	 *
+	 * @return <code>true</code> if we are running without UI
+	 */
+	@WrapToScript
+	public static boolean isHeadless() {
+		return !PlatformUI.isWorkbenchRunning();
+	}
+
+	/**
+	 * Constructs a new color given the desired red, green and blue values expressed as ints in the range 0 to 255 (where 0 is black and 255 is full
+	 * brightness).
+	 * <p>
+	 * You must dispose the color when it is no longer required.
+	 * </p>
+	 *
+	 * @param red
+	 *            the amount of red in the color
+	 * @param green
+	 *            the amount of green in the color
+	 * @param blue
+	 *            the amount of blue in the color
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the red, green or blue argument is not between 0 and 255</li>
+	 *                </ul>
+	 * @return color instance
+	 */
+	@WrapToScript
+	public Color createColor(int red, int green, int blue) {
+		return new Color(Display.getDefault(), red, green, blue);
 	}
 }

@@ -90,16 +90,15 @@ public class EcoreModule extends AbstractScriptModule {
 	 * @return the currently selected model element.
 	 */
 	public EObject getSelection() {
-		Object selection = getSelectionModule().getCustomSelectionFromSelector(GMFSemanticSeletor.SELECTOR_ID);
+		final Object selection = getSelectionModule().getCustomSelectionFromSelector(GMFSemanticSeletor.SELECTOR_ID);
 		if (selection instanceof EObject) {
 			if (selection instanceof Element) {
-				EList<Stereotype> appliedStereotypes = ((Element) selection).getAppliedStereotypes();
+				final EList<Stereotype> appliedStereotypes = ((Element) selection).getAppliedStereotypes();
 			}
 			return (EObject) selection;
 		} else {
-			String message = "Unable to retreive a EObject from the selection";
-			getEnvironment().getModule(UIModule.class);
-			UIModule.showErrorDialog("Error", message);
+			final String message = "Unable to retreive a EObject from the selection";
+			getEnvironment().getModule(UIModule.class).showErrorDialog("Error", message);
 			return null;
 		}
 	}
@@ -119,10 +118,9 @@ public class EcoreModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public boolean eInstanceOf(@ScriptParameter(name = "eObject") final EObject eObject, @ScriptParameter(name = "type") final String type) {
-		EClassifier classifier = getEPackage().getEClassifier(type);
+		final EClassifier classifier = getEPackage().getEClassifier(type);
 		if (classifier == null) {
-			getEnvironment().getModule(UIModule.class);
-			UIModule.showErrorDialog("Error", "Unable to find EClass named :" + type);
+			getEnvironment().getModule(UIModule.class).showErrorDialog("Error", "Unable to find EClass named :" + type);
 		}
 		return classifier.isInstance(eObject);
 	}
@@ -140,7 +138,7 @@ public class EcoreModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public EObject getSelection(@ScriptParameter(defaultValue = ScriptParameter.NULL, name = "type") final String type) {
-		EObject selection = getSelection();
+		final EObject selection = getSelection();
 		if (type != null) {
 			if (eInstanceOf(selection, type)) {
 				return selection;
@@ -182,21 +180,19 @@ public class EcoreModule extends AbstractScriptModule {
 		else
 			fUri = nsURI;
 
-		EPackage ePack = getEPackage();
+		final EPackage ePack = getEPackage();
 		if (ePack == null) {
-			getEnvironment().getModule(UIModule.class);
-			UIModule.showErrorDialog("Error", "Unable to find metamodel with URI : " + fUri);
+			getEnvironment().getModule(UIModule.class).showErrorDialog("Error", "Unable to find metamodel with URI : " + fUri);
 			return;
 		}
 
-		EFactory factory = getFactory();
+		final EFactory factory = getFactory();
 		if (factory != null) {
 			getScriptEngine().setVariable(getFactoryVariableName(), factory);
 			getEnvironment().wrap(factory.getClass());
 
 		} else {
-			getEnvironment().getModule(UIModule.class);
-			UIModule.showErrorDialog("Error", "Unable to find metamodel with URI : " + fUri);
+			getEnvironment().getModule(UIModule.class).showErrorDialog("Error", "Unable to find metamodel with URI : " + fUri);
 		}
 	}
 
@@ -217,11 +213,11 @@ public class EcoreModule extends AbstractScriptModule {
 			Logger.warning(Activator.PLUGIN_ID, "Unable to get the current resourceSet. Creating a new one...");
 			resourceSet = new ResourceSetImpl();
 		}
-		URI resourceURI = createURI(uri, name);
+		final URI resourceURI = createURI(uri, name);
 		Resource resource = null;
 		try {
 			resource = resourceSet.getResource(resourceURI, true);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			resource = resourceSet.createResource(resourceURI);
 		}
 		return resource;
@@ -242,24 +238,22 @@ public class EcoreModule extends AbstractScriptModule {
 		URI container = null;
 		if (containerURI == null) {
 			// Launch dialog to get an URI
-			String location = getEnvironment().getModule(ResourcesModule.class).showFolderSelectionDialog(null, "Select where you want to add your resource",
-					null);
+			final String location = getEnvironment().getModule(ResourcesModule.class).showFolderSelectionDialog(null,
+					"Select where you want to add your resource", null);
 			if ((location == null) || (location.isEmpty())) {
-				getEnvironment().getModule(UIModule.class);
-				UIModule.showErrorDialog("Error", "Unable to retreive a container for the new resource from your selestion");
+				getEnvironment().getModule(UIModule.class).showErrorDialog("Error", "Unable to retreive a container for the new resource from your selestion");
 				return null;
 			}
 
-			IPath containerPath = ResourceTools.toPath(location);
+			final IPath containerPath = ResourceTools.toPath(location);
 			container = URI.createPlatformResourceURI(containerPath.toString(), true);
 
 		} else {
 			container = URI.createFileURI(containerURI);
 		}
 		if (fileName == null) {
-			getEnvironment().getModule(UIModule.class);
 			// Launch input dialog
-			fileName = UIModule.showInputDialog("", "Give the resource name (With it's extension)", "");
+			fileName = getEnvironment().getModule(UIModule.class).showInputDialog("", "Give the resource name (With it's extension)", "");
 		}
 
 		container = container.appendSegment(fileName);
@@ -276,7 +270,7 @@ public class EcoreModule extends AbstractScriptModule {
 		if (fUri == null) {
 			initEPackageFromDialog();
 		}
-		EPackage ePackage = getEPackage();
+		final EPackage ePackage = getEPackage();
 		if (ePackage == null) {
 			throw new RuntimeException("Unable to retreive EPackage with URI " + fUri);
 		}
@@ -293,16 +287,16 @@ public class EcoreModule extends AbstractScriptModule {
 		if (fUri == null) {
 			initEPackageFromDialog();
 		}
-		EPackage ePack = EPackage.Registry.INSTANCE.getEPackage(fUri);
+		final EPackage ePack = EPackage.Registry.INSTANCE.getEPackage(fUri);
 		return ePack;
 	}
 
 	private void initEPackageFromDialog() {
 		getEnvironment().getModule(UIModule.class);
-		UriSelectionDialog dialog = new UriSelectionDialog(UIModule.getShell());
-		int returnCode = DialogModule.openDialog(dialog);
+		final UriSelectionDialog dialog = new UriSelectionDialog(UIModule.getShell());
+		final int returnCode = DialogModule.openDialog(dialog);
 		if (returnCode == Window.OK) {
-			Object[] result = dialog.getResult();
+			final Object[] result = dialog.getResult();
 			if ((result != null) && (result.length == 1)) {
 				fUri = (String) result[0];
 			}
@@ -371,18 +365,14 @@ public class EcoreModule extends AbstractScriptModule {
 
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final ActiveEditorRef activeEditorRef = new ActiveEditorRef();
-		Display display = workbench.getDisplay();
+		final Display display = workbench.getDisplay();
 
-		display.syncExec(new Runnable() {
+		display.syncExec(() -> {
+			final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 
-			@Override
-			public void run() {
-				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-
-				// this can be null if you close all perspectives
-				if ((window != null) && (window.getActivePage() != null) && (window.getActivePage().getActiveEditor() != null))
-					activeEditorRef.activeEditorPart = window.getActivePage().getActiveEditor();
-			}
+			// this can be null if you close all perspectives
+			if ((window != null) && (window.getActivePage() != null) && (window.getActivePage().getActiveEditor() != null))
+				activeEditorRef.activeEditorPart = window.getActivePage().getActiveEditor();
 		});
 		return activeEditorRef.activeEditorPart;
 	}
@@ -397,7 +387,7 @@ public class EcoreModule extends AbstractScriptModule {
 	public void save(@ScriptParameter(defaultValue = ScriptParameter.NULL, name = "target") final Object target) {
 		Resource toSave = null;
 		if (target instanceof EObject) {
-			EObject eObject = (EObject) target;
+			final EObject eObject = (EObject) target;
 			toSave = eObject.eResource();
 		} else if (target instanceof Resource) {
 			toSave = (Resource) target;
@@ -405,10 +395,9 @@ public class EcoreModule extends AbstractScriptModule {
 		if (toSave != null) {
 			try {
 				toSave.save(null);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
-				getEnvironment().getModule(UIModule.class);
-				UIModule.showErrorDialog("Error", e.getMessage());
+				getEnvironment().getModule(UIModule.class).showErrorDialog("Error", e.getMessage());
 				return;
 			}
 		} else {
@@ -421,7 +410,7 @@ public class EcoreModule extends AbstractScriptModule {
 	}
 
 	protected EditingDomain getEditingDomain() {
-		IEditorPart currentEditorPart = getCurrentEditorPart();
+		final IEditorPart currentEditorPart = getCurrentEditorPart();
 		if (currentEditorPart != null) {
 			Object domain = currentEditorPart.getAdapter(EditingDomain.class);
 			if (domain instanceof EditingDomain) {
@@ -469,12 +458,12 @@ public class EcoreModule extends AbstractScriptModule {
 			}
 		}
 
-		Collection<Setting> result = crossReferencer.getInverseReferences(eObject, true);
+		final Collection<Setting> result = crossReferencer.getInverseReferences(eObject, true);
 		return Collections2.transform(result, new Function<Setting, Object[]>() {
 
 			@Override
 			public Object[] apply(final Setting arg0) {
-				Object[] setting = new Object[2];
+				final Object[] setting = new Object[2];
 				setting[1] = arg0.getEStructuralFeature();
 				setting[0] = arg0.getEObject();
 
@@ -484,7 +473,7 @@ public class EcoreModule extends AbstractScriptModule {
 	}
 
 	protected ResourceSet getResourceSet() {
-		EditingDomain editingDomain = getEditingDomain();
+		final EditingDomain editingDomain = getEditingDomain();
 		if (editingDomain != null) {
 			return editingDomain.getResourceSet();
 		}
@@ -506,7 +495,7 @@ public class EcoreModule extends AbstractScriptModule {
 	@WrapToScript
 	public void runOperation(@ScriptParameter(name = "operation") final Runnable operation,
 			@ScriptParameter(name = "name", defaultValue = "Script Operation") final String operationName) {
-		EditingDomain domain = getEditingDomain();
+		final EditingDomain domain = getEditingDomain();
 
 		if (domain instanceof TransactionalEditingDomain) {
 			((TransactionalEditingDomain) domain).getCommandStack().execute(
@@ -514,7 +503,7 @@ public class EcoreModule extends AbstractScriptModule {
 			// ((EditingDomain)domain).getCommandStack().undo();
 		} else if (domain != null) {
 			// execute the operation in a command
-			ChangeRecorder recorder = new ChangeRecorder();
+			final ChangeRecorder recorder = new ChangeRecorder();
 			domain.getCommandStack().execute(new RunnableCommandWrapper(operation, domain.getResourceSet(), recorder));
 			recorder.dispose();
 		} else {
@@ -570,7 +559,7 @@ public class EcoreModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public String ePrint(final EObject target) {
-		IItemLabelProvider labelProvider = getLabelProvider(target);
+		final IItemLabelProvider labelProvider = getLabelProvider(target);
 		if (labelProvider != null) {
 			return labelProvider.getText(target);
 		}
@@ -578,7 +567,7 @@ public class EcoreModule extends AbstractScriptModule {
 	}
 
 	private IItemLabelProvider getLabelProvider(final EObject target) {
-		IItemLabelProvider labelProvider = (IItemLabelProvider) adapter.adapt(target, IItemLabelProvider.class);
+		final IItemLabelProvider labelProvider = (IItemLabelProvider) adapter.adapt(target, IItemLabelProvider.class);
 		return labelProvider;
 	}
 

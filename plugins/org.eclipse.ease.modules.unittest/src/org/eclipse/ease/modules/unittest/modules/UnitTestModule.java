@@ -154,7 +154,7 @@ public class UnitTestModule extends AbstractScriptModule implements IScriptFunct
 		final IReportGenerator report = ReportTools.getReport(reportType);
 		if (report != null) {
 			final String reportData = report.createReport(title, description, suite);
-			final IFileHandle handle = getEnvironment().getModule(ResourcesModule.class).writeFile(file, reportData, ResourcesModule.WRITE);
+			final IFileHandle handle = getEnvironment().getModule(ResourcesModule.class).writeFile(file, reportData, ResourcesModule.WRITE, false);
 			ResourcesModule.closeFile(handle);
 			return true;
 		}

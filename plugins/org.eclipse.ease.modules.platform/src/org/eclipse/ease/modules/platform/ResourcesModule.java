@@ -36,7 +36,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ease.IExecutionListener;
+import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.Logger;
+import org.eclipse.ease.Script;
 import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
@@ -59,7 +62,7 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  * Provides file access for workspace and file system resources. Methods accepting location objects can deal with {@link String}, {@link URI}, {@link IFile} and
  * {@link File} instances.
  */
-public class ResourcesModule extends AbstractScriptModule {
+public class ResourcesModule extends AbstractScriptModule implements IExecutionListener {
 
 	/** Module identifier. */
 	public static final String MODULE_ID = "/System/Resources";
@@ -75,6 +78,9 @@ public class ResourcesModule extends AbstractScriptModule {
 	/** Access modifier for append mode (4). */
 	@WrapToScript
 	public static final int APPEND = IFileHandle.APPEND;
+
+	/** Open file handles managed by this module. */
+	private final Collection<IFileHandle> fOpenHandles = new HashSet<>();
 
 	/**
 	 * Monitor to wake up listeners when done.
@@ -197,7 +203,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public Object createFile(final Object location) throws Exception {
-		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE);
+		final IFileHandle handle = getFileHandle(location, IFileHandle.WRITE, false);
 		return handle.getFile();
 	}
 
@@ -208,13 +214,17 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            file location
 	 * @param mode
 	 *            one of {@module #READ}, {@module #WRITE}, {@module #APPEND}
+	 * @param autoClose
+	 *            automatically close resource when script engine is terminated
+	 *
 	 * @return file handle instance to be used for file modification commands
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode) throws Exception {
-		return getFileHandle(location, mode);
+	public IFileHandle openFile(final Object location, @ScriptParameter(defaultValue = "1") final int mode,
+			@ScriptParameter(defaultValue = "true") boolean autoClose) throws Exception {
+		return getFileHandle(location, mode, autoClose);
 	}
 
 	/**
@@ -254,7 +264,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public String readFile(final Object location, @ScriptParameter(defaultValue = "-1") final int bytes) throws Exception {
-		final IFileHandle handle = getFileHandle(location, IFileHandle.READ);
+		final IFileHandle handle = getFileHandle(location, IFileHandle.READ, false);
 
 		if (handle != null) {
 			final String result = handle.read(bytes);
@@ -279,8 +289,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public void copyFile(final Object sourceLocation, final Object targetLocation) throws Exception {
-
-		final IFileHandle handle = writeFile(targetLocation, readFile(sourceLocation, -1), IFileHandle.WRITE);
+		final IFileHandle handle = writeFile(targetLocation, readFile(sourceLocation, -1), IFileHandle.WRITE, false);
 		if (handle != null)
 			handle.close();
 	}
@@ -354,7 +363,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	 */
 	@WrapToScript
 	public String readLine(final Object location) throws Exception {
-		final IFileHandle handle = getFileHandle(location, IFileHandle.READ);
+		final IFileHandle handle = getFileHandle(location, IFileHandle.READ, false);
 
 		if (handle != null) {
 			final String result = handle.readLine();
@@ -377,13 +386,16 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            data to be written
 	 * @param mode
 	 *            write mode ({@module #WRITE}/{@module #APPEND})
+	 * @param autoClose
+	 *            automatically close resource when script engine is terminated
 	 * @return file handle to continue write operations
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeFile(final Object location, final Object data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
-		final IFileHandle handle = getFileHandle(location, mode);
+	public IFileHandle writeFile(final Object location, final Object data, @ScriptParameter(defaultValue = "2") final int mode,
+			@ScriptParameter(defaultValue = "true") boolean autoClose) throws Exception {
+		final IFileHandle handle = getFileHandle(location, mode, autoClose);
 
 		if (handle != null) {
 			if (data instanceof byte[])
@@ -407,13 +419,16 @@ public class ResourcesModule extends AbstractScriptModule {
 	 *            data to be written
 	 * @param mode
 	 *            write mode ({@module #WRITE}/{@module #APPEND})
+	 * @param autoClose
+	 *            automatically close resource when script engine is terminated
 	 * @return file handle to continue write operations
 	 * @throws Exception
 	 *             problems on file access
 	 */
 	@WrapToScript
-	public IFileHandle writeLine(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode) throws Exception {
-		final IFileHandle handle = getFileHandle(location, mode);
+	public IFileHandle writeLine(final Object location, final String data, @ScriptParameter(defaultValue = "2") final int mode,
+			@ScriptParameter(defaultValue = "true") boolean autoClose) throws Exception {
+		final IFileHandle handle = getFileHandle(location, mode, autoClose);
 
 		if (handle != null)
 			handle.write(data + LINE_DELIMITER);
@@ -423,7 +438,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		return handle;
 	}
 
-	private IFileHandle getFileHandle(final Object location, final int mode) throws Exception {
+	private IFileHandle getFileHandle(final Object location, final int mode, boolean autoClose) throws Exception {
 		IFileHandle handle = null;
 		if (location instanceof IFileHandle)
 			handle = (IFileHandle) location;
@@ -435,11 +450,17 @@ public class ResourcesModule extends AbstractScriptModule {
 			handle = new ResourceHandle((IFile) location, mode);
 
 		else if (location != null)
-			handle = getFileHandle(ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), mode == IFileHandle.READ), mode);
+			handle = getFileHandle(ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), mode == IFileHandle.READ), mode, autoClose);
 
 		if ((handle != null) && (!handle.exists())) {
 			// create file if it does not exist yet
 			handle.createFile(true);
+		}
+
+		if ((handle != null) && (autoClose)) {
+			fOpenHandles.add(handle);
+			// we need to manage a handle, register script engine listener
+			getScriptEngine().addExecutionListener(this);
 		}
 
 		return handle;
@@ -536,6 +557,7 @@ public class ResourcesModule extends AbstractScriptModule {
 							setResult("workspace:/" + ((IResource) dialog.getFirstResult()).getFullPath().toPortableString());
 					}
 				}
+
 			};
 
 			Display.getDefault().syncExec(runnable);
@@ -604,6 +626,7 @@ public class ResourcesModule extends AbstractScriptModule {
 					if (dialog.open() == Window.OK)
 						setResult("workspace:/" + ((IPath) dialog.getResult()[0]).toPortableString());
 				}
+
 			};
 
 			Display.getDefault().syncExec(runnable);
@@ -635,7 +658,7 @@ public class ResourcesModule extends AbstractScriptModule {
 		else
 			regExp = Pattern.compile(pattern);
 
-		final List<Object> result = new ArrayList<Object>();
+		final List<Object> result = new ArrayList<>();
 
 		// locate root folder to start with
 		Object root = ResourceTools.resolveFolder(rootFolder, getScriptEngine().getExecutedFile(), true);
@@ -644,7 +667,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		if (root instanceof IContainer) {
 			// search in workspace
-			final Collection<IContainer> toVisit = new HashSet<IContainer>();
+			final Collection<IContainer> toVisit = new HashSet<>();
 			toVisit.add((IContainer) root);
 
 			do {
@@ -668,7 +691,7 @@ public class ResourcesModule extends AbstractScriptModule {
 
 		} else if (root instanceof File) {
 			// search in file system
-			final Collection<File> toVisit = new HashSet<File>();
+			final Collection<File> toVisit = new HashSet<>();
 			toVisit.add((File) root);
 
 			do {
@@ -794,7 +817,7 @@ public class ResourcesModule extends AbstractScriptModule {
 	public void createProblemMarker(final String severity, final Object location, final int lineNumber, final String message,
 			@ScriptParameter(defaultValue = "org.eclipse.core.resources.problemmarker") final String type,
 			@ScriptParameter(defaultValue = "true") final boolean permanent) throws CoreException {
-		Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
+		final Object file = ResourceTools.resolveFile(location, getScriptEngine().getExecutedFile(), true);
 
 		if (file instanceof IFile) {
 
@@ -805,13 +828,24 @@ public class ResourcesModule extends AbstractScriptModule {
 			if ("warning".equals(severity))
 				intSeverity = IMarker.SEVERITY_WARNING;
 
-			final HashMap<String, Object> attributes = new HashMap<String, Object>();
+			final HashMap<String, Object> attributes = new HashMap<>();
 			attributes.put(IMarker.LINE_NUMBER, lineNumber);
 			attributes.put(IMarker.SEVERITY, intSeverity);
 			attributes.put(IMarker.MESSAGE, message);
 			attributes.put(IMarker.TRANSIENT, !permanent);
 
 			MarkerUtilities.createMarker((IFile) file, attributes, type);
+		}
+	}
+
+	@Override
+	public void notify(IScriptEngine engine, Script script, int status) {
+		if (status == IExecutionListener.ENGINE_END) {
+			// close all managed file handles
+			for (final IFileHandle handle : fOpenHandles)
+				handle.close();
+
+			fOpenHandles.clear();
 		}
 	}
 }

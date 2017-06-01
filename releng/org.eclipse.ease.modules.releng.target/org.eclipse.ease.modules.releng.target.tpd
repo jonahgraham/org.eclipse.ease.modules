@@ -38,7 +38,13 @@ location "http://download.eclipse.org/releases/neon/" eclipse-neon {
 	org.eclipse.osgi
 }
 
-location "http://download.eclipse.org/ease/update/nightly" {
+// The default is: http://download.eclipse.org/ease/update/nightly
+// but that means that this build is dependent on the last published 
+// build, not what is locally in the core build. 
+// Therefore using something like:
+//   file:///scratch/ease/org.eclipse.ease.core/releng/org.eclipse.ease.releng.p2/target/repository
+// makes more sense
+location "REPLACE_WITH_PATH_TO_CORE_REPO" {
 	// EASE core dependencies
 	org.eclipse.ease.feature.feature.group lazy
 	org.eclipse.ease.ui.feature.feature.group lazy

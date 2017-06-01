@@ -26,6 +26,7 @@
 		<platform.api>org.eclipse.platform.doc.isv/reference/api</platform.api>
 		<ease.api>org.eclipse.ease.help/help/api-docs/javadoc</ease.api>
 		<ease.modules.api>org.eclipse.ease.modules.help/help/api-docs/javadoc</ease.modules.api>
+		<doclet.path>${user.dir}/ease.module.doclet.jar</doclet.path>
 	</properties>
 
 	<pluginRepositories>
@@ -158,6 +159,15 @@
 		</profile>
 
 		<profile>
+			<!-- build help pages for modules using javadoc. Needs variable doclet.path
+				to be set to the location of the ModuleDoclet jar.
+				The jar can be built with:
+				   mvn clean package -f org.eclipse.ease.core/developers/org.eclipse.ease.helpgenerator/pom.xml
+				in which case the doclet.path would be:
+				   org.eclipse.ease.core/developers/org.eclipse.ease.helpgenerator/target/ease.module.doclet.jar
+				or the pre-built jar can downloaded from:
+				   https://hudson.eclipse.org/ease/job/ease-build-module-doclet/lastSuccessfulBuild/artifact/developers/org.eclipse.ease.helpgenerator/target/ease.module.doclet.jar
+			-->
 			<id>module-docs</id>
 
 			<build>
@@ -171,7 +181,7 @@
 						<configuration>
 							<outputDirectory>${project.build.directory}/../mydocs</outputDirectory>
 							<doclet>org.eclipse.ease.helpgenerator.ModuleDoclet</doclet>
-							<docletPath>${user.dir}/ease.module.doclet.jar</docletPath>
+							<docletPath>${doclet.path}</docletPath>
 							<additionalparam>-root ${basedir}</additionalparam>
 							<useStandardDocletOptions>false</useStandardDocletOptions>
 							<links>
